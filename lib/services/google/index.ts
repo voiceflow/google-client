@@ -1,27 +1,31 @@
-import Client, { Context, State, Store } from '@voiceflow/client';
+import Client, { Context, Frame, State, Store } from '@voiceflow/client';
 import { DialogflowConversation, SimpleResponse } from 'actions-on-google';
 import { WebhookClient as Agent } from 'dialogflow-fulfillment';
 import { Request, Response } from 'express';
 import randomstring from 'randomstring';
+import uuid4 from 'uuid/v4';
 
-import { S } from '@/lib/constants';
+import { S, T } from '@/lib/constants';
 
+// import { responseHandlers } from '@/lib/services/voiceflow/handlers';
 import { AbstractManager } from '../utils';
 import { SkillMetadata } from './types';
 
+// TODO: actually read from dynamo
 const buildContext = async (versionID: string, _userID: string, voiceflow: Client): Promise<Context> => {
   const rawState = {};
 
-  return voiceflow.createContext(versionID, rawState as State);
-};
+  const context = voiceflow.createContext(versionID, rawState as State);
+  context.storage.set(S.OUTPUT, '');
 
-const VAR_VF = 'voiceflow';
+  return context;
+};
 
 const initialize = async (context: Context, conv: DialogflowConversation<any>): Promise<void> => {
   // fetch the metadata for this version (project)
   const meta = (await context.fetchMetadata()) as SkillMetadata;
 
-  const { storage, variables } = context;
+  const { stack, storage, variables } = context;
 
   // TODO: stream flags
 
@@ -36,10 +40,10 @@ const initialize = async (context: Context, conv: DialogflowConversation<any>): 
 
   // set based on input
   storage.set(S.LOCALE, conv.user?.locale);
-  // storage.set(S.USER, requestEnvelope.context.System.user.userId);
+  if (!conv.user.storage.userId) conv.user.storage.userId = uuid4();
+  storage.set(S.USER, conv.user.storage.userId);
 
   // set based on metadata
-  storage.set(S.ALEXA_PERMISSIONS, meta.alexa_permissions ?? []);
   storage.set(S.REPEAT, meta.repeat ?? 100);
 
   // default global variables
@@ -51,9 +55,8 @@ const initialize = async (context: Context, conv: DialogflowConversation<any>): 
     platform: 'google',
 
     // hidden system variables (code block only)
-    [VAR_VF]: {
+    voiceflow: {
       // TODO: implement all exposed voiceflow variables
-      permissions: storage.get(S.ALEXA_PERMISSIONS),
       events: [],
     },
   });
@@ -62,6 +65,49 @@ const initialize = async (context: Context, conv: DialogflowConversation<any>): 
   Store.initialize(variables, meta.global, 0);
 
   // TODO: restart logic
+  stack.push(new Frame({ diagramID: meta.diagram }));
+};
+
+const buildResponse = async (context: Context, conv: DialogflowConversation<any>, agent: Agent) => {
+  const { storage, turn } = context;
+
+  if (context.stack.isEmpty()) {
+    turn.set(T.END, true);
+  }
+
+  let displayText;
+
+  if (
+    storage
+      .get(S.OUTPUT)
+      .replace(/<[^><]+\/?>/g, '')
+      .trim().length === 0
+  ) {
+    displayText = '🔊';
+  }
+
+  const response = new SimpleResponse({
+    speech: `<speak>${storage.get(S.OUTPUT)}</speak>`,
+    text: displayText,
+  });
+
+  if (turn.get(T.END)) {
+    conv.close(response);
+  } else {
+    conv.ask(response);
+  }
+
+  // TODO: add response builders for card, play and chips
+  // eslint-disable-next-line no-restricted-syntax
+  // for (const handler of responseHandlers) {
+  //   // eslint-disable-next-line no-await-in-loop
+  //   await handler(context, conv);
+  // }
+
+  // TODO: persist context
+
+  conv.user.storage.forceUpdateToken = randomstring.generate();
+  agent.add(conv);
 };
 
 const dialogflowRequestHandler = (voiceflow: Client) => async (agent: Agent) => {
@@ -73,13 +119,15 @@ const dialogflowRequestHandler = (voiceflow: Client) => async (agent: Agent) => 
       return;
     }
 
+    // TODO
     // const input = conv.input.raw;
-
     // if (conv.query === 'actions_intent_MEDIA_STATUS') {
     //   input = 'continue';
     // } // Special case for google stream
 
     const { intent } = agent;
+
+    // TODO
     // const slots = agent.parameters;
     // if (slots) {
     //   // Keep consistent with alexa
@@ -91,43 +139,23 @@ const dialogflowRequestHandler = (voiceflow: Client) => async (agent: Agent) => 
     //   }
     // }
 
-    /**
-   * steps TODO:
-   * 
-   const context = await buildContext(input);
-
-    await initialize(context, input);
-
-    await update(context);
-
-    return buildResponse(context, input);
-   */
-
     const { userId } = conv.user.storage;
 
-    // const session = await getSessionData(userId);
-    const context = await buildContext(/* conv.body.versionID */ 'XwG14yqjQD', userId, voiceflow);
+    // TODO: make user of userId for retrieving context and find a way to get skill_id here
+    const context = await buildContext('XwG14yqjQD', userId, voiceflow);
 
     if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || context.stack.isEmpty()) {
-      // setUpNewSession(conv, session);
       await initialize(context, conv);
-      // session.oneShotIntent = intent;
     }
 
+    // TODO
     // session.raw_input = input;
     // session.intent = intent;
     // session.slots = slots;
 
-    // await responseRender(conv, session);
+    await context.update();
 
-    conv.close(
-      new SimpleResponse({
-        speech: '<speak>LEO</speak>',
-        text: undefined,
-      })
-    );
-    conv.user.storage.forceUpdateToken = randomstring.generate();
-    agent.add(conv);
+    buildResponse(context, conv, agent);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log('INNNER ERR: ', err);
