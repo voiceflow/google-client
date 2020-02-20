@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 import { param } from 'express-validator';
 
-import { validate } from '../utils';
+// import { validate } from '../utils';
 import { AbstractController } from './utils';
 
 class GoogleController extends AbstractController {
@@ -13,12 +13,17 @@ class GoogleController extends AbstractController {
     },
   };
 
-  @validate({ VERSION_ID: GoogleController.VALIDATIONS.PARAMS.versionID })
-  async handler(req: Request, res: Response) {
+  // TODO: @validate({ VERSION_ID: GoogleController.VALIDATIONS.PARAMS.versionID })
+  handler = async (req: Request, res: Response) => {
     const { google } = this.services;
 
-    return google.handleRequest(req, res);
-  }
+    try {
+      return google.handleRequest(req, res);
+    } catch (err) {
+      // eslint-disable-next-line no-console
+      console.log('ERROR: ', err);
+    }
+  };
 }
 
 export default GoogleController;
