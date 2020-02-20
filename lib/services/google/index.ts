@@ -6,17 +6,74 @@ import randomstring from 'randomstring';
 import uuid4 from 'uuid/v4';
 
 import { S, T } from '@/lib/constants';
+import { Config } from '@/types';
 
 // import { responseHandlers } from '@/lib/services/voiceflow/handlers';
 import { AbstractManager } from '../utils';
 import { SkillMetadata } from './types';
 
+const GACTION_SESSIONS_DYNAMO_PREFIX = 'gactions.user';
+
+const persistState = async (docClient: AWS.DynamoDB.DocumentClient, config: Config, userId: string, state: State) => {
+  const params = {
+    TableName: config.SESSIONS_DYNAMO_TABLE,
+    Item: {
+      id: `${GACTION_SESSIONS_DYNAMO_PREFIX}.${userId}`,
+      state,
+    },
+  };
+
+  try {
+    await docClient.put(params).promise();
+  } catch (e) {
+    // eslint-disable-next-line no-console
+    console.log('persist state error:', e);
+  }
+};
+
+const getStateFromDb = async (docClient: AWS.DynamoDB.DocumentClient, config: Config, userId: string) => {
+  if (!userId) {
+    return {};
+  }
+
+  const params = {
+    TableName: config.SESSIONS_DYNAMO_TABLE,
+    Key: {
+      id: `${GACTION_SESSIONS_DYNAMO_PREFIX}.${userId}`,
+    },
+  };
+
+  try {
+    const data = await docClient.get(params).promise();
+
+    if (!data.Item) {
+      throw new Error(`session not found for userId: ${userId}`);
+    }
+
+    return data.Item.state;
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.log('get state from db err:', err);
+    return {};
+  }
+};
+
 // TODO: actually read from dynamo
-const buildContext = async (versionID: string, _userID: string, voiceflow: Client): Promise<Context> => {
-  const rawState = {};
+const buildContext = async (
+  versionID: string,
+  userID: string,
+  voiceflow: Client,
+  docClient: AWS.DynamoDB.DocumentClient,
+  config: Config
+): Promise<Context> => {
+  const rawState = await getStateFromDb(docClient, config, userID);
 
   const context = voiceflow.createContext(versionID, rawState as State);
+
+  context.turn.set(T.PREVIOUS_OUTPUT, context.storage.get(S.OUTPUT));
   context.storage.set(S.OUTPUT, '');
+
+  // TODO: set events 'frameDidFinish' and 'diagramWillFetch'
 
   return context;
 };
@@ -68,7 +125,13 @@ const initialize = async (context: Context, conv: DialogflowConversation<any>): 
   stack.push(new Frame({ diagramID: meta.diagram }));
 };
 
-const buildResponse = async (context: Context, conv: DialogflowConversation<any>, agent: Agent) => {
+const buildResponse = async (
+  context: Context,
+  conv: DialogflowConversation<any>,
+  agent: Agent,
+  docClient: AWS.DynamoDB.DocumentClient,
+  config: Config
+) => {
   const { storage, turn } = context;
 
   if (context.stack.isEmpty()) {
@@ -104,13 +167,13 @@ const buildResponse = async (context: Context, conv: DialogflowConversation<any>
   //   await handler(context, conv);
   // }
 
-  // TODO: persist context
+  persistState(docClient, config, storage.get(S.USER), context.getFinalState());
 
   conv.user.storage.forceUpdateToken = randomstring.generate();
   agent.add(conv);
 };
 
-const dialogflowRequestHandler = (voiceflow: Client) => async (agent: Agent) => {
+const dialogflowRequestHandler = (voiceflow: Client, docClient: AWS.DynamoDB.DocumentClient, config: Config) => async (agent: Agent) => {
   try {
     const conv = agent.conv();
 
@@ -142,7 +205,7 @@ const dialogflowRequestHandler = (voiceflow: Client) => async (agent: Agent) => 
     const { userId } = conv.user.storage;
 
     // TODO: make user of userId for retrieving context and find a way to get skill_id here
-    const context = await buildContext('XwG14yqjQD', userId, voiceflow);
+    const context = await buildContext('XwG14yqjQD', userId, voiceflow, docClient, config);
 
     if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || context.stack.isEmpty()) {
       await initialize(context, conv);
@@ -155,7 +218,7 @@ const dialogflowRequestHandler = (voiceflow: Client) => async (agent: Agent) => 
 
     await context.update();
 
-    buildResponse(context, conv, agent);
+    buildResponse(context, conv, agent, docClient, config);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.log('INNNER ERR: ', err);
@@ -164,7 +227,7 @@ const dialogflowRequestHandler = (voiceflow: Client) => async (agent: Agent) => 
 
 class GoogleManager extends AbstractManager {
   handleRequest(request: Request, response: Response) {
-    const { WebhookClient, voiceflow } = this.services;
+    const { WebhookClient, voiceflow, docClient } = this.services;
 
     request.body.versionID = request.params.versionID;
 
@@ -174,7 +237,7 @@ class GoogleManager extends AbstractManager {
     });
 
     const intentMap = new Map();
-    intentMap.set(null, dialogflowRequestHandler(voiceflow));
+    intentMap.set(null, dialogflowRequestHandler(voiceflow, docClient, this.config as Config));
 
     agent.handleRequest(intentMap);
   }

@@ -15,7 +15,6 @@ export interface SkillMetadata {
   repeat: number;
   slots: Slot[];
   fulfillment: Record<string, any>;
-  alexa_permissions: string[];
 }
 
 export interface Audio {

@@ -8,7 +8,7 @@ import Dynamo from './dynamo';
 import Static from './static';
 
 export interface ClientMap {
-  dynamo: AWS.DynamoDB;
+  docClient: AWS.DynamoDB.DocumentClient;
   axios: AxiosStatic;
   WebhookClient: WebhookClientConstructor;
 }
@@ -19,7 +19,7 @@ export interface ClientMap {
 const buildClients = (config: Config) => {
   const clients = { ...Static } as ClientMap;
 
-  clients.dynamo = Dynamo(config);
+  clients.docClient = Dynamo(config);
 
   return clients;
 };
