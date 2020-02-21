@@ -16,7 +16,6 @@ export interface SkillMetadata {
   slots: Slot[];
   fulfillment: Record<string, any>;
 }
-
 export interface Audio {
   url: string;
   title?: string;

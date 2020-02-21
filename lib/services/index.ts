@@ -5,9 +5,15 @@ import { Config } from '@/types';
 
 import { ClientMap } from '../clients';
 import Google from './google';
+import Handler from './handler';
+import Lifecycle from './lifecycle';
+import State from './state';
 import Voiceflow from './voiceflow';
 
 export interface ServiceMap {
+  state: State;
+  lifecycle: Lifecycle;
+  handler: Handler;
   google: Google;
   voiceflow: Client;
 }
@@ -25,6 +31,9 @@ const buildServices = (config: Config, clients: ClientMap): FullServiceMap => {
   } as FullServiceMap;
 
   services.secretsProvider = secretsProvider;
+  services.state = new State(services, config);
+  services.lifecycle = new Lifecycle(services, config);
+  services.handler = new Handler(services, config);
   services.voiceflow = Voiceflow(services, config);
   services.google = new Google(services, config);
 
