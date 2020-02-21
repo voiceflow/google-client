@@ -8,34 +8,22 @@ import fixtures from './fixture';
 const tests = [
   {
     method: 'post',
-    calledPath: '/state/skill/:versionID',
+    calledPath: '/state/skill/gactions/:versionID',
     expected: {
       controllers: {
-        alexa: {
+        google: {
           handler: 1,
         },
       },
-      middlewares: {
-        alexa: {
-          verifier: 1,
-        },
-      },
-      validations: {
-        controllers: {
-          alexa: {
-            handler: {
-              VERSION_ID: 1,
-            },
-          },
-        },
-      },
+      middlewares: {},
+      validations: {},
     },
   },
 ];
 
-describe('alexa route unit tests', () => {
+describe('google route unit tests', () => {
   let app;
-  let server;
+  let server: any;
 
   afterEach(async () => {
     sinon.restore();
