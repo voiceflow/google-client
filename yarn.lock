@@ -2869,10 +2869,9 @@ dezalgo@^1.0.0, dezalgo@~1.0.3:
     asap "^2.0.0"
     wrappy "1"
 
-dialogflow-fulfillment@^0.6.1:
-  version "0.6.1"
-  resolved "https://registry.yarnpkg.com/dialogflow-fulfillment/-/dialogflow-fulfillment-0.6.1.tgz#1950e3fea82e2f815967a18173b5edaaff23d582"
-  integrity sha512-lBnjPyXmO0P3grJfNBPTbVX1J3GVCBE1KZ+dEskbsH1O6DVXvFR/ncYroE85dfqGII7xUukfSjtqd084HT3W+w==
+dialogflow-fulfillment@dialogflow/dialogflow-fulfillment-nodejs:
+  version "0.6.2"
+  resolved "https://codeload.github.com/dialogflow/dialogflow-fulfillment-nodejs/tar.gz/86a844a34ce61a665fa3687afe91af68b3dca0b8"
   dependencies:
     debug "^3.1.0"
     lodash "^4.17.11"
