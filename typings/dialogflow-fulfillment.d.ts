@@ -1,22 +1,3 @@
-// declare module 'dialogflow-fulfillment' {
-//   import { Request, Response, RequestHandler } from 'express';
-
-//   // eslint-disable-next-line import/prefer-default-export
-//   export class WebhookClient {
-//     public ACTIONS_ON_GOOGLE: string;
-
-//     public requestSource: string;
-
-//     constructor(options: { request: Request; response: Response });
-
-//     handleRequest(map: Map<any, any>): RequestHandler;
-//   }
-
-//   export interface WebhookClientConstructor {
-//     new (options: { request: Request; response: Response }): WebhookClient;
-//   }
-// }
-
 declare module 'dialogflow-fulfillment' {
   import { DialogflowConversation } from 'actions-on-google';
   import { Request, Response } from 'express';

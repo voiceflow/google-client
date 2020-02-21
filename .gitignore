@@ -45,3 +45,5 @@ local_secrets.yaml
 
 # build folder
 build
+
+yarn-error.log

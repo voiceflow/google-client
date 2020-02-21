@@ -36,7 +36,6 @@ class HandlerManager extends AbstractManager {
 
       const { userId } = conv.user.storage;
 
-      // TODO: make user of userId for retrieving context and find a way to get skill_id here
       const context = await lifecycle.buildContext(_.get(conv.body, 'versionID'), userId);
 
       if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || context.stack.isEmpty()) {
@@ -50,7 +49,7 @@ class HandlerManager extends AbstractManager {
 
       await context.update();
 
-      lifecycle.buildResponse(context, conv, agent);
+      lifecycle.buildResponse(context, agent);
     } catch (err) {
       // eslint-disable-next-line no-console
       console.log('INNNER ERR: ', err);
