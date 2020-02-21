@@ -17,12 +17,7 @@ class StateManager extends AbstractManager {
       },
     };
 
-    try {
-      await docClient.put(params).promise();
-    } catch (e) {
-      // eslint-disable-next-line no-console
-      console.log('persist state error:', e);
-    }
+    await docClient.put(params).promise();
   }
 
   async getFromDb(userId: string) {
@@ -40,19 +35,9 @@ class StateManager extends AbstractManager {
       },
     };
 
-    try {
-      const data = await docClient.get(params).promise();
+    const data = await docClient.get(params).promise();
 
-      if (!data.Item) {
-        throw new Error(`session not found for userId: ${userId}`);
-      }
-
-      return data.Item.state;
-    } catch (err) {
-      // eslint-disable-next-line no-console
-      console.log('get state from db err:', err);
-      return {};
-    }
+    return data.Item?.state ?? {};
   }
 }
 
