@@ -1,5 +1,4 @@
 import { Context, Store } from '@voiceflow/client';
-import { Slot } from 'ask-sdk-model';
 
 import { T } from '@/lib/constants';
 
@@ -37,7 +36,7 @@ export const formatName = (name: string): string => {
   return formattedName;
 };
 
-export const mapSlots = (mappings: Mapping[], slots: { [key: string]: Slot }, overwrite = false): object => {
+export const mapSlots = (mappings: Mapping[], slots: { [key: string]: string }, overwrite = false): object => {
   const variables: Record<string, any> = {};
 
   if (mappings && slots) {
@@ -48,7 +47,7 @@ export const mapSlots = (mappings: Mapping[], slots: { [key: string]: Slot }, ov
       const fromSlot = formatName(map.slot);
 
       // extract slot value from request
-      const fromSlotValue = slots[fromSlot]?.resolutions?.resolutionsPerAuthority?.[0].values?.[0].value?.name || slots[fromSlot]?.value || null;
+      const fromSlotValue = slots[fromSlot] || null;
 
       if (toVariable && (fromSlotValue || overwrite)) {
         variables[toVariable] = _stringToNumIfNumeric(fromSlotValue);

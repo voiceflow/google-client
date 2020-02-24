@@ -14,24 +14,14 @@ class HandlerManager extends AbstractManager {
     }
 
     // TODO
-    // const input = conv.input.raw;
+    const input = conv.input.raw;
     // if (conv.query === 'actions_intent_MEDIA_STATUS') {
     //   input = 'continue';
     // } // Special case for google stream
 
     const { intent } = agent;
 
-    // TODO
-    // const slots = agent.parameters;
-    // if (slots) {
-    //   // Keep consistent with alexa
-    //   for (const key in slots) {
-    //     const slot_value = slots[key];
-    //     slots[key] = {
-    //       value: slot_value,
-    //     };
-    //   }
-    // }
+    const { parameters: slots } = agent;
 
     const { userId } = conv.user.storage;
 
@@ -39,16 +29,18 @@ class HandlerManager extends AbstractManager {
 
     if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || context.stack.isEmpty()) {
       await lifecycle.initialize(context, conv);
+    } else {
+      // todo: store this in a nicer manner
+      context.turn.set('intentRequest', {
+        intent,
+        input,
+        slots,
+      });
     }
-
-    // TODO
-    // session.raw_input = input;
-    // session.intent = intent;
-    // session.slots = slots;
 
     await context.update();
 
-    lifecycle.buildResponse(context, agent);
+    await lifecycle.buildResponse(context, agent, conv);
   }
 }
 

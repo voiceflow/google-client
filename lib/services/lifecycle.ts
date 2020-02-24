@@ -73,9 +73,8 @@ class LifecycleManager extends AbstractManager {
     stack.push(new Frame({ diagramID: meta.diagram }));
   }
 
-  async buildResponse(context: Context, agent: WebhookClient) {
+  async buildResponse(context: Context, agent: WebhookClient, conv: DialogflowConversation<any>) {
     const { state } = this.services;
-    const conv = agent.conv();
     const { storage, turn } = context;
 
     if (context.stack.isEmpty()) {

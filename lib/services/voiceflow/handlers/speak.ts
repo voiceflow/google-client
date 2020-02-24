@@ -43,6 +43,7 @@ const SpeakHandler: Handler<Speak> = {
         draft[S.OUTPUT] += output;
       });
 
+      // console.log('OUTPUT', output);
       context.stack.top().storage.set(F.SPEAK, output);
     }
 
