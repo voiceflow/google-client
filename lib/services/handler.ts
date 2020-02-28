@@ -31,7 +31,7 @@ class HandlerManager extends AbstractManager {
       await lifecycle.initialize(context, conv);
     } else {
       // todo: store this in a nicer manner
-      context.turn.set('intentRequest', {
+      context.turn.set('request', {
         intent,
         input,
         slots,

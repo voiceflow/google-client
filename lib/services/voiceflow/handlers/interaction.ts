@@ -4,7 +4,7 @@ import { S } from '@/lib/constants';
 
 import { Mapping } from '../types';
 import { addRepromptIfExists, formatName, mapSlots } from '../utils';
-// import CommandHandler from './command';
+import CommandHandler from './command';
 
 type Choice = {
   intent: string;
@@ -24,7 +24,7 @@ const InteractionHandler: Handler<Interaction> = {
     return !!block.interactions;
   },
   handle: (block, context, variables) => {
-    const interactionReq = context.turn.get('intentRequest');
+    const interactionReq = context.turn.get('request');
 
     // console.log('interaction handler');
 
@@ -56,13 +56,13 @@ const InteractionHandler: Handler<Interaction> = {
 
     // console.log('did we made it here?');
 
-    // TODO: check if there is a command in the stack that fulfills intent
-    // if (!nextId && CommandHandler.canHandle(context)) {
-    //   return CommandHandler.handle(context, variables);
-    // }
+    // check if there is a command in the stack that fulfills intent
+    if (!nextId && CommandHandler.canHandle(context)) {
+      return CommandHandler.handle(context, variables);
+    }
 
     // request for this turn has been processed, delete request
-    context.turn.delete('interaction');
+    context.turn.delete('request');
 
     // TODO: why does the output have the last spoken? temp solution
     context.storage.set(S.OUTPUT, '');

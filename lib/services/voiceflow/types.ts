@@ -8,6 +8,10 @@ export enum RequestType {
   INTENT = 'INTENT',
 }
 
+export enum IntentName {
+  VOICEFLOW = 'VoiceFlowIntent',
+}
+
 export interface IntentRequestPayload {
   intent: Intent;
 }
