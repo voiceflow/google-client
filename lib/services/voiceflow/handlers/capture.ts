@@ -1,7 +1,7 @@
 import { Handler } from '@voiceflow/client';
 import wordsToNumbers from 'words-to-numbers';
 
-import { S, T } from '@/lib/constants';
+import { T } from '@/lib/constants';
 
 import { IntentRequest, RequestType } from '../types';
 import { addRepromptIfExists } from '../utils';
@@ -43,9 +43,6 @@ const CaptureHandler: Handler<Capture> = {
       } else {
         variables.set(block.variable, num);
       }
-
-      // TODO: why does the output have the last spoken? temp solution
-      context.storage.set(S.OUTPUT, '');
     }
 
     ({ nextId = null } = block);

@@ -1,14 +1,17 @@
-import { Context, Frame, State, Store } from '@voiceflow/client';
+import { Context, Event, Frame, State, Store } from '@voiceflow/client';
 import { DialogflowConversation, SimpleResponse } from 'actions-on-google';
 import { WebhookClient } from 'dialogflow-fulfillment';
 import randomstring from 'randomstring';
 import uuid4 from 'uuid/v4';
 
 // import { responseHandlers } from '@/lib/services/voiceflow/handlers';
-import { S, T } from '@/lib/constants';
+import { F, S, T } from '@/lib/constants';
+import { createResumeFrame, RESUME_DIAGRAM_ID, ResumeDiagram } from '@/lib/services/voiceflow/diagrams/resume';
 
 import { SkillMetadata } from './types';
 import { AbstractManager } from './utils';
+
+const VAR_VF = 'voiceflow';
 
 class LifecycleManager extends AbstractManager {
   async buildContext(versionID: string, userID: string): Promise<Context> {
@@ -21,7 +24,19 @@ class LifecycleManager extends AbstractManager {
     context.turn.set(T.PREVIOUS_OUTPUT, context.storage.get(S.OUTPUT));
     context.storage.set(S.OUTPUT, '');
 
-    // TODO: set events 'frameDidFinish' and 'diagramWillFetch'
+    context.setEvent(Event.frameDidFinish, (c: Context) => {
+      if (c.stack.top()?.storage.get(F.CALLED_COMMAND)) {
+        c.stack.top().storage.delete(F.CALLED_COMMAND);
+        context.storage.set(S.OUTPUT, c.stack.top().storage.get(F.SPEAK) ?? '');
+      }
+    });
+
+    context.setEvent(Event.diagramWillFetch, (_, diagramID) => {
+      if (diagramID === RESUME_DIAGRAM_ID) {
+        return ResumeDiagram;
+      }
+      return null;
+    });
 
     return context;
   }
@@ -32,7 +47,7 @@ class LifecycleManager extends AbstractManager {
 
     const { stack, storage, variables } = context;
 
-    // TODO: stream flags
+    // TODO: init stream flags
 
     // increment user sessions by 1 or initialize
     if (!storage.get(S.SESSIONS)) {
@@ -60,7 +75,7 @@ class LifecycleManager extends AbstractManager {
       platform: 'google',
 
       // hidden system variables (code block only)
-      voiceflow: {
+      [VAR_VF]: {
         // TODO: implement all exposed voiceflow variables
         events: [],
       },
@@ -69,8 +84,30 @@ class LifecycleManager extends AbstractManager {
     // initialize all the global variables
     Store.initialize(variables, meta.global, 0);
 
-    // TODO: restart logic
-    stack.push(new Frame({ diagramID: meta.diagram }));
+    // restart logic
+    const shouldRestart = stack.isEmpty() || meta.restart || context.variables.get(VAR_VF)?.resume === false;
+    if (shouldRestart) {
+      // start the stack with just the root flow
+      stack.flush();
+      stack.push(new Frame({ diagramID: meta.diagram }));
+    } else if (meta.resume_prompt) {
+      // resume prompt flow - use command flow logic
+      stack.top().storage.set(F.CALLED_COMMAND, true);
+
+      // if there is an existing resume flow, remove itself and anything above it
+      const resumeStackIndex = stack.getFrames().findIndex((frame) => frame.getDiagramID() === RESUME_DIAGRAM_ID);
+      if (resumeStackIndex >= 0) {
+        stack.popTo(resumeStackIndex);
+      }
+
+      stack.push(createResumeFrame(meta.resume_prompt));
+    } else {
+      // give context to where the user left off with last speak block
+      stack.top().storage.delete(F.CALLED_COMMAND);
+      const lastSpeak = stack.top().storage.get(F.SPEAK) ?? '';
+
+      storage.set(S.OUTPUT, lastSpeak);
+    }
   }
 
   async buildResponse(context: Context, agent: WebhookClient, conv: DialogflowConversation<any>) {

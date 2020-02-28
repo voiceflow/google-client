@@ -1,6 +1,6 @@
 import { Handler } from '@voiceflow/client';
 
-import { S, T } from '@/lib/constants';
+import { T } from '@/lib/constants';
 
 import { IntentRequest, Mapping, RequestType } from '../types';
 import { addRepromptIfExists, formatName, mapSlots } from '../utils';
@@ -57,9 +57,6 @@ const InteractionHandler: Handler<Interaction> = {
 
     // request for this turn has been processed, delete request
     context.turn.delete(T.REQUEST);
-
-    // TODO: why does the output have the last spoken? temp solution
-    context.storage.set(S.OUTPUT, '');
 
     return (nextId || block.elseId) ?? null;
   },
