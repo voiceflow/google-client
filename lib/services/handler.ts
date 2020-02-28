@@ -16,8 +16,8 @@ class HandlerManager extends AbstractManager {
       return;
     }
 
-    // TODO
     const input = conv.input.raw;
+    // TODO
     // if (conv.query === 'actions_intent_MEDIA_STATUS') {
     //   input = 'continue';
     // } // Special case for google stream

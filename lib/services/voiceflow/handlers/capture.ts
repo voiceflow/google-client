@@ -22,14 +22,11 @@ const CaptureHandler: Handler<Capture> = {
 
     if (request?.type !== RequestType.INTENT) {
       addRepromptIfExists(block, context, variables);
-      // TODO: addChipsIfExists
       // quit cycleStack without ending session by stopping on itself
       return block.blockID;
     }
 
     let nextId: string | null = null;
-
-    // const { intent } = request.payload;
 
     // check if there is a command in the stack that fulfills intent
     if (CommandHandler.canHandle(context)) {

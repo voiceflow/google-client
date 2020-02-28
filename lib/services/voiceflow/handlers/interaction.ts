@@ -28,7 +28,6 @@ const InteractionHandler: Handler<Interaction> = {
 
     if (request?.type !== RequestType.INTENT) {
       addRepromptIfExists(block, context, variables);
-      // TODO: add chips
       // quit cycleStack without ending session by stopping on itself
       return block.blockID;
     }
@@ -51,8 +50,6 @@ const InteractionHandler: Handler<Interaction> = {
       variables.merge(mapSlots(variableMap, slots));
     }
 
-    // console.log('did we made it here?');
-
     // check if there is a command in the stack that fulfills intent
     if (!nextId && CommandHandler.canHandle(context)) {
       return CommandHandler.handle(context, variables);
@@ -64,7 +61,6 @@ const InteractionHandler: Handler<Interaction> = {
     // TODO: why does the output have the last spoken? temp solution
     context.storage.set(S.OUTPUT, '');
 
-    // console.log('THE NEXT ID', (nextId || block.elseId) ?? null);
     return (nextId || block.elseId) ?? null;
   },
 };
