@@ -1,6 +1,9 @@
 import { WebhookClient } from 'dialogflow-fulfillment';
 import _ from 'lodash';
 
+import { T } from '@/lib/constants';
+import { RequestType } from '@/lib/services/voiceflow/types';
+
 import { AbstractManager } from './utils';
 
 class HandlerManager extends AbstractManager {
@@ -30,11 +33,13 @@ class HandlerManager extends AbstractManager {
     if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || context.stack.isEmpty()) {
       await lifecycle.initialize(context, conv);
     } else {
-      // todo: store this in a nicer manner
-      context.turn.set('request', {
-        intent,
-        input,
-        slots,
+      context.turn.set(T.REQUEST, {
+        type: RequestType.INTENT,
+        payload: {
+          intent,
+          input,
+          slots,
+        },
       });
     }
 

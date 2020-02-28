@@ -1,16 +1,16 @@
 import { Command, Context, extractFrameCommand, Frame, Store } from '@voiceflow/client';
 
-import { F } from '@/lib/constants';
+import { F, T } from '@/lib/constants';
 
-import { IntentName, Mapping } from '../types';
+import { IntentName, IntentRequest, Mapping, RequestType } from '../types';
 import { mapSlots } from '../utils';
 
 const getCommand = (context: Context) => {
-  const request = context.turn.get('request');
+  const request = context.turn.get(T.REQUEST) as IntentRequest;
 
-  if (!request) return null;
+  if (request?.type !== RequestType.INTENT) return null;
 
-  const { intent, slots } = request;
+  const { intent, slots } = request.payload;
 
   // don't act on a catchall intent
   if (intent === IntentName.VOICEFLOW) return null;
@@ -64,9 +64,9 @@ const CommandHandler = {
       }
     }
 
-    context.turn.delete('request');
+    context.turn.delete(T.REQUEST);
 
-    if (variableMap && res.intent.slots) {
+    if (variableMap && res.slots) {
       // map request mappings to variables
       variables.merge(mapSlots(variableMap, res.slots));
     }

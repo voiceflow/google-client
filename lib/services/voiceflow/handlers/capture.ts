@@ -1,9 +1,9 @@
 import { Handler } from '@voiceflow/client';
 import wordsToNumbers from 'words-to-numbers';
 
-import { S } from '@/lib/constants';
+import { S, T } from '@/lib/constants';
 
-// import { IntentRequest, RequestType } from '../types';
+import { IntentRequest, RequestType } from '../types';
 import { addRepromptIfExists } from '../utils';
 import CommandHandler from './command';
 
@@ -18,9 +18,9 @@ const CaptureHandler: Handler<Capture> = {
     return !!block.variable;
   },
   handle: (block, context, variables) => {
-    const captureReq = context.turn.get('request');
+    const request = context.turn.get(T.REQUEST) as IntentRequest;
 
-    if (!captureReq) {
+    if (request?.type !== RequestType.INTENT) {
       addRepromptIfExists(block, context, variables);
       // TODO: addChipsIfExists
       // quit cycleStack without ending session by stopping on itself
@@ -36,9 +36,7 @@ const CaptureHandler: Handler<Capture> = {
       return CommandHandler.handle(context, variables);
     }
 
-    // try to match the first slot of the intent to the variable
-    // const input = _.keys(intent.slots).length === 1 ? _.values(intent.slots)[0]?.value : null;
-    const { input } = captureReq;
+    const { input } = request.payload;
 
     if (input) {
       const num = wordsToNumbers(input);
@@ -56,7 +54,7 @@ const CaptureHandler: Handler<Capture> = {
     ({ nextId = null } = block);
 
     // request for this turn has been processed, delete request
-    context.turn.delete('request');
+    context.turn.delete(T.REQUEST);
 
     return nextId;
   },

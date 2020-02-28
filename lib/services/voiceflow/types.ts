@@ -1,6 +1,5 @@
 import { Context, Request } from '@voiceflow/client';
 import { ResponseBuilder as ASKResponseBuilder } from 'ask-sdk';
-import { Intent } from 'ask-sdk-model';
 
 export type Mapping = { variable: string; slot: string };
 
@@ -13,7 +12,9 @@ export enum IntentName {
 }
 
 export interface IntentRequestPayload {
-  intent: Intent;
+  intent: string;
+  input: string;
+  slots: { [key: string]: string };
 }
 
 export interface IntentRequest extends Request {

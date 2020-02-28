@@ -1,8 +1,8 @@
 import { Handler } from '@voiceflow/client';
 
-import { S } from '@/lib/constants';
+import { S, T } from '@/lib/constants';
 
-import { Mapping } from '../types';
+import { IntentRequest, Mapping, RequestType } from '../types';
 import { addRepromptIfExists, formatName, mapSlots } from '../utils';
 import CommandHandler from './command';
 
@@ -24,12 +24,9 @@ const InteractionHandler: Handler<Interaction> = {
     return !!block.interactions;
   },
   handle: (block, context, variables) => {
-    const interactionReq = context.turn.get('request');
+    const request = context.turn.get(T.REQUEST) as IntentRequest;
 
-    // console.log('interaction handler');
-
-    if (!interactionReq) {
-      // console.log('not interaction req');
+    if (request?.type !== RequestType.INTENT) {
       addRepromptIfExists(block, context, variables);
       // TODO: add chips
       // quit cycleStack without ending session by stopping on itself
@@ -39,7 +36,7 @@ const InteractionHandler: Handler<Interaction> = {
     let nextId: string | null = null;
     let variableMap: Mapping[] | null = null;
 
-    const { intent } = interactionReq;
+    const { intent, slots } = request.payload;
 
     // check if there is a choice in the block that fulfills intent
     block.interactions.forEach((choice, i: number) => {
@@ -49,9 +46,9 @@ const InteractionHandler: Handler<Interaction> = {
       }
     });
 
-    if (variableMap && interactionReq.slots) {
+    if (variableMap && slots) {
       // map request mappings to variables
-      variables.merge(mapSlots(variableMap, interactionReq.slots));
+      variables.merge(mapSlots(variableMap, slots));
     }
 
     // console.log('did we made it here?');
@@ -62,7 +59,7 @@ const InteractionHandler: Handler<Interaction> = {
     }
 
     // request for this turn has been processed, delete request
-    context.turn.delete('request');
+    context.turn.delete(T.REQUEST);
 
     // TODO: why does the output have the last spoken? temp solution
     context.storage.set(S.OUTPUT, '');
