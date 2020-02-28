@@ -1,5 +1,5 @@
 import { Context, Request } from '@voiceflow/client';
-import { ResponseBuilder as ASKResponseBuilder } from 'ask-sdk';
+import { DialogflowConversation } from 'actions-on-google';
 
 export type Mapping = { variable: string; slot: string };
 
@@ -24,4 +24,4 @@ export interface IntentRequest extends Request {
   payload: IntentRequestPayload;
 }
 
-export type ResponseBuilder = (context: Context, builder: ASKResponseBuilder) => void | boolean;
+export type ResponseBuilder = (context: Context, conv: DialogflowConversation<any>) => void | boolean;
