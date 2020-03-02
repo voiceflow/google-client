@@ -1,4 +1,4 @@
-import { Context, Event, Frame, State, Store } from '@voiceflow/client';
+import { Context, Frame, State, Store } from '@voiceflow/client';
 import { DialogflowConversation, SimpleResponse } from 'actions-on-google';
 import { WebhookClient } from 'dialogflow-fulfillment';
 import randomstring from 'randomstring';
@@ -6,7 +6,7 @@ import uuid4 from 'uuid/v4';
 
 // import { responseHandlers } from '@/lib/services/voiceflow/handlers';
 import { F, S, T } from '@/lib/constants';
-import { createResumeFrame, RESUME_DIAGRAM_ID, ResumeDiagram } from '@/lib/services/voiceflow/diagrams/resume';
+import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
 
 import { SkillMetadata } from './types';
 import { AbstractManager } from './utils';
@@ -23,20 +23,6 @@ class LifecycleManager extends AbstractManager {
 
     context.turn.set(T.PREVIOUS_OUTPUT, context.storage.get(S.OUTPUT));
     context.storage.set(S.OUTPUT, '');
-
-    context.setEvent(Event.frameDidFinish, (c: Context) => {
-      if (c.stack.top()?.storage.get(F.CALLED_COMMAND)) {
-        c.stack.top().storage.delete(F.CALLED_COMMAND);
-        context.storage.set(S.OUTPUT, c.stack.top().storage.get(F.SPEAK) ?? '');
-      }
-    });
-
-    context.setEvent(Event.diagramWillFetch, (_, diagramID) => {
-      if (diagramID === RESUME_DIAGRAM_ID) {
-        return ResumeDiagram;
-      }
-      return null;
-    });
 
     return context;
   }
