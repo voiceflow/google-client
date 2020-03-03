@@ -1,34 +1,39 @@
 import dice from 'talisman/metrics/distance/dice';
 import jaccard from 'talisman/metrics/distance/jaccard';
 
-const getBestScore = (a: any, b: any, tolerance = 0.9) => {
-  if (!a) return null;
+type Choice = { value: string; index: number };
 
-  let best = null;
-  let score = tolerance;
+const getBestScore = (input: string, choices: Array<Choice>, tolerance = 0.9): number | null => {
+  if (!input) return null;
 
-  // eslint-disable-next-line no-restricted-syntax
-  for (const target of b) {
-    if (target.string) {
-      const input = a.toLowerCase();
-      const match = target.string.toLowerCase();
-      let temp = 1 - jaccard(input, match) + dice(input, match);
+  const best = choices.reduce(
+    (acc: { choice: null | Choice; score: number }, choice) => {
+      if (!choice.value) return acc;
+
+      const sanitizedInput = input.toLowerCase();
+      const match = choice.value.toLowerCase();
+      let tempScore = (jaccard(sanitizedInput, match) + dice(sanitizedInput, match)) / 2;
 
       if (input.charAt(0) === match.charAt(0)) {
-        temp += 0.1;
+        tempScore += 0.1;
       }
 
-      if (temp > score) {
-        score = temp;
-        best = target;
+      if (tempScore > acc.score) {
+        acc = {
+          score: tempScore,
+          choice,
+        };
       }
+
+      return acc;
+    },
+    {
+      choice: null,
+      score: tolerance,
     }
-  }
+  );
 
-  if (best) {
-    return best.value || best.value === 0 ? best.value : best.string;
-  }
-  return null;
+  return best.choice?.index ?? null;
 };
 
 export default getBestScore;

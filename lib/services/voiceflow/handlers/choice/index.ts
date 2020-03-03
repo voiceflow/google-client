@@ -33,24 +33,19 @@ const ChoiceHandler: Handler<Choice> = {
     const { input } = request.payload;
 
     let result = null;
-    const choices: Array<{ string: string; value: number }> = [];
-    if (Array.isArray(block.inputs)) {
-      block.inputs
-        .filter((_input) => Array.isArray(_input))
-        .forEach((_input, i) => {
-          _input.forEach((choice) => {
-            if (choice) {
-              choices.push({
-                string: choice,
-                value: i,
-              });
-            }
-          });
-        });
-    }
+
+    // flatten inputs
+    const choices = block.inputs.reduce((acc: Array<{ value: string; index: number }>, option, index) => {
+      option.forEach((item) => {
+        acc.push({ value: item, index });
+      });
+
+      return acc;
+    }, []);
+
     result = getBestScore(input, choices);
 
-    if (result in block.nextIds) {
+    if (result != null && result in block.nextIds) {
       nextId = block.nextIds[result];
     }
 
