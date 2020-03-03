@@ -4,9 +4,9 @@ import { WebhookClient } from 'dialogflow-fulfillment';
 import randomstring from 'randomstring';
 import uuid4 from 'uuid/v4';
 
-// import { responseHandlers } from '@/lib/services/voiceflow/handlers';
 import { F, S, T } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
+import { responseHandlers } from '@/lib/services/voiceflow/handlers';
 
 import { SkillMetadata } from './types';
 import { AbstractManager } from './utils';
@@ -126,12 +126,11 @@ class LifecycleManager extends AbstractManager {
       conv.ask(response);
     }
 
-    // TODO: add response builders for card, play and chips
     // eslint-disable-next-line no-restricted-syntax
-    // for (const handler of responseHandlers) {
-    //   // eslint-disable-next-line no-await-in-loop
-    //   await handler(context, conv);
-    // }
+    for (const handler of responseHandlers) {
+      // eslint-disable-next-line no-await-in-loop
+      await handler(context, conv);
+    }
 
     state.saveToDb(storage.get(S.USER), context.getFinalState());
 
