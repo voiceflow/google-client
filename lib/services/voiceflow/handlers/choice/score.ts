@@ -12,7 +12,7 @@ const getBestScore = (input: string, choices: Array<Choice>, tolerance = 0.9): n
 
       const sanitizedInput = input.toLowerCase();
       const match = choice.value.toLowerCase();
-      let tempScore = (jaccard(sanitizedInput, match) + dice(sanitizedInput, match)) / 2;
+      let tempScore = jaccard(sanitizedInput, match) + dice(sanitizedInput, match);
 
       if (input.charAt(0) === match.charAt(0)) {
         tempScore += 0.1;
