@@ -11,6 +11,7 @@ export enum Turn {
   PREVIOUS_OUTPUT = 'lastOutput',
   REPROMPT = 'reprompt',
   REQUEST = 'request',
+  CARD = 'card',
 }
 
 export enum Frame {
