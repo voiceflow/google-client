@@ -9,8 +9,6 @@ export enum RequestType {
 
 export enum IntentName {
   VOICEFLOW = 'VoiceFlowIntent',
-  YES = 'yes',
-  NO = 'no',
 }
 
 export interface IntentRequestPayload {
