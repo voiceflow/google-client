@@ -1,7 +1,5 @@
 import { Diagram, Frame } from '@voiceflow/client';
 
-import { IntentName } from '@/lib/services/voiceflow/types';
-
 export const RESUME_DIAGRAM_ID = '__RESUME_FLOW__';
 
 export enum ResumeVariables {
@@ -46,15 +44,10 @@ const ResumeDiagramRaw = {
     },
     2: {
       blockID: '2',
-      interactions: [
-        {
-          intent: IntentName.YES,
-          mappings: [],
-        },
-        {
-          intent: IntentName.NO,
-          mappings: [],
-        },
+      choices: [{ open: true }, { open: true }],
+      inputs: [
+        ['yes', 'yep', 'yup', 'sure', 'okay'],
+        ['no', 'nope', 'no thanks'],
       ],
       nextIds: ['3', '4'],
       elseId: '3',
