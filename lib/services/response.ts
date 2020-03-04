@@ -1,7 +1,6 @@
 import { Context } from '@voiceflow/client';
 import { DialogflowConversation, SimpleResponse } from 'actions-on-google';
 import { WebhookClient } from 'dialogflow-fulfillment';
-import randomstring from 'randomstring';
 
 import { S, T } from '@/lib/constants';
 import { responseHandlers } from '@/lib/services/voiceflow/handlers';
@@ -10,7 +9,7 @@ import { AbstractManager } from './utils';
 
 class ResponseManager extends AbstractManager {
   async build(context: Context, agent: WebhookClient, conv: DialogflowConversation<any>) {
-    const { state } = this.services;
+    const { state, randomstring } = this.services;
     const { storage, turn } = context;
 
     if (context.stack.isEmpty()) {

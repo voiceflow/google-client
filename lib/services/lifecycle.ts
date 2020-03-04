@@ -1,6 +1,5 @@
 import { Context, Frame, Store } from '@voiceflow/client';
 import { DialogflowConversation } from 'actions-on-google';
-import uuid4 from 'uuid/v4';
 
 import { F, S } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
@@ -30,7 +29,7 @@ class LifecycleManager extends AbstractManager {
 
     // set based on input
     storage.set(S.LOCALE, conv.user?.locale);
-    if (!conv.user.storage.userId) conv.user.storage.userId = uuid4();
+    if (!conv.user.storage.userId) conv.user.storage.userId = this.services.uuid4();
     storage.set(S.USER, conv.user.storage.userId);
 
     // set based on metadata
