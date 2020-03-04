@@ -8,7 +8,7 @@ import { AbstractManager } from './utils';
 
 class HandlerManager extends AbstractManager {
   async dialogflow(agent: WebhookClient) {
-    const { lifecycle } = this.services;
+    const { lifecycle, context, response } = this.services;
     const conv = agent.conv();
 
     if (!conv) {
@@ -28,12 +28,12 @@ class HandlerManager extends AbstractManager {
 
     const { userId } = conv.user.storage;
 
-    const context = await lifecycle.buildContext(_.get(conv.body, 'versionID'), userId);
+    const newContext = await context.build(_.get(conv.body, 'versionID'), userId);
 
-    if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || context.stack.isEmpty()) {
-      await lifecycle.initialize(context, conv);
+    if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || newContext.stack.isEmpty()) {
+      await lifecycle.initialize(newContext, conv);
     } else {
-      context.turn.set(T.REQUEST, {
+      newContext.turn.set(T.REQUEST, {
         type: RequestType.INTENT,
         payload: {
           intent,
@@ -43,9 +43,9 @@ class HandlerManager extends AbstractManager {
       });
     }
 
-    await context.update();
+    await newContext.update();
 
-    await lifecycle.buildResponse(context, agent, conv);
+    await response.build(newContext, agent, conv);
   }
 }
 

@@ -1,23 +1,16 @@
 import { Context, Frame, Store } from '@voiceflow/client';
 import { DialogflowConversation } from 'actions-on-google';
-import { WebhookClient } from 'dialogflow-fulfillment';
 import uuid4 from 'uuid/v4';
 
 import { F, S } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
 
-import { SkillMetadata } from '../types';
-import { AbstractManager } from '../utils';
-import buildContext from './context';
-import buildResponse from './response';
+import { SkillMetadata } from './types';
+import { AbstractManager } from './utils';
 
 const VAR_VF = 'voiceflow';
 
 class LifecycleManager extends AbstractManager {
-  async buildContext(versionID: string, userID: string): Promise<Context> {
-    return buildContext(this.services, versionID, userID);
-  }
-
   async initialize(context: Context, conv: DialogflowConversation<any>): Promise<void> {
     // fetch the metadata for this version (project)
     const meta = (await context.fetchMetadata()) as SkillMetadata;
@@ -85,10 +78,6 @@ class LifecycleManager extends AbstractManager {
 
       storage.set(S.OUTPUT, lastSpeak);
     }
-  }
-
-  async buildResponse(context: Context, agent: WebhookClient, conv: DialogflowConversation<any>) {
-    return buildResponse(this.services, context, agent, conv);
   }
 }
 
