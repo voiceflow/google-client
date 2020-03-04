@@ -46,8 +46,9 @@ const ResumeDiagramRaw = {
       blockID: '2',
       choices: [{ open: true }, { open: true }],
       inputs: [
-        ['yes', 'yep', 'yup', 'sure', 'okay'],
-        ['no', 'nope', 'no thanks'],
+        // todo: support other languages
+        ['yes', 'yea', 'ok', 'okay', 'yup', 'ya', 'sure'],
+        ['no', 'nope', 'nay', 'nah', 'no way', 'negative'],
       ],
       nextIds: ['3', '4'],
       elseId: '3',
