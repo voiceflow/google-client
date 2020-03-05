@@ -21,10 +21,6 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; context: 
     }
 
     const input = conv.input.raw;
-    // TODO: stream
-    // if (conv.query === 'actions_intent_MEDIA_STATUS') {
-    //   input = 'continue';
-    // } // Special case for google stream
 
     const { intent } = agent;
 

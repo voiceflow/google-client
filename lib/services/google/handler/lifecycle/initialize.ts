@@ -16,8 +16,6 @@ class InitializeManager extends AbstractManager {
 
     const { stack, storage, variables } = context;
 
-    // TODO: init stream flags
-
     // increment user sessions by 1 or initialize
     if (!storage.get(S.SESSIONS)) {
       storage.set(S.SESSIONS, 1);
