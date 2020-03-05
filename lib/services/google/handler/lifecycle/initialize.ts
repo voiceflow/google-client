@@ -4,13 +4,13 @@ import { DialogflowConversation } from 'actions-on-google';
 import { F, S } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
 
-import { SkillMetadata } from './types';
-import { AbstractManager } from './utils';
+import { SkillMetadata } from '../../../types';
+import { AbstractManager } from '../../../utils';
 
 const VAR_VF = 'voiceflow';
 
-class LifecycleManager extends AbstractManager {
-  async initialize(context: Context, conv: DialogflowConversation<any>): Promise<void> {
+class InitializeManager extends AbstractManager {
+  async build(context: Context, conv: DialogflowConversation<any>): Promise<void> {
     // fetch the metadata for this version (project)
     const meta = (await context.fetchMetadata()) as SkillMetadata;
 
@@ -80,4 +80,4 @@ class LifecycleManager extends AbstractManager {
   }
 }
 
-export default LifecycleManager;
+export default InitializeManager;
