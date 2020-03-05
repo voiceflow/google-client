@@ -1,33 +1,16 @@
-import { Context, Frame, State, Store } from '@voiceflow/client';
-import { DialogflowConversation, SimpleResponse } from 'actions-on-google';
-import { WebhookClient } from 'dialogflow-fulfillment';
-import randomstring from 'randomstring';
-import uuid4 from 'uuid/v4';
+import { Context, Frame, Store } from '@voiceflow/client';
+import { DialogflowConversation } from 'actions-on-google';
 
-import { F, S, T } from '@/lib/constants';
+import { F, S } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
-import { responseHandlers } from '@/lib/services/voiceflow/handlers';
 
-import { SkillMetadata } from './types';
-import { AbstractManager } from './utils';
+import { SkillMetadata } from '../../../types';
+import { AbstractManager } from '../../../utils';
 
 const VAR_VF = 'voiceflow';
 
-class LifecycleManager extends AbstractManager {
-  async buildContext(versionID: string, userID: string): Promise<Context> {
-    const { state, voiceflow } = this.services;
-
-    const rawState = await state.getFromDb(userID);
-
-    const context = voiceflow.createContext(versionID, rawState as State);
-
-    context.turn.set(T.PREVIOUS_OUTPUT, context.storage.get(S.OUTPUT));
-    context.storage.set(S.OUTPUT, '');
-
-    return context;
-  }
-
-  async initialize(context: Context, conv: DialogflowConversation<any>): Promise<void> {
+class InitializeManager extends AbstractManager {
+  async build(context: Context, conv: DialogflowConversation<any>): Promise<void> {
     // fetch the metadata for this version (project)
     const meta = (await context.fetchMetadata()) as SkillMetadata;
 
@@ -46,7 +29,7 @@ class LifecycleManager extends AbstractManager {
 
     // set based on input
     storage.set(S.LOCALE, conv.user?.locale);
-    if (!conv.user.storage.userId) conv.user.storage.userId = uuid4();
+    if (!conv.user.storage.userId) conv.user.storage.userId = this.services.uuid4();
     storage.set(S.USER, conv.user.storage.userId);
 
     // set based on metadata
@@ -95,48 +78,6 @@ class LifecycleManager extends AbstractManager {
       storage.set(S.OUTPUT, lastSpeak);
     }
   }
-
-  async buildResponse(context: Context, agent: WebhookClient, conv: DialogflowConversation<any>) {
-    const { state } = this.services;
-    const { storage, turn } = context;
-
-    if (context.stack.isEmpty()) {
-      turn.set(T.END, true);
-    }
-
-    let displayText;
-
-    if (
-      storage
-        .get(S.OUTPUT)
-        .replace(/<[^><]+\/?>/g, '')
-        .trim().length === 0
-    ) {
-      displayText = '🔊';
-    }
-
-    const response = new SimpleResponse({
-      speech: `<speak>${storage.get(S.OUTPUT)}</speak>`,
-      text: displayText,
-    });
-
-    if (turn.get(T.END)) {
-      conv.close(response);
-    } else {
-      conv.ask(response);
-    }
-
-    // eslint-disable-next-line no-restricted-syntax
-    for (const handler of responseHandlers) {
-      // eslint-disable-next-line no-await-in-loop
-      await handler(context, conv);
-    }
-
-    state.saveToDb(storage.get(S.USER), context.getFinalState());
-
-    conv.user.storage.forceUpdateToken = randomstring.generate();
-    agent.add(conv);
-  }
 }
 
-export default LifecycleManager;
+export default InitializeManager;

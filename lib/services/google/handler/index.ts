@@ -4,11 +4,15 @@ import _ from 'lodash';
 import { T } from '@/lib/constants';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
-import { AbstractManager } from './utils';
+import { AbstractManager, autoinject } from '../../utils';
+import Context from './lifecycle/context';
+import Initialize from './lifecycle/initialize';
+import Response from './lifecycle/response';
 
-class HandlerManager extends AbstractManager {
+@autoinject({ initialize: Initialize, context: Context, response: Response })
+class HandlerManager extends AbstractManager<{ initialize: Initialize; context: Context; response: Response }> {
   async dialogflow(agent: WebhookClient) {
-    const { lifecycle } = this.services;
+    const { initialize, context, response } = this.services;
     const conv = agent.conv();
 
     if (!conv) {
@@ -28,12 +32,12 @@ class HandlerManager extends AbstractManager {
 
     const { userId } = conv.user.storage;
 
-    const context = await lifecycle.buildContext(_.get(conv.body, 'versionID'), userId);
+    const newContext = await context.build(_.get(conv.body, 'versionID'), userId);
 
-    if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || context.stack.isEmpty()) {
-      await lifecycle.initialize(context, conv);
+    if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || newContext.stack.isEmpty()) {
+      await initialize.build(newContext, conv);
     } else {
-      context.turn.set(T.REQUEST, {
+      newContext.turn.set(T.REQUEST, {
         type: RequestType.INTENT,
         payload: {
           intent,
@@ -43,9 +47,9 @@ class HandlerManager extends AbstractManager {
       });
     }
 
-    await context.update();
+    await newContext.update();
 
-    await lifecycle.buildResponse(context, agent, conv);
+    await response.build(newContext, agent, conv);
   }
 }
 
