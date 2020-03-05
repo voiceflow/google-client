@@ -4,20 +4,13 @@ import _ from 'lodash';
 import { T } from '@/lib/constants';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
-import { AbstractManager, Config, FullServiceMap } from '../../utils';
+import { AbstractManager, autoinject } from '../../utils';
 import Context from './lifecycle/context';
 import Initialize from './lifecycle/initialize';
 import Response from './lifecycle/response';
 
+@autoinject({ initialize: Initialize, context: Context, response: Response })
 class HandlerManager extends AbstractManager<{ initialize: Initialize; context: Context; response: Response }> {
-  constructor(services: FullServiceMap, config: Config) {
-    const initialize = new Initialize(services, config);
-    const context = new Context(services, config);
-    const response = new Response(services, config);
-
-    super({ ...services, initialize, context, response }, config);
-  }
-
   async dialogflow(agent: WebhookClient) {
     const { initialize, context, response } = this.services;
     const conv = agent.conv();
