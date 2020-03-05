@@ -14,7 +14,9 @@ export abstract class AbstractManager<T = {}> {
 
 type InjectedServiceMap<S extends object> = { [K in keyof S]: { new (services: FullServiceMap, config: Config): S[K] } };
 
-export const autoinject = <S extends object>(injectedServiceMap: InjectedServiceMap<S>) => <T extends { new (...args: any[]): any }>(clazz: T): any =>
+export const injectServices = <S extends object>(injectedServiceMap: InjectedServiceMap<S>) => <T extends { new (...args: any[]): any }>(
+  clazz: T
+): any =>
   class extends clazz {
     constructor(...args: any[]) {
       super(...args);

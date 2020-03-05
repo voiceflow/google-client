@@ -1,9 +1,9 @@
 import { Request, Response } from 'express';
 
-import { AbstractManager, autoinject } from '../utils';
+import { AbstractManager, injectServices } from '../utils';
 import Handler from './handler';
 
-@autoinject({ handler: Handler })
+@injectServices({ handler: Handler })
 class GoogleManager extends AbstractManager<{ handler: Handler }> {
   async handleRequest(request: Request, response: Response) {
     const { WebhookClient, handler } = this.services;
