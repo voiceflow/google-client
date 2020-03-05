@@ -8,4 +8,4 @@ export abstract class AbstractManager<T = {}> {
   constructor(public services: FullServiceMap & T, public config: Config) {}
 }
 
-export type ManagerFunction<T = {}> = (services: FullServiceMap & T, config: Config) => AbstractManager;
+export type ManagerFunction<T = {}> = (services: FullServiceMap & T, config: Config) => any;

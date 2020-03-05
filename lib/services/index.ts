@@ -10,7 +10,7 @@ import Voiceflow from './voiceflow';
 
 export interface ServiceMap {
   state: State;
-  google: Google;
+  google: ReturnType<typeof Google>;
   voiceflow: Client;
 }
 
@@ -29,7 +29,7 @@ const buildServices = (config: Config, clients: ClientMap): FullServiceMap => {
   services.secretsProvider = secretsProvider;
   services.state = new State(services, config);
   services.voiceflow = Voiceflow(services, config);
-  services.google = new Google(services, config);
+  services.google = Google(services, config);
 
   return services;
 };

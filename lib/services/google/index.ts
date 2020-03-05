@@ -1,30 +1,11 @@
-import { Request, Response } from 'express';
-
-import { AbstractManager, Config, FullServiceMap } from '../utils';
+import { ManagerFunction } from '../utils';
+import Google from './google';
 import Handler from './handler';
 
-class GoogleManager extends AbstractManager<{ handler: Handler }> {
-  constructor(services: FullServiceMap, config: Config) {
-    const handler = new Handler(services, config);
+const Manager: ManagerFunction = (services, config) => {
+  const handler = Handler(services, config);
 
-    super({ ...services, handler }, config);
-  }
+  return new Google({ ...services, handler }, config);
+};
 
-  async handleRequest(request: Request, response: Response) {
-    const { WebhookClient, handler } = this.services;
-
-    request.body.versionID = request.params.versionID;
-
-    const agent = new WebhookClient({
-      request,
-      response,
-    });
-
-    const intentMap = new Map();
-    intentMap.set(null, handler.dialogflow.bind(handler));
-
-    return agent.handleRequest(intentMap);
-  }
-}
-
-export default GoogleManager;
+export default Manager;
