@@ -4,11 +4,22 @@ import _ from 'lodash';
 import { T } from '@/lib/constants';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
-import { AbstractManager } from './utils';
+import { AbstractManager, Config, FullServiceMap } from '../../utils';
+import Context from './lifecycle/context';
+import Initialize from './lifecycle/initialize';
+import Response from './lifecycle/response';
 
-class HandlerManager extends AbstractManager {
+class HandlerManager extends AbstractManager<{ initialize: Initialize; context: Context; response: Response }> {
+  constructor(services: FullServiceMap, config: Config) {
+    const initialize = new Initialize(services, config);
+    const context = new Context(services, config);
+    const response = new Response(services, config);
+
+    super({ ...services, initialize, context, response }, config);
+  }
+
   async dialogflow(agent: WebhookClient) {
-    const { lifecycle, context, response } = this.services;
+    const { initialize, context, response } = this.services;
     const conv = agent.conv();
 
     if (!conv) {
@@ -31,7 +42,7 @@ class HandlerManager extends AbstractManager {
     const newContext = await context.build(_.get(conv.body, 'versionID'), userId);
 
     if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || newContext.stack.isEmpty()) {
-      await lifecycle.initialize(newContext, conv);
+      await initialize.build(newContext, conv);
     } else {
       newContext.turn.set(T.REQUEST, {
         type: RequestType.INTENT,

@@ -1,8 +1,15 @@
 import { Request, Response } from 'express';
 
-import { AbstractManager } from '../utils';
+import { AbstractManager, Config, FullServiceMap } from '../utils';
+import Handler from './handler';
 
-class GoogleManager extends AbstractManager {
+class GoogleManager extends AbstractManager<{ handler: Handler }> {
+  constructor(services: FullServiceMap, config: Config) {
+    const handler = new Handler(services, config);
+
+    super({ ...services, handler }, config);
+  }
+
   async handleRequest(request: Request, response: Response) {
     const { WebhookClient, handler } = this.services;
 
