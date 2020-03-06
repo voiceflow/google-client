@@ -4,13 +4,14 @@ import wordsToNumbers from 'words-to-numbers';
 import { T } from '@/lib/constants';
 
 import { IntentRequest, RequestType } from '../types';
-import { addRepromptIfExists } from '../utils';
+import { addChipsIfExists, addRepromptIfExists } from '../utils';
 import CommandHandler from './command';
 
 export type Capture = {
   nextId?: string;
   variable: string | number;
   reprompt?: string;
+  chips?: string[];
 };
 
 const CaptureHandler: Handler<Capture> = {
@@ -22,6 +23,7 @@ const CaptureHandler: Handler<Capture> = {
 
     if (request?.type !== RequestType.INTENT) {
       addRepromptIfExists(block, context, variables);
+      addChipsIfExists(block, context, variables);
       // quit cycleStack without ending session by stopping on itself
       return block.blockID;
     }

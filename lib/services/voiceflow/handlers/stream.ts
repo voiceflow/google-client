@@ -4,7 +4,7 @@ import { Image, MediaObject, MediaObjectOptions, Suggestions } from 'actions-on-
 import { F, S, T } from '@/lib/constants';
 
 import { ResponseBuilder } from '../types';
-import { regexVariables } from '../utils';
+import { addChipsIfExists, regexVariables } from '../utils';
 
 type StreamBlock = {
   play: string;
@@ -13,6 +13,7 @@ type StreamBlock = {
   background_img: string;
   description: string;
   title: string;
+  chips?: string[];
 };
 
 type StreamPlay = {
@@ -51,7 +52,7 @@ export const StreamResponseBuilder: ResponseBuilder = (context, conv) => {
 
     conv.add(new MediaObject(media));
 
-    if (!context.turn.get(T.END)) {
+    if (!context.turn.get(T.END) && !context.turn.get(T.CHIPS)) {
       conv.add(new Suggestions(['continue', 'exit']));
     }
   } else {
@@ -86,6 +87,8 @@ const StreamHandler: Handler<StreamBlock> = {
         draft[S.OUTPUT] = `Now Playing ${streamTitle || 'Media'}`;
       }
     });
+
+    addChipsIfExists(block, context, variables);
 
     if (block.gNextId) {
       context.stack.top().storage.delete(F.SPEAK);
