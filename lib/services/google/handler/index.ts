@@ -4,7 +4,8 @@ import _ from 'lodash';
 import { T } from '@/lib/constants';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
-import { AbstractManager, injectServices } from '../../utils';
+import { AbstractManager } from '../../types';
+import { injectServices } from '../../utils';
 import Context from './lifecycle/context';
 import Initialize from './lifecycle/initialize';
 import Response from './lifecycle/response';

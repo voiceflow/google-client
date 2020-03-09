@@ -4,8 +4,7 @@ import { DialogflowConversation } from 'actions-on-google';
 import { F, S } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
 
-import { SkillMetadata } from '../../../types';
-import { AbstractManager } from '../../../utils';
+import { AbstractManager, SkillMetadata } from '../../../types';
 
 const VAR_VF = 'voiceflow';
 

@@ -1,6 +1,6 @@
 import { State } from '@voiceflow/client';
 
-import { AbstractManager } from './utils';
+import { AbstractManager } from './types';
 
 class StateManager extends AbstractManager {
   static GACTION_SESSIONS_DYNAMO_PREFIX = 'gactions.user';

@@ -5,7 +5,7 @@ import { WebhookClient } from 'dialogflow-fulfillment';
 import { S, T } from '@/lib/constants';
 import { responseHandlers } from '@/lib/services/voiceflow/handlers';
 
-import { AbstractManager } from '../../../utils';
+import { AbstractManager } from '../../../types';
 
 class ResponseManager extends AbstractManager {
   async build(context: Context, agent: WebhookClient, conv: DialogflowConversation<any>) {
