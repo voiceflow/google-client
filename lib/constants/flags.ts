@@ -12,6 +12,8 @@ export enum Turn {
   REPROMPT = 'reprompt',
   REQUEST = 'request',
   CARD = 'card',
+  STREAM_PLAY = 'stream_play',
+  CHIPS = 'chips',
 }
 
 export enum Frame {
