@@ -1,5 +1,8 @@
 version: 2.1
 
+orbs:
+  codecov: codecov/codecov@1.0.2
+
 executors:
   build-executor:
     docker:
@@ -34,13 +37,15 @@ jobs:
       - checkout
       - install_node_modules
       - run:
-          name: "Build package"
+          name: 'Build package'
           command: |
             yarn build
       - run:
-          name: "Run tests"
+          name: 'Run tests'
           command: |
             yarn test
+      - codecov/upload:
+          file: nyc_coverage/lcov.info
 workflows:
   test-and-release:
     jobs:
