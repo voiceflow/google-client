@@ -1,7 +1,6 @@
 import { Request, Response } from 'express';
 
-import { AbstractManager } from '../types';
-import { injectServices } from '../utils';
+import { AbstractManager, injectServices } from '../types';
 import Handler from './handler';
 
 @injectServices({ handler: Handler })
