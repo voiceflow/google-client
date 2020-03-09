@@ -3,7 +3,7 @@ import { Handler } from '@voiceflow/client';
 import { T } from '@/lib/constants';
 
 import { IntentRequest, Mapping, RequestType } from '../types';
-import { addRepromptIfExists, formatName, mapSlots } from '../utils';
+import { addChipsIfExists, addRepromptIfExists, formatName, mapSlots } from '../utils';
 import CommandHandler from './command';
 
 type Choice = {
@@ -17,6 +17,7 @@ type Interaction = {
   nextIds: string[];
   reprompt?: string;
   interactions: Choice[];
+  chips?: string[];
 };
 
 const InteractionHandler: Handler<Interaction> = {
@@ -28,6 +29,7 @@ const InteractionHandler: Handler<Interaction> = {
 
     if (request?.type !== RequestType.INTENT) {
       addRepromptIfExists(block, context, variables);
+      addChipsIfExists(block, context, variables);
       // quit cycleStack without ending session by stopping on itself
       return block.blockID;
     }

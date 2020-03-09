@@ -3,13 +3,13 @@ import Client, { EventType } from '@voiceflow/client';
 import { F, S } from '@/lib/constants';
 import { Config } from '@/types';
 
-import { ServiceMap } from '..';
+import { FullServiceMap } from '..';
 import { RESUME_DIAGRAM_ID, ResumeDiagram } from './diagrams/resume';
 import handlers from './handlers';
 
-const Voiceflow = (_services: ServiceMap, config: Config) => {
+const Voiceflow = (services: FullServiceMap, config: Config) => {
   const client = new Client({
-    secret: config.VF_DATA_SECRET,
+    secret: services.secretsProvider.get('VF_DATA_SECRET'),
     endpoint: config.VF_DATA_ENDPOINT,
     handlers,
   });

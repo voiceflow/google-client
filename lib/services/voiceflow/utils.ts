@@ -63,3 +63,12 @@ export const addRepromptIfExists = <B extends { reprompt?: string }>(block: B, c
     context.turn.set(T.REPROMPT, regexVariables(block.reprompt, variables.getState()));
   }
 };
+
+export const addChipsIfExists = <B extends { chips?: string[] }>(block: B, context: Context, variables: Store): void => {
+  if (block.chips) {
+    context.turn.set(
+      T.CHIPS,
+      block.chips.map((chip) => regexVariables(chip, variables.getState()))
+    );
+  }
+};
