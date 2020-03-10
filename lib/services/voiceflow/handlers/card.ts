@@ -61,35 +61,31 @@ const utilsObj = {
   addVariables,
 };
 
-export const CardHandlerGenerator = (utils: typeof utilsObj): Handler<CardBlock> => {
-  return {
-    canHandle: (block) => {
-      return !!block.card;
-    },
-    handle: (block, context, variables) => {
-      const { card } = block;
+export const CardHandlerGenerator = (utils: typeof utilsObj): Handler<CardBlock> => ({
+  canHandle: (block) => {
+    return !!block.card;
+  },
+  handle: (block, context, variables) => {
+    const { card } = block;
 
-      const newCard: Required<Card> = {
-        type: card.type ?? CardType.SIMPLE,
-        title: utils.addVariables(card.title, variables),
-        text: utils.addVariables(card.text, variables),
-        content: utils.addVariables(card.content, variables),
-        image: {
-          largeImageUrl: '',
-        },
-      };
+    const newCard: Required<Card> = {
+      type: card.type ?? CardType.SIMPLE,
+      title: utils.addVariables(card.title, variables),
+      text: utils.addVariables(card.text, variables),
+      content: utils.addVariables(card.content, variables),
+      image: {
+        largeImageUrl: '',
+      },
+    };
 
-      if (card.type === CardType.STANDARD && card.image?.largeImageUrl) {
-        newCard.image.largeImageUrl = utils.addVariables(card.image.largeImageUrl, variables);
-      }
+    if (card.type === CardType.STANDARD && card.image?.largeImageUrl) {
+      newCard.image.largeImageUrl = utils.addVariables(card.image.largeImageUrl, variables);
+    }
 
-      context.turn.set(T.CARD, newCard);
+    context.turn.set(T.CARD, newCard);
 
-      return block.nextId;
-    },
-  };
-};
+    return block.nextId;
+  },
+});
 
-const CardHandler = CardHandlerGenerator(utilsObj);
-
-export default CardHandler;
+export default CardHandlerGenerator(utilsObj);
