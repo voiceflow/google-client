@@ -14,11 +14,7 @@ export abstract class AbstractManager<T = {}> {
 type InjectedServiceMap<S extends object> = { [K in keyof S]: { new (services: FullServiceMap, config: Config): S[K] } };
 
 const newService = (Service: any, services: any, config: any) => {
-  try {
-    return new Service(services, config);
-  } catch (err) {
-    return Service;
-  }
+  return typeof Service === 'object' ? Service : new Service(services, config);
 };
 
 export const injectServices = <S extends object>(injectedServiceMap: InjectedServiceMap<S> | S) => <T extends { new (...args: any[]): any }>(
