@@ -35,4 +35,75 @@ describe('stateManager unit tests', async () => {
       expect(putPromise.callCount).to.eql(1);
     });
   });
+
+  describe('getFromDb', () => {
+    it('no userId', async () => {
+      const config = {
+        SESSIONS_DYNAMO_TABLE: 'session-table',
+      };
+      const services = {
+        docClient: {
+          get: sinon.stub(),
+        },
+      };
+      const stateManager = new StateManager(services as any, config as any);
+
+      const userId = null;
+
+      expect(await stateManager.getFromDb(userId as any)).to.eql({});
+      expect(services.docClient.get.callCount).to.eql(0);
+    });
+
+    it('no state in item', async () => {
+      const config = {
+        SESSIONS_DYNAMO_TABLE: 'session-table',
+      };
+      const services = {
+        docClient: {
+          get: sinon.stub().returns({ promise: sinon.stub().returns({ Item: {} }) }),
+        },
+      };
+      const stateManager = new StateManager(services as any, config as any);
+
+      const userId = '1';
+
+      expect(await stateManager.getFromDb(userId as any)).to.eql({});
+      expect(services.docClient.get.callCount).to.eql(1);
+    });
+
+    it('no item', async () => {
+      const config = {
+        SESSIONS_DYNAMO_TABLE: 'session-table',
+      };
+      const services = {
+        docClient: {
+          get: sinon.stub().returns({ promise: sinon.stub().returns({}) }),
+        },
+      };
+      const stateManager = new StateManager(services as any, config as any);
+
+      const userId = '1';
+
+      expect(await stateManager.getFromDb(userId as any)).to.eql({});
+      expect(services.docClient.get.callCount).to.eql(1);
+    });
+
+    it('works correctly', async () => {
+      const state = { foo: 'bar' };
+      const config = {
+        SESSIONS_DYNAMO_TABLE: 'session-table',
+      };
+      const services = {
+        docClient: {
+          get: sinon.stub().returns({ promise: sinon.stub().returns({ Item: { state } }) }),
+        },
+      };
+      const stateManager = new StateManager(services as any, config as any);
+
+      const userId = '1';
+
+      expect(await stateManager.getFromDb(userId as any)).to.eql(state);
+      expect(services.docClient.get.callCount).to.eql(1);
+    });
+  });
 });
