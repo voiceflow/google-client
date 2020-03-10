@@ -13,7 +13,15 @@ export abstract class AbstractManager<T = {}> {
 
 type InjectedServiceMap<S extends object> = { [K in keyof S]: { new (services: FullServiceMap, config: Config): S[K] } };
 
-export const injectServices = <S extends object>(injectedServiceMap: InjectedServiceMap<S>) => <T extends { new (...args: any[]): any }>(
+const newService = (Service: any, services: any, config: any) => {
+  try {
+    return new Service(services, config);
+  } catch (err) {
+    return Service;
+  }
+};
+
+export const injectServices = <S extends object>(injectedServiceMap: InjectedServiceMap<S> | S) => <T extends { new (...args: any[]): any }>(
   clazz: T
 ): any =>
   class extends clazz {
@@ -24,7 +32,7 @@ export const injectServices = <S extends object>(injectedServiceMap: InjectedSer
         .filter((key) => !(key in this.services))
         .reduce((acc, key) => {
           const Service = injectedServiceMap[key];
-          acc[key] = new Service(this.services, this.config);
+          acc[key] = newService(Service, this.services, this.config);
           return acc;
         }, {} as S);
       this.services = { ...this.services, ...injectedServices };
