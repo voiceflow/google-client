@@ -1,3 +1,4 @@
+import { isConstructor } from '@/lib/utils';
 import { Config } from '@/types';
 
 import { FullServiceMap } from '.';
@@ -13,8 +14,9 @@ export abstract class AbstractManager<T = {}> {
 
 type InjectedServiceMap<S extends object> = { [K in keyof S]: { new (services: FullServiceMap, config: Config): S[K] } };
 
-const newService = (Service: any, services: any, config: any) => {
-  return typeof Service === 'object' ? Service : new Service(services, config);
+const constructService = (Service: any, services: any, config: any) => {
+  // eslint-disable-next-line no-nested-ternary
+  return isConstructor(Service) ? new Service(services, config) : typeof Service === 'function' ? Service(services, config) : Service;
 };
 
 export const injectServices = <S extends object>(injectedServiceMap: InjectedServiceMap<S> | S) => <T extends { new (...args: any[]): any }>(
@@ -28,7 +30,7 @@ export const injectServices = <S extends object>(injectedServiceMap: InjectedSer
         .filter((key) => !(key in this.services))
         .reduce((acc, key) => {
           const Service = injectedServiceMap[key];
-          acc[key] = newService(Service, this.services, this.config);
+          acc[key] = constructService(Service, this.services, this.config);
           return acc;
         }, {} as S);
       this.services = { ...this.services, ...injectedServices };

@@ -2,6 +2,8 @@ import { ResponseBuilder } from '@voiceflow/backend-utils';
 import { ValidationChain } from 'express-validator';
 import { Middleware } from 'express-validator/src/base';
 
+import { AnyClass } from '@/types';
+
 import { ControllerMap } from './controllers';
 import { AbstractController } from './controllers/utils';
 import { MiddlewareMap } from './middlewares';
@@ -44,4 +46,16 @@ export const routeWrapper = (routers: ControllerMap | MiddlewareMap) => {
       }
     });
   });
+};
+
+export const isConstructor = <T extends AnyClass>(clazz: T | unknown): clazz is T => {
+  try {
+    // eslint-disable-next-line no-new
+    new new Proxy(clazz as any, {
+      construct: () => ({}),
+    })();
+    return true;
+  } catch {
+    return false;
+  }
 };
