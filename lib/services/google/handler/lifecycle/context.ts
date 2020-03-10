@@ -10,7 +10,7 @@ class ContextManager extends AbstractManager {
 
     const rawState = await state.getFromDb(userID);
 
-    const context = voiceflow.createContext(versionID, rawState as State);
+    const context = voiceflow.client().createContext(versionID, rawState as State);
 
     context.turn.set(T.PREVIOUS_OUTPUT, context.storage.get(S.OUTPUT));
     context.storage.set(S.OUTPUT, '');
