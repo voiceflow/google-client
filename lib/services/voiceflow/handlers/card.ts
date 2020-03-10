@@ -57,31 +57,39 @@ export const CardResponseBuilder: ResponseBuilder = (context, conv) => {
 const addVariables = (value: string | undefined, variables: Store, defaultValue = '') =>
   value ? regexVariables(value, variables.getState()) : defaultValue;
 
-const CardHandler: Handler<CardBlock> = {
-  canHandle: (block) => {
-    return !!block.card;
-  },
-  handle: (block, context, variables) => {
-    const { card } = block;
-
-    const newCard: Required<Card> = {
-      type: card.type ?? CardType.SIMPLE,
-      title: addVariables(card.title, variables),
-      text: addVariables(card.text, variables),
-      content: addVariables(card.content, variables),
-      image: {
-        largeImageUrl: '',
-      },
-    };
-
-    if (card.type === CardType.STANDARD && card.image?.largeImageUrl) {
-      newCard.image.largeImageUrl = addVariables(card.image.largeImageUrl, variables);
-    }
-
-    context.turn.set(T.CARD, newCard);
-
-    return block.nextId;
-  },
+const utilsObj = {
+  addVariables,
 };
+
+export const CardHandlerGenerator = (utils: typeof utilsObj): Handler<CardBlock> => {
+  return {
+    canHandle: (block) => {
+      return !!block.card;
+    },
+    handle: (block, context, variables) => {
+      const { card } = block;
+
+      const newCard: Required<Card> = {
+        type: card.type ?? CardType.SIMPLE,
+        title: utils.addVariables(card.title, variables),
+        text: utils.addVariables(card.text, variables),
+        content: utils.addVariables(card.content, variables),
+        image: {
+          largeImageUrl: '',
+        },
+      };
+
+      if (card.type === CardType.STANDARD && card.image?.largeImageUrl) {
+        newCard.image.largeImageUrl = utils.addVariables(card.image.largeImageUrl, variables);
+      }
+
+      context.turn.set(T.CARD, newCard);
+
+      return block.nextId;
+    },
+  };
+};
+
+const CardHandler = CardHandlerGenerator(utilsObj);
 
 export default CardHandler;
