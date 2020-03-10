@@ -12,6 +12,7 @@ const utils = {
     ResumeDiagram,
     RESUME_DIAGRAM_ID,
   },
+  handlers,
 };
 @injectServices({ utils })
 class VoiceflowManager extends AbstractManager<{ utils: typeof utils }> {
@@ -19,7 +20,7 @@ class VoiceflowManager extends AbstractManager<{ utils: typeof utils }> {
     const client = new this.services.utils.Client({
       secret: this.services.secretsProvider.get('VF_DATA_SECRET'),
       endpoint: this.config.VF_DATA_ENDPOINT,
-      handlers,
+      handlers: this.services.utils.handlers,
     });
 
     client.setEvent(EventType.frameDidFinish, ({ context }) => {
