@@ -23,7 +23,9 @@ describe('contextManager unit tests', async () => {
           getFromDb: sinon.stub().resolves({}),
         },
         voiceflow: {
-          createContext: sinon.stub().returns(contextObj),
+          client: sinon.stub().returns({
+            createContext: sinon.stub().returns(contextObj),
+          }),
         },
       };
       const contextManager = new ContextManager(services as any, null as any);
