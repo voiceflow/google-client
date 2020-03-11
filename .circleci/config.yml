@@ -7,7 +7,7 @@ executors:
   build-executor:
     docker:
       - image: circleci/node:12
-       - image: circleci/dynamodb:13-oracle # DynamoDB service container
+      - image: circleci/dynamodb:13-oracle # DynamoDB service container
     resource_class: medium
 
 commands:
