@@ -7,13 +7,14 @@ import { responseHandlers } from '@/lib/services/voiceflow/handlers';
 
 import { AbstractManager, injectServices } from '../../../types';
 
-const utils = {
+const utilsObj = {
   responseHandlers,
+  SimpleResponse,
 };
-@injectServices({ utils })
-class ResponseManager extends AbstractManager<{ utils: typeof utils }> {
+@injectServices({ utils: utilsObj })
+class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
   async build(context: Context, agent: WebhookClient, conv: DialogflowConversation<any>) {
-    const { state, randomstring } = this.services;
+    const { state, randomstring, utils } = this.services;
     const { storage, turn } = context;
 
     if (context.stack.isEmpty()) {
@@ -31,7 +32,7 @@ class ResponseManager extends AbstractManager<{ utils: typeof utils }> {
       displayText = '🔊';
     }
 
-    const response = new SimpleResponse({
+    const response = new utils.SimpleResponse({
       speech: `<speak>${storage.get(S.OUTPUT)}</speak>`,
       text: displayText,
     });
@@ -43,7 +44,7 @@ class ResponseManager extends AbstractManager<{ utils: typeof utils }> {
     }
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const handler of this.services.utils.responseHandlers) {
+    for (const handler of utils.responseHandlers) {
       // eslint-disable-next-line no-await-in-loop
       await handler(context, conv);
     }
