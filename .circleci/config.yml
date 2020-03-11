@@ -7,6 +7,7 @@ executors:
   build-executor:
     docker:
       - image: circleci/node:12
+       - image: circleci/dynamodb:13-oracle # DynamoDB service container
     resource_class: medium
 
 commands:
@@ -24,6 +25,14 @@ commands:
           key: node-module-cache-{{ checksum "yarn.lock" }}
           paths:
             - ./node_modules
+  setup_test_env:
+    steps:
+      - run:
+          name: AWS Config
+          command: ./scripts/mock_aws_credentials.sh
+      - run:
+          name: Wait for Dynamo Docker Image
+          command: dockerize -wait tcp://localhost:8000 -timeout 1m
 
 jobs:
   release:
@@ -36,6 +45,7 @@ jobs:
     steps:
       - checkout
       - install_node_modules
+      - setup_test_env
       - run:
           name: 'Build package'
           command: |
