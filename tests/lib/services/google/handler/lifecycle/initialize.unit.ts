@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import _ from 'lodash';
 import sinon from 'sinon';
 
 import { F, S } from '@/lib/constants';
@@ -135,14 +136,29 @@ describe('initializeManager unit tests', async () => {
     });
 
     it('second session', async () => {
+      // existing session and userId
       const { services, context, conv } = generateFakes();
 
       const contextManager = new InitializeManager(services as any, null as any);
+
+      const oldUserId = 'old-id';
+      _.set(conv, 'user.storage.userId', oldUserId);
 
       await contextManager.build(context as any, conv as any);
 
       expect(context.storage.get.args[0]).to.eql([S.SESSIONS]);
       expect(context.storage.produce.callCount).to.eql(1);
+
+      const fn = context.storage.produce.args[0][0];
+      const draft = {
+        [S.SESSIONS]: 1,
+      };
+
+      fn(draft);
+
+      expect(draft[S.SESSIONS]).to.eql(2);
+
+      expect(context.storage.set.args[1]).to.eql([S.USER, oldUserId]);
     });
 
     it('meta repeat null', async () => {
