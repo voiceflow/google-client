@@ -14,7 +14,14 @@ export type Capture = {
   chips?: string[];
 };
 
-const CaptureHandler: Handler<Capture> = {
+const utilsObj = {
+  wordsToNumbers,
+  addChipsIfExists,
+  addRepromptIfExists,
+  CommandHandler,
+};
+
+export const CaptureHandlerGenerator = (utils: typeof utilsObj): Handler<Capture> => ({
   canHandle: (block) => {
     return !!block.variable;
   },
@@ -22,8 +29,8 @@ const CaptureHandler: Handler<Capture> = {
     const request = context.turn.get(T.REQUEST) as IntentRequest;
 
     if (request?.type !== RequestType.INTENT) {
-      addRepromptIfExists(block, context, variables);
-      addChipsIfExists(block, context, variables);
+      utils.addRepromptIfExists(block, context, variables);
+      utils.addChipsIfExists(block, context, variables);
       // quit cycleStack without ending session by stopping on itself
       return block.blockID;
     }
@@ -31,14 +38,14 @@ const CaptureHandler: Handler<Capture> = {
     let nextId: string | null = null;
 
     // check if there is a command in the stack that fulfills intent
-    if (CommandHandler.canHandle(context)) {
-      return CommandHandler.handle(context, variables);
+    if (utils.CommandHandler.canHandle(context)) {
+      return utils.CommandHandler.handle(context, variables);
     }
 
     const { input } = request.payload;
 
     if (input) {
-      const num = wordsToNumbers(input);
+      const num = utils.wordsToNumbers(input);
 
       if (typeof num !== 'number' || Number.isNaN(num)) {
         variables.set(block.variable, input);
@@ -54,6 +61,6 @@ const CaptureHandler: Handler<Capture> = {
 
     return nextId;
   },
-};
+});
 
-export default CaptureHandler;
+export default CaptureHandlerGenerator(utilsObj);
