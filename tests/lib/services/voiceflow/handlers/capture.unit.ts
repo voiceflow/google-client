@@ -5,7 +5,7 @@ import { T } from '@/lib/constants';
 import CaptureHandler, { CaptureHandlerGenerator } from '@/lib/services/voiceflow/handlers/capture';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
-describe('speak handler unit tests', async () => {
+describe('capture handler unit tests', async () => {
   afterEach(() => sinon.restore());
 
   describe('canHandle', () => {
@@ -54,7 +54,7 @@ describe('speak handler unit tests', async () => {
     });
 
     describe('request type is intent', () => {
-      it('command handler can handler', () => {
+      it('command handler can handle', () => {
         const output = 'bar';
 
         const utils = {
@@ -74,71 +74,71 @@ describe('speak handler unit tests', async () => {
         expect(utils.CommandHandler.canHandle.args).to.eql([[context]]);
         expect(utils.CommandHandler.handle.args).to.eql([[context, variables]]);
       });
-    });
 
-    describe('command cant handle', () => {
-      it('no input', () => {
-        const utils = {
-          CommandHandler: {
-            canHandle: sinon.stub().returns(false),
-          },
-        };
+      describe('command cant handle', () => {
+        it('no input', () => {
+          const utils = {
+            CommandHandler: {
+              canHandle: sinon.stub().returns(false),
+            },
+          };
 
-        const captureHandler = CaptureHandlerGenerator(utils as any);
+          const captureHandler = CaptureHandlerGenerator(utils as any);
 
-        const block = { nextId: 'next-id' };
-        const request = { type: RequestType.INTENT, payload: { intent: null } };
-        const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
-        const variables = { foo: 'bar' };
+          const block = { nextId: 'next-id' };
+          const request = { type: RequestType.INTENT, payload: { intent: null } };
+          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
+          const variables = { foo: 'bar' };
 
-        expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.nextId);
-        expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
-      });
+          expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.nextId);
+          expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
+        });
 
-      it('input not number', () => {
-        const word = 'not number';
+        it('input not number', () => {
+          const word = 'not number';
 
-        const utils = {
-          CommandHandler: {
-            canHandle: sinon.stub().returns(false),
-          },
-          wordsToNumbers: sinon.stub().returns(word),
-        };
+          const utils = {
+            CommandHandler: {
+              canHandle: sinon.stub().returns(false),
+            },
+            wordsToNumbers: sinon.stub().returns(word),
+          };
 
-        const captureHandler = CaptureHandlerGenerator(utils as any);
+          const captureHandler = CaptureHandlerGenerator(utils as any);
 
-        const block = { nextId: 'next-id', variable: 'var' };
-        const request = { type: RequestType.INTENT, payload: { input: 'input' } };
-        const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
-        const variables = { set: sinon.stub() };
+          const block = { nextId: 'next-id', variable: 'var' };
+          const request = { type: RequestType.INTENT, payload: { input: 'input' } };
+          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
+          const variables = { set: sinon.stub() };
 
-        expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.nextId);
-        expect(utils.wordsToNumbers.args).to.eql([[request.payload.input]]);
-        expect(variables.set.args).to.eql([[block.variable, request.payload.input]]);
-        expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
-      });
+          expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.nextId);
+          expect(utils.wordsToNumbers.args).to.eql([[request.payload.input]]);
+          expect(variables.set.args).to.eql([[block.variable, request.payload.input]]);
+          expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
+        });
 
-      it('input is number', () => {
-        const word = 1;
+        it('input is number', () => {
+          const word = 1;
 
-        const utils = {
-          CommandHandler: {
-            canHandle: sinon.stub().returns(false),
-          },
-          wordsToNumbers: sinon.stub().returns(word),
-        };
+          const utils = {
+            CommandHandler: {
+              canHandle: sinon.stub().returns(false),
+            },
+            wordsToNumbers: sinon.stub().returns(word),
+          };
 
-        const captureHandler = CaptureHandlerGenerator(utils as any);
+          const captureHandler = CaptureHandlerGenerator(utils as any);
 
-        const block = { variable: 'var' };
-        const request = { type: RequestType.INTENT, payload: { input: 'input' } };
-        const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
-        const variables = { set: sinon.stub() };
+          const block = { variable: 'var' };
+          const request = { type: RequestType.INTENT, payload: { input: 'input' } };
+          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
+          const variables = { set: sinon.stub() };
 
-        expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(null);
-        expect(utils.wordsToNumbers.args).to.eql([[request.payload.input]]);
-        expect(variables.set.args).to.eql([[block.variable, word]]);
-        expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
+          expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(null);
+          expect(utils.wordsToNumbers.args).to.eql([[request.payload.input]]);
+          expect(variables.set.args).to.eql([[block.variable, word]]);
+          expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
+        });
       });
     });
   });
