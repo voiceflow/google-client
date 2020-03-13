@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { T } from '@/lib/constants';
-import {
+import CardHandler, {
   addVariables,
   CardHandlerGenerator,
   CardResponseBuilder,
@@ -15,21 +15,17 @@ describe('card handler unit tests', async () => {
 
   describe('canHandle', () => {
     it('false', async () => {
-      const cardHandler = CardHandlerGenerator(null as any);
-
       const block = {};
 
-      const result = cardHandler.canHandle(block as any, null as any, null as any, null as any);
+      const result = CardHandler.canHandle(block as any, null as any, null as any, null as any);
 
       expect(result).to.eql(false);
     });
 
     it('true', async () => {
-      const cardHandler = CardHandlerGenerator(null as any);
-
       const block = { card: { foo: 'bar' } };
 
-      const result = cardHandler.canHandle(block as any, null as any, null as any, null as any);
+      const result = CardHandler.canHandle(block as any, null as any, null as any, null as any);
 
       expect(result).to.eql(true);
     });
