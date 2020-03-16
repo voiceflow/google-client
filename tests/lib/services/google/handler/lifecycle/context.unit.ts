@@ -1,6 +1,7 @@
-// import { expect } from 'chai';
+import { expect } from 'chai';
 import sinon from 'sinon';
 
+import { S, T } from '@/lib/constants';
 import ContextManager from '@/lib/services/google/handler/lifecycle/context';
 
 describe('contextManager unit tests', async () => {
@@ -8,24 +9,30 @@ describe('contextManager unit tests', async () => {
 
   describe('build', () => {
     it('works', async () => {
+      const outputString = 'output';
+
       const contextObj = {
         turn: {
           set: sinon.stub(),
         },
         storage: {
           set: sinon.stub(),
-          get: sinon.stub().returns('output'),
+          get: sinon.stub().returns(outputString),
         },
+      };
+
+      const rawState = { foo: 'bar' };
+
+      const client = {
+        createContext: sinon.stub().returns(contextObj),
       };
 
       const services = {
         state: {
-          getFromDb: sinon.stub().resolves({}),
+          getFromDb: sinon.stub().resolves(rawState),
         },
         voiceflow: {
-          client: sinon.stub().returns({
-            createContext: sinon.stub().returns(contextObj),
-          }),
+          client: sinon.stub().returns(client),
         },
       };
       const contextManager = new ContextManager(services as any, null as any);
@@ -33,9 +40,14 @@ describe('contextManager unit tests', async () => {
       const versionID = 'version-id';
       const userID = 'user-id';
 
-      await contextManager.build(versionID, userID);
+      const result = await contextManager.build(versionID, userID);
 
-      // todo: assertions
+      expect(result).to.eql(contextObj);
+      expect(services.state.getFromDb.args[0]).to.eql([userID]);
+      expect(client.createContext.args[0]).to.eql([versionID, rawState]);
+      expect(contextObj.turn.set.args[0]).to.eql([T.PREVIOUS_OUTPUT, outputString]);
+      expect(contextObj.storage.get.args[0]).to.eql([S.OUTPUT]);
+      expect(contextObj.storage.set.args[0]).to.eql([S.OUTPUT, '']);
     });
   });
 });

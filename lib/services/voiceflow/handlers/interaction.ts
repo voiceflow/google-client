@@ -20,7 +20,15 @@ type Interaction = {
   chips?: string[];
 };
 
-const InteractionHandler: Handler<Interaction> = {
+const utilsObj = {
+  addRepromptIfExists,
+  addChipsIfExists,
+  formatName,
+  mapSlots,
+  CommandHandler,
+};
+
+export const InteractionHandlerGenerator = (utils: typeof utilsObj): Handler<Interaction> => ({
   canHandle: (block) => {
     return !!block.interactions;
   },
@@ -28,8 +36,8 @@ const InteractionHandler: Handler<Interaction> = {
     const request = context.turn.get(T.REQUEST) as IntentRequest;
 
     if (request?.type !== RequestType.INTENT) {
-      addRepromptIfExists(block, context, variables);
-      addChipsIfExists(block, context, variables);
+      utils.addRepromptIfExists(block, context, variables);
+      utils.addChipsIfExists(block, context, variables);
       // quit cycleStack without ending session by stopping on itself
       return block.blockID;
     }
@@ -41,7 +49,7 @@ const InteractionHandler: Handler<Interaction> = {
 
     // check if there is a choice in the block that fulfills intent
     block.interactions.forEach((choice, i: number) => {
-      if (choice.intent && formatName(choice.intent) === intent) {
+      if (choice.intent && utils.formatName(choice.intent) === intent) {
         variableMap = choice.mappings ?? null;
         nextId = block.nextIds[choice.nextIdIndex || choice.nextIdIndex === 0 ? choice.nextIdIndex : i];
       }
@@ -49,12 +57,12 @@ const InteractionHandler: Handler<Interaction> = {
 
     if (variableMap && slots) {
       // map request mappings to variables
-      variables.merge(mapSlots(variableMap, slots));
+      variables.merge(utils.mapSlots(variableMap, slots));
     }
 
     // check if there is a command in the stack that fulfills intent
-    if (!nextId && CommandHandler.canHandle(context)) {
-      return CommandHandler.handle(context, variables);
+    if (!nextId && utils.CommandHandler.canHandle(context)) {
+      return utils.CommandHandler.handle(context, variables);
     }
 
     // request for this turn has been processed, delete request
@@ -62,6 +70,6 @@ const InteractionHandler: Handler<Interaction> = {
 
     return (nextId || block.elseId) ?? null;
   },
-};
+});
 
-export default InteractionHandler;
+export default InteractionHandlerGenerator(utilsObj);

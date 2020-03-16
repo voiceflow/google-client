@@ -39,7 +39,7 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
     }
 
     // set based on input
-    storage.set(S.LOCALE, conv.user?.locale);
+    storage.set(S.LOCALE, conv.user.locale);
     if (!conv.user.storage.userId) conv.user.storage.userId = this.services.uuid4();
     storage.set(S.USER, conv.user.storage.userId);
 

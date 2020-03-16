@@ -6,7 +6,7 @@ import { T } from '@/lib/constants';
 import { ResponseBuilder } from '../types';
 import { regexVariables } from '../utils';
 
-enum CardType {
+export enum CardType {
   STANDARD = 'Standard',
   SIMPLE = 'Simple',
 }
@@ -26,7 +26,7 @@ export type CardBlock = {
   nextId: string;
 };
 
-export const CardResponseBuilder: ResponseBuilder = (context, conv) => {
+export const CardResponseBuilderGenerator = (CardBuilder: typeof BasicCard, ImageBuilder: typeof Image): ResponseBuilder => (context, conv) => {
   const card: Required<Card> | undefined = context.turn.get(T.CARD);
 
   if (!card) {
@@ -35,17 +35,17 @@ export const CardResponseBuilder: ResponseBuilder = (context, conv) => {
 
   if (card.type === CardType.SIMPLE) {
     conv.add(
-      new BasicCard({
+      new CardBuilder({
         text: card.content,
         title: card.title,
       })
     );
   } else if (card.type === CardType.STANDARD) {
     conv.add(
-      new BasicCard({
+      new CardBuilder({
         text: card.text,
         title: card.title,
-        image: new Image({
+        image: new ImageBuilder({
           url: card.image.largeImageUrl,
           alt: 'Image',
         }),
@@ -54,11 +54,13 @@ export const CardResponseBuilder: ResponseBuilder = (context, conv) => {
   }
 };
 
-const addVariables = (value: string | undefined, variables: Store, defaultValue = '') =>
-  value ? regexVariables(value, variables.getState()) : defaultValue;
+export const CardResponseBuilder = CardResponseBuilderGenerator(BasicCard, Image);
+
+export const addVariables = (regex: typeof regexVariables) => (value: string | undefined, variables: Store, defaultValue = '') =>
+  value ? regex(value, variables.getState()) : defaultValue;
 
 const utilsObj = {
-  addVariables,
+  addVariables: addVariables(regexVariables),
 };
 
 export const CardHandlerGenerator = (utils: typeof utilsObj): Handler<CardBlock> => ({

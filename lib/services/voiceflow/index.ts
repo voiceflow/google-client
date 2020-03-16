@@ -6,7 +6,7 @@ import { AbstractManager, injectServices } from '../types';
 import { RESUME_DIAGRAM_ID, ResumeDiagram } from './diagrams/resume';
 import handlers from './handlers';
 
-const utils = {
+const utilsObj = {
   Client,
   resume: {
     ResumeDiagram,
@@ -14,13 +14,15 @@ const utils = {
   },
   handlers,
 };
-@injectServices({ utils })
-class VoiceflowManager extends AbstractManager<{ utils: typeof utils }> {
+@injectServices({ utils: utilsObj })
+class VoiceflowManager extends AbstractManager<{ utils: typeof utilsObj }> {
   client(): Client {
-    const client = new this.services.utils.Client({
+    const { utils } = this.services;
+
+    const client = new utils.Client({
       secret: this.services.secretsProvider.get('VF_DATA_SECRET'),
       endpoint: this.config.VF_DATA_ENDPOINT,
-      handlers: this.services.utils.handlers,
+      handlers: utils.handlers,
     });
 
     client.setEvent(EventType.frameDidFinish, ({ context }) => {
@@ -37,8 +39,8 @@ class VoiceflowManager extends AbstractManager<{ utils: typeof utils }> {
     });
 
     client.setEvent(EventType.diagramWillFetch, ({ diagramID, override }) => {
-      if (diagramID === this.services.utils.resume.RESUME_DIAGRAM_ID) {
-        override(this.services.utils.resume.ResumeDiagram);
+      if (diagramID === utils.resume.RESUME_DIAGRAM_ID) {
+        override(utils.resume.ResumeDiagram);
       }
     });
 
