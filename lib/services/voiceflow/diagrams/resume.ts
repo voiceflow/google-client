@@ -16,7 +16,7 @@ export type ResumePrompt = {
   follow_voice: string;
 };
 
-const promptToSSML = (content = '', voice: string | undefined) => {
+export const promptToSSML = (content = '', voice: string | undefined) => {
   if (voice === 'audio') {
     return `<audio src="${content}"/>`;
   }
