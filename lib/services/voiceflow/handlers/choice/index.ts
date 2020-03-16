@@ -17,14 +17,23 @@ type Choice = {
   chips?: string[];
 };
 
-export const ChipsResponseBuilder: ResponseBuilder = (context, conv) => {
+export const ChipsResponseBuilderGenerator = (SuggestionsBuilder: typeof Suggestions): ResponseBuilder => (context, conv) => {
   const chips = context.turn.get(T.CHIPS);
   if (chips) {
-    conv.add(new Suggestions(chips));
+    conv.add(new SuggestionsBuilder(chips));
   }
 };
 
-const ChoiceHandler: Handler<Choice> = {
+export const ChipsResponseBuilder = ChipsResponseBuilderGenerator(Suggestions);
+
+const utilsObj = {
+  addRepromptIfExists,
+  addChipsIfExists,
+  getBestScore,
+  CommandHandler,
+};
+
+export const ChoiceHandlerGenerator = (utils: typeof utilsObj): Handler<Choice> => ({
   canHandle: (block) => {
     return !!block.choices;
   },
@@ -32,8 +41,8 @@ const ChoiceHandler: Handler<Choice> = {
     const request = context.turn.get(T.REQUEST) as IntentRequest;
 
     if (request?.type !== RequestType.INTENT) {
-      addRepromptIfExists(block, context, variables);
-      addChipsIfExists(block, context, variables);
+      utils.addRepromptIfExists(block, context, variables);
+      utils.addChipsIfExists(block, context, variables);
       // quit cycleStack without ending session by stopping on itself
       return block.blockID;
     }
@@ -53,15 +62,15 @@ const ChoiceHandler: Handler<Choice> = {
       return acc;
     }, []);
 
-    result = getBestScore(input, choices);
+    result = utils.getBestScore(input, choices);
 
     if (result != null && result in block.nextIds) {
       nextId = block.nextIds[result];
     }
 
     // check if there is a command in the stack that fulfills intent
-    if (!nextId && CommandHandler.canHandle(context)) {
-      return CommandHandler.handle(context, variables);
+    if (!nextId && utils.CommandHandler.canHandle(context)) {
+      return utils.CommandHandler.handle(context, variables);
     }
 
     // request for this turn has been processed, delete request
@@ -69,6 +78,6 @@ const ChoiceHandler: Handler<Choice> = {
 
     return (nextId || block.elseId) ?? null;
   },
-};
+});
 
-export default ChoiceHandler;
+export default ChoiceHandlerGenerator(utilsObj);
