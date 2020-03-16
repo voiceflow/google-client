@@ -24,7 +24,11 @@ type StreamPlay = {
   background_img: string;
 };
 
-export const StreamResponseBuilder: ResponseBuilder = (context, conv) => {
+export const StreamResponseBuilderGenerator = (
+  ImageBuilder: typeof Image,
+  MediaObjectBuilder: typeof MediaObject,
+  SuggestionsBuilder: typeof Suggestions
+): ResponseBuilder => (context, conv) => {
   const streamPlay = context.turn.get(T.STREAM_PLAY);
 
   if (!streamPlay) return;
@@ -39,47 +43,54 @@ export const StreamResponseBuilder: ResponseBuilder = (context, conv) => {
     };
 
     if (background_img) {
-      media.image = new Image({
+      media.image = new ImageBuilder({
         url: background_img,
         alt: 'Media Background Image',
       });
     } else if (icon_img) {
-      media.icon = new Image({
+      media.icon = new ImageBuilder({
         url: icon_img,
         alt: 'Media Icon Image',
       });
     }
 
-    conv.add(new MediaObject(media));
+    conv.add(new MediaObjectBuilder(media));
 
     if (!context.turn.get(T.END) && !context.turn.get(T.CHIPS)) {
-      conv.add(new Suggestions(['continue', 'exit']));
+      conv.add(new SuggestionsBuilder(['continue', 'exit']));
     }
   } else {
     conv.add('Sorry, this device does not support audio playback.');
   }
 };
 
-const StreamHandler: Handler<StreamBlock> = {
+export const StreamResponseBuilder = StreamResponseBuilderGenerator(Image, MediaObject, Suggestions);
+
+const utilsObj = {
+  regexVariables,
+  addChipsIfExists,
+};
+
+export const StreamHandlerGenerator = (utils: typeof utilsObj): Handler<StreamBlock> => ({
   canHandle: (block) => {
     return !!block.play;
   },
   handle: (block, context, variables) => {
     const variablesMap = variables.getState();
-    const audioUrl = regexVariables(block.play, variablesMap);
+    const audioUrl = utils.regexVariables(block.play, variablesMap);
 
     if (!audioUrl && block.gNextId) {
       return block.gNextId;
     }
 
-    const streamTitle = regexVariables(block.title, variablesMap);
+    const streamTitle = utils.regexVariables(block.title, variablesMap);
 
     context.turn.set(T.STREAM_PLAY, {
       url: audioUrl,
       title: streamTitle,
-      description: regexVariables(block.description, variablesMap),
-      icon_img: regexVariables(block.icon_img, variablesMap),
-      background_img: regexVariables(block.background_img, variablesMap),
+      description: utils.regexVariables(block.description, variablesMap),
+      icon_img: utils.regexVariables(block.icon_img, variablesMap),
+      background_img: utils.regexVariables(block.background_img, variablesMap),
     } as StreamPlay);
 
     context.storage.produce((draft) => {
@@ -88,7 +99,7 @@ const StreamHandler: Handler<StreamBlock> = {
       }
     });
 
-    addChipsIfExists(block, context, variables);
+    utils.addChipsIfExists(block, context, variables);
 
     if (block.gNextId) {
       context.stack.top().storage.delete(F.SPEAK);
@@ -100,6 +111,6 @@ const StreamHandler: Handler<StreamBlock> = {
     context.end();
     return null;
   },
-};
+});
 
-export default StreamHandler;
+export default StreamHandlerGenerator(utilsObj);

@@ -1,10 +1,10 @@
 import { State } from '@voiceflow/client';
 
-import { AbstractManager } from './utils';
-
-const GACTION_SESSIONS_DYNAMO_PREFIX = 'gactions.user';
+import { AbstractManager } from './types';
 
 class StateManager extends AbstractManager {
+  static GACTION_SESSIONS_DYNAMO_PREFIX = 'gactions.user';
+
   async saveToDb(userId: string, state: State) {
     const { docClient } = this.services;
     const { SESSIONS_DYNAMO_TABLE } = this.config;
@@ -12,7 +12,7 @@ class StateManager extends AbstractManager {
     const params = {
       TableName: SESSIONS_DYNAMO_TABLE,
       Item: {
-        id: `${GACTION_SESSIONS_DYNAMO_PREFIX}.${userId}`,
+        id: `${StateManager.GACTION_SESSIONS_DYNAMO_PREFIX}.${userId}`,
         state,
       },
     };
@@ -31,7 +31,7 @@ class StateManager extends AbstractManager {
     const params = {
       TableName: SESSIONS_DYNAMO_TABLE,
       Key: {
-        id: `${GACTION_SESSIONS_DYNAMO_PREFIX}.${userId}`,
+        id: `${StateManager.GACTION_SESSIONS_DYNAMO_PREFIX}.${userId}`,
       },
     };
 

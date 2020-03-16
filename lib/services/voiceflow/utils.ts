@@ -4,23 +4,23 @@ import { T } from '@/lib/constants';
 
 import { Mapping } from '../voiceflow/types';
 
-const _replacer = (match: string, inner: string, variables: Record<string, any>, modifier?: Function) => {
+export const _replacer = (match: string, inner: string, variables: Record<string, any>, modifier?: Function) => {
   if (inner in variables) {
     return typeof modifier === 'function' ? modifier(variables[inner]) : variables[inner];
   }
   return match;
 };
 
-export const regexVariables = (phrase: string, variables: Record<string, any>, modifier?: Function) => {
-  if (!phrase || !phrase.trim()) return '';
-
-  return phrase.replace(/\{([a-zA-Z0-9_]{1,32})\}/g, (match, inner) => _replacer(match, inner, variables, modifier));
-};
-
 const _stringToNumIfNumeric = (str: string | null): number | string | null => {
   const number = Number(str);
 
   return Number.isNaN(number) ? str : number;
+};
+
+export const regexVariables = (phrase: string, variables: Record<string, any>, modifier?: Function) => {
+  if (!phrase || !phrase.trim()) return '';
+
+  return phrase.replace(/\{([a-zA-Z0-9_]{1,32})\}/g, (match, inner) => _replacer(match, inner, variables, modifier));
 };
 
 export const formatName = (name: string): string => {

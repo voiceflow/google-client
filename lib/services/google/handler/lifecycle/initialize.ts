@@ -4,13 +4,26 @@ import { DialogflowConversation } from 'actions-on-google';
 import { F, S } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
 
-import { SkillMetadata } from '../../../types';
-import { AbstractManager } from '../../../utils';
+import { AbstractManager, injectServices, SkillMetadata } from '../../../types';
 
-const VAR_VF = 'voiceflow';
+const utils = {
+  resume: {
+    createResumeFrame,
+    RESUME_DIAGRAM_ID,
+  },
+  client: {
+    Frame,
+    Store,
+  },
+};
 
-class InitializeManager extends AbstractManager {
+@injectServices({ utils })
+class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
+  static VAR_VF = 'voiceflow';
+
   async build(context: Context, conv: DialogflowConversation<any>): Promise<void> {
+    const { resume, client } = this.services.utils;
+
     // fetch the metadata for this version (project)
     const meta = (await context.fetchMetadata()) as SkillMetadata;
 
@@ -26,7 +39,7 @@ class InitializeManager extends AbstractManager {
     }
 
     // set based on input
-    storage.set(S.LOCALE, conv.user?.locale);
+    storage.set(S.LOCALE, conv.user.locale);
     if (!conv.user.storage.userId) conv.user.storage.userId = this.services.uuid4();
     storage.set(S.USER, conv.user.storage.userId);
 
@@ -42,32 +55,32 @@ class InitializeManager extends AbstractManager {
       platform: 'google',
 
       // hidden system variables (code block only)
-      [VAR_VF]: {
+      [InitializeManager.VAR_VF]: {
         // TODO: implement all exposed voiceflow variables
         events: [],
       },
     });
 
     // initialize all the global variables
-    Store.initialize(variables, meta.global, 0);
+    client.Store.initialize(variables, meta.global, 0);
 
     // restart logic
-    const shouldRestart = stack.isEmpty() || meta.restart || context.variables.get(VAR_VF)?.resume === false;
+    const shouldRestart = stack.isEmpty() || meta.restart || variables.get(InitializeManager.VAR_VF)?.resume === false;
     if (shouldRestart) {
       // start the stack with just the root flow
       stack.flush();
-      stack.push(new Frame({ diagramID: meta.diagram }));
+      stack.push(new client.Frame({ diagramID: meta.diagram }));
     } else if (meta.resume_prompt) {
       // resume prompt flow - use command flow logic
       stack.top().storage.set(F.CALLED_COMMAND, true);
 
       // if there is an existing resume flow, remove itself and anything above it
-      const resumeStackIndex = stack.getFrames().findIndex((frame) => frame.getDiagramID() === RESUME_DIAGRAM_ID);
+      const resumeStackIndex = stack.getFrames().findIndex((frame) => frame.getDiagramID() === resume.RESUME_DIAGRAM_ID);
       if (resumeStackIndex >= 0) {
         stack.popTo(resumeStackIndex);
       }
 
-      stack.push(createResumeFrame(meta.resume_prompt));
+      stack.push(resume.createResumeFrame(meta.resume_prompt));
     } else {
       // give context to where the user left off with last speak block
       stack.top().storage.delete(F.CALLED_COMMAND);
