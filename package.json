@@ -141,7 +141,6 @@
     "build": "npm run clean && ttsc --project ./tsconfig.build.json",
     "clean": "rimraf build",
     "deploy:staging": "git push origin $(git branch | grep \\* | cut -d ' ' -f2):staging -f",
-    "eslint-dep": "eslint --no-eslintrc --rule \"import/no-cycle: 2\" \"./**/*.ts\"",
     "gen-certs": "scripts/generate_certs.sh",
     "lint": "eslint \"./**/*.{js,ts}\"",
     "local": "NODE_ENV=local ts-node --files -r tsconfig-paths/register start.ts",
