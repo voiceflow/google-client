@@ -187,7 +187,9 @@ describe('capture handler unit tests', async () => {
   });
 
   describe('generation', () => {
-    const context = { turn: { get: sinon.stub().returns(null) } };
-    expect(CommandHandler.canHandle(context as any)).to.eql(false);
+    it('works correctly', () => {
+      const context = { turn: { get: sinon.stub().returns(null) } };
+      expect(CommandHandler.canHandle(context as any)).to.eql(false);
+    });
   });
 });
