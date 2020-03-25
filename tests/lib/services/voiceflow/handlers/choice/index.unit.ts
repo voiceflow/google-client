@@ -2,11 +2,11 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { F, S, T } from '@/lib/constants';
+import { T } from '@/lib/constants';
 import ChoiceHandler, { ChipsResponseBuilderGenerator, ChoiceHandlerGenerator } from '@/lib/services/voiceflow/handlers/choice';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
-describe('stream handler unit tests', async () => {
+describe('choice handler unit tests', async () => {
   afterEach(() => sinon.restore());
 
   describe('canHandle', () => {
