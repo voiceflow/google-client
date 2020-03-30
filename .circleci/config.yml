@@ -115,7 +115,7 @@ jobs:
             kubectl set image --namespace voiceflow-v1 deployment/google-$CIRCLE_BRANCH app=168387678261.dkr.ecr.us-east-1.amazonaws.com/google:k8s-$CIRCLE_BRANCH-$BUILD_NUM
             if [ "$CIRCLE_BRANCH" == "master" ]; then
               aws eks --region us-east-1 update-kubeconfig --name production
-              kubectl set image --namespace voiceflow-v1 deployment/google-$CIRCLE_BRANCH app=168387678261.dkr.ecr.us-east-1.amazonaws.com/google:k8s-$CIRCLE_BRANCH-$BUILD_NUM
+              kubectl set image --namespace voiceflow-v1 deployment/google-production app=168387678261.dkr.ecr.us-east-1.amazonaws.com/google:k8s-$CIRCLE_BRANCH-$BUILD_NUM
             fi
 
   release:
