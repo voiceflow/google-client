@@ -1,13 +1,14 @@
 version: 2.1
 
-orbs:
-  codecov: codecov/codecov@1.0.2
-
 executors:
   test-executor:
     docker:
       - image: circleci/node:12
-      - image: circleci/dynamodb:13-oracle # DynamoDB service container
+    resource_class: medium
+  build-executor:
+    working_directory: /tmp/vf-build
+    docker:
+      - image: voiceflow/ci-image:v3
     resource_class: medium
   build-executor:
     working_directory: /tmp/vf-build
@@ -46,7 +47,6 @@ jobs:
     steps:
       - checkout
       - install_node_modules
-      - setup_test_env
       - run:
           name: "Build package"
           command: |
