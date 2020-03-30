@@ -46,6 +46,7 @@ jobs:
     steps:
       - checkout
       - install_node_modules
+      - setup_test_env
       - run:
           name: "Build package"
           command: |
