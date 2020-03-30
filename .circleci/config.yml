@@ -1,9 +1,13 @@
 version: 2.1
 
+orbs:
+  codecov: codecov/codecov@1.0.2
+
 executors:
   test-executor:
     docker:
       - image: circleci/node:12
+      - image: circleci/dynamodb:13-oracle # DynamoDB service container
     resource_class: medium
   build-executor:
     working_directory: /tmp/vf-build
@@ -12,6 +16,15 @@ executors:
     resource_class: medium
 
 commands:
+  setup_test_env:
+    steps:
+      - run:
+          name: AWS Config
+          command: ./scripts/mock_aws_credentials.sh
+      - run:
+          name: Wait for Dynamo Docker Image
+          command: dockerize -wait tcp://localhost:8000 -timeout 1m
+
   install_node_modules:
     steps:
       - restore_cache:
@@ -41,6 +54,8 @@ jobs:
           name: "Run tests"
           command: |
             yarn test
+      - codecov/upload:
+          file: nyc_coverage/lcov.info
 
   build-push-image:
     executor: build-executor
