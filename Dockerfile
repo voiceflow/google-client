@@ -6,10 +6,10 @@ WORKDIR /target
 COPY ./ ./
 
 RUN echo $NPM_TOKEN > .npmrc && \
-    yarn install && \
-    yarn build && \
-    rm -rf build/node_modules && \
-    rm -f .npmrc 
+  yarn install && \
+  yarn build && \
+  rm -rf build/node_modules && \
+  rm -f .npmrc 
 
 FROM node:12-alpine 
 
@@ -26,12 +26,14 @@ ENV GIT_SHA=${build_GIT_SHA}}
 ENV BUILD_URL=${build_BUILD_URL}
 
 RUN yarn global add pm2
+RUN apk --no-cache add git 
 
 WORKDIR /usr/src/app
 COPY --from=build /target/build ./
 
 RUN echo $NPM_TOKEN > .npmrc && \
-    yarn install --production && \
-    rm -f .npmrc
+  yarn install --production && \
+  rm -f .npmrc && \
+  yarn cache clean
 
 CMD ["pm2-runtime", "start", "app.config.js"]

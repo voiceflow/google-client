@@ -14,6 +14,11 @@ executors:
     docker:
       - image: voiceflow/ci-image:v3
     resource_class: medium
+  build-executor:
+    working_directory: /tmp/vf-build
+    docker:
+      - image: voiceflow/ci-image:v3
+    resource_class: medium
 
 commands:
   setup_test_env:
