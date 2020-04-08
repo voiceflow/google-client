@@ -50,7 +50,7 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       await handler(context, conv);
     }
 
-    state.saveToDb(storage.get(S.USER), context.getFinalState());
+    await state.saveToDb(storage.get(S.USER), context.getFinalState());
 
     conv.user.storage.forceUpdateToken = randomstring.generate();
     agent.add(conv);
