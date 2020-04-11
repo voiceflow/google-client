@@ -1,4 +1,4 @@
-import { Handler, Store } from '@voiceflow/client';
+import { HandlerFactory, Store } from '@voiceflow/client';
 import { BasicCard, Image } from 'actions-on-google';
 
 import { T } from '@/lib/constants';
@@ -63,7 +63,7 @@ const utilsObj = {
   addVariables: addVariables(regexVariables),
 };
 
-export const CardHandlerGenerator = (utils: typeof utilsObj): Handler<CardBlock> => ({
+export const CardHandler: HandlerFactory<CardBlock, typeof utilsObj> = (utils) => ({
   canHandle: (block) => {
     return !!block.card;
   },
@@ -90,4 +90,4 @@ export const CardHandlerGenerator = (utils: typeof utilsObj): Handler<CardBlock>
   },
 });
 
-export default CardHandlerGenerator(utilsObj);
+export default () => CardHandler(utilsObj);

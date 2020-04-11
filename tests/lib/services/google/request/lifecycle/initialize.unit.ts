@@ -3,7 +3,7 @@ import _ from 'lodash';
 import sinon from 'sinon';
 
 import { F, S } from '@/lib/constants';
-import InitializeManager from '@/lib/services/google/handler/lifecycle/initialize';
+import InitializeManager from '@/lib/services/google/request/lifecycle/initialize';
 
 describe('initializeManager unit tests', async () => {
   let clock: sinon.SinonFakeTimers;

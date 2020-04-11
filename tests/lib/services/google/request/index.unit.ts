@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { T } from '@/lib/constants';
-import HandlerManager from '@/lib/services/google/handler';
+import HandlerManager from '@/lib/services/google/request';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
 describe('handlerManager unit tests', async () => {

@@ -1,4 +1,4 @@
-import { Handler } from '@voiceflow/client';
+import { HandlerFactory } from '@voiceflow/client';
 import { Image, MediaObject, MediaObjectOptions, Suggestions } from 'actions-on-google';
 
 import { F, S, T } from '@/lib/constants';
@@ -71,7 +71,7 @@ const utilsObj = {
   addChipsIfExists,
 };
 
-export const StreamHandlerGenerator = (utils: typeof utilsObj): Handler<StreamBlock> => ({
+export const StreamHandler: HandlerFactory<StreamBlock, typeof utilsObj> = (utils) => ({
   canHandle: (block) => {
     return !!block.play;
   },
@@ -113,4 +113,4 @@ export const StreamHandlerGenerator = (utils: typeof utilsObj): Handler<StreamBl
   },
 });
 
-export default StreamHandlerGenerator(utilsObj);
+export default () => StreamHandler(utilsObj);
