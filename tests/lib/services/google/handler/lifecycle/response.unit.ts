@@ -1,10 +1,11 @@
 import { expect } from 'chai';
+import _ from 'lodash';
 import sinon from 'sinon';
 
 import { S, T } from '@/lib/constants';
 import ResponseManager from '@/lib/services/google/handler/lifecycle/response';
 
-describe('initializeManager unit tests', async () => {
+describe('responseManager unit tests', async () => {
   afterEach(() => sinon.restore());
 
   describe('build', () => {
@@ -61,7 +62,7 @@ describe('initializeManager unit tests', async () => {
       await contextManager.build(context as any, agent as any, conv as any);
 
       expect(context.stack.isEmpty.callCount).to.eql(1);
-      expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.OUTPUT], [S.USER]]);
+      expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.OUTPUT], [S.OUTPUT], [S.USER]]);
       expect(services.utils.SimpleResponse.args[0]).to.eql([
         {
           speech: `<speak>${output}</speak>`,
@@ -69,6 +70,7 @@ describe('initializeManager unit tests', async () => {
         },
       ]);
       expect(conv.ask.args[0]).to.eql([response]);
+      expect(_.get(conv, 'noInputs')).to.eql([output]);
       expect(responseHandler1.args).to.eql([[context, conv]]);
       expect(responseHandler2.args).to.eql([[context, conv]]);
       expect(services.state.saveToDb.args[0]).to.eql([userId, contextFinalState]);

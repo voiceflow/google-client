@@ -48,3 +48,6 @@ local_secrets.yaml
 build
 
 yarn-error.log
+
+/tests/smokeTest/recordedSessions/*
+!/tests/smokeTest/recordedSessions/readme.md

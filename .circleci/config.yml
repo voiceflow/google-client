@@ -20,6 +20,22 @@ executors:
     resource_class: small
 
 commands:
+  install_aws_cli:
+    steps:
+      - run:
+          name: Install pip3
+          command: sudo apt update && sudo apt install -y python3-pip
+      - run:
+          name: Install AWS CLI
+          command: pip3 install awscli
+
+  clone_s3_assets:
+    steps:
+      - run:
+          name: Clone s3 assets
+          command: |
+            aws s3 sync s3://com.voiceflow.ci.assets/google ~/project/tests/smokeTest/recordedSessions
+
   setup_test_env:
     steps:
       - run:
@@ -52,15 +68,21 @@ jobs:
       - install_node_modules
       - setup_test_env
       - run:
-          name: "Build package"
+          name: 'Build package'
           command: |
             yarn build
       - run:
-          name: "Run tests"
+          name: 'Run tests'
           command: |
             yarn test
       - codecov/upload:
           file: nyc_coverage/lcov.info
+      # temp steps
+      - install_aws_cli
+      - clone_s3_assets
+      - run:
+          name: Run smoke tests
+          command: yarn test:smoke
 
   build-push-image:
     executor: build-executor
@@ -68,7 +90,7 @@ jobs:
       - checkout # special step to check out source code to working directory
       - setup_remote_docker
       - run:
-          name: "Build docker image"
+          name: 'Build docker image'
           command: |
             mkdir -p /tmp/vf-build/vars
             # Fix semantic versioning 
@@ -96,7 +118,7 @@ jobs:
               -t 168387678261.dkr.ecr.us-east-1.amazonaws.com/google:k8s-$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM . 
             echo $CIRCLE_BUILD_NUM > /tmp/vf-build/vars/build_num
       - run:
-          name: "Push docker images"
+          name: 'Push docker images'
           command: |
             docker push 168387678261.dkr.ecr.us-east-1.amazonaws.com/google:k8s-$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM
             docker tag 168387678261.dkr.ecr.us-east-1.amazonaws.com/google:k8s-$CIRCLE_BRANCH-$CIRCLE_BUILD_NUM 168387678261.dkr.ecr.us-east-1.amazonaws.com/google:latest-$CIRCLE_BRANCH
