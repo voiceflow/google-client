@@ -1,7 +1,7 @@
 import { Request, Response } from 'express';
 
 import { AbstractManager, injectServices } from '../types';
-import Handler from './handler';
+import Handler from './request';
 
 @injectServices({ handler: Handler })
 class GoogleManager extends AbstractManager<{ handler: Handler }> {

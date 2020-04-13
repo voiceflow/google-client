@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { S, T } from '@/lib/constants';
-import ContextManager from '@/lib/services/google/handler/lifecycle/context';
+import ContextManager from '@/lib/services/google/request/lifecycle/context';
 
 describe('contextManager unit tests', async () => {
   afterEach(() => sinon.restore());
@@ -32,7 +32,7 @@ describe('contextManager unit tests', async () => {
           getFromDb: sinon.stub().resolves(rawState),
         },
         voiceflow: {
-          client: sinon.stub().returns(client),
+          client,
         },
       };
       const contextManager = new ContextManager(services as any, null as any);

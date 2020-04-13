@@ -2,11 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { F, S, T } from '@/lib/constants';
-import StreamHandler, {
-  StreamHandlerGenerator,
-  StreamResponseBuilder,
-  StreamResponseBuilderGenerator,
-} from '@/lib/services/voiceflow/handlers/stream';
+import DefaultStreamHandler, { StreamHandler, StreamResponseBuilder, StreamResponseBuilderGenerator } from '@/lib/services/voiceflow/handlers/stream';
 
 describe('stream handler unit tests', async () => {
   afterEach(() => sinon.restore());
@@ -15,7 +11,7 @@ describe('stream handler unit tests', async () => {
     it('false', async () => {
       const block = {};
 
-      const result = StreamHandler.canHandle(block as any, null as any, null as any, null as any);
+      const result = DefaultStreamHandler().canHandle(block as any, null as any, null as any, null as any);
 
       expect(result).to.eql(false);
     });
@@ -23,7 +19,7 @@ describe('stream handler unit tests', async () => {
     it('true', async () => {
       const block = { play: { foo: 'bar' } };
 
-      const result = StreamHandler.canHandle(block as any, null as any, null as any, null as any);
+      const result = DefaultStreamHandler().canHandle(block as any, null as any, null as any, null as any);
 
       expect(result).to.eql(true);
     });
@@ -35,7 +31,7 @@ describe('stream handler unit tests', async () => {
         regexVariables: sinon.stub().returns(null),
       };
 
-      const streamHandler = StreamHandlerGenerator(utils as any);
+      const streamHandler = StreamHandler(utils as any);
 
       const varState = { foo: 'bar' };
       const variables = { getState: sinon.stub().returns(varState) };
@@ -66,7 +62,7 @@ describe('stream handler unit tests', async () => {
           addChipsIfExists: sinon.stub(),
         };
 
-        const streamHandler = StreamHandlerGenerator(utils as any);
+        const streamHandler = StreamHandler(utils as any);
 
         const varState = { foo: 'bar' };
         const variables = { getState: sinon.stub().returns(varState) };
@@ -131,7 +127,7 @@ describe('stream handler unit tests', async () => {
           addChipsIfExists: sinon.stub(),
         };
 
-        const streamHandler = StreamHandlerGenerator(utils as any);
+        const streamHandler = StreamHandler(utils as any);
 
         const variables = { getState: sinon.stub().returns({ foo: 'bar' }) };
         const context = {
@@ -162,7 +158,7 @@ describe('stream handler unit tests', async () => {
             addChipsIfExists: sinon.stub(),
           };
 
-          const streamHandler = StreamHandlerGenerator(utils as any);
+          const streamHandler = StreamHandler(utils as any);
 
           const variables = { getState: sinon.stub().returns({ foo: 'bar' }) };
           const context = {
@@ -199,7 +195,7 @@ describe('stream handler unit tests', async () => {
             addChipsIfExists: sinon.stub(),
           };
 
-          const streamHandler = StreamHandlerGenerator(utils as any);
+          const streamHandler = StreamHandler(utils as any);
 
           const variables = { getState: sinon.stub().returns({ foo: 'bar' }) };
           const context = {
@@ -236,7 +232,7 @@ describe('stream handler unit tests', async () => {
             addChipsIfExists: sinon.stub(),
           };
 
-          const streamHandler = StreamHandlerGenerator(utils as any);
+          const streamHandler = StreamHandler(utils as any);
 
           const variables = { getState: sinon.stub().returns({ foo: 'bar' }) };
           const context = {

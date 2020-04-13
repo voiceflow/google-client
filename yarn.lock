@@ -782,6 +782,11 @@
   resolved "https://registry.yarnpkg.com/@types/retry/-/retry-0.12.0.tgz#2b35eccfcee7d38cd72ad99232fbd58bffb3c84d"
   integrity sha512-wWKOClTTiizcZhXnPY4wikVAwmdYHp8q6DmC+EJUzAMsycb7HB32Kh9RN4+0gExjmPmZSAQjgURXIGATPegAvA==
 
+"@types/safe-json-stringify@^1.1.0":
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/@types/safe-json-stringify/-/safe-json-stringify-1.1.0.tgz#4cd786442d7abc037f8e9026b22e3b401005c287"
+  integrity sha512-iIQqHp8fqDgxTlWor4DrTrKGVmjDeGDodQBipQkPSlRU1QeKIytv37U4aFN9N65VJcFJx67+zOnpbTNQzqHTOg==
+
 "@types/serve-static@*":
   version "1.13.3"
   resolved "https://registry.yarnpkg.com/@types/serve-static/-/serve-static-1.13.3.tgz#eb7e1c41c4468272557e897e9171ded5e2ded9d1"
@@ -902,16 +907,18 @@
     randomstring "^1.1.5"
     sinon "^7.5.0"
 
-"@voiceflow/client@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@voiceflow/client/-/client-1.1.0.tgz#671769e09c6527e52b0264bfa3332061a8a7bbe5"
-  integrity sha512-73KPg2TBLOzKqy7H1MSxa8tgeclBxv+1kbWyXLfJoFwjQnH+L8l5BT8Q6ymsIIrO50bUIE0DhgY27aaFt5U1tw==
+"@voiceflow/client@^1.6.0":
+  version "1.6.0"
+  resolved "https://registry.yarnpkg.com/@voiceflow/client/-/client-1.6.0.tgz#a64e76d8815313debc5239a1577c62f425d60324"
+  integrity sha512-Tu+sgxY2a+1tDpHdanbEPWGZrhUZGOGzQ05V19DbtVUgS5ktZgEJASNgxETGIxl3yGTxjwloj14l12ZN8+sLqg==
   dependencies:
+    "@types/safe-json-stringify" "^1.1.0"
     axios "^0.19.0"
     bluebird "^3.7.2"
     immer "^5.1.0"
     lodash "^4.17.15"
     mathjs "^6.5.0"
+    safe-json-stringify "^1.2.0"
     workerpool "^5.0.4"
 
 "@voiceflow/commitlint-config@^1.0.1":
@@ -8859,7 +8866,7 @@ safe-buffer@^5.0.1, safe-buffer@^5.1.0, safe-buffer@^5.1.1, safe-buffer@^5.1.2, 
   resolved "https://registry.yarnpkg.com/safe-buffer/-/safe-buffer-5.2.0.tgz#b74daec49b1148f88c64b68d49b1e815c1f2f519"
   integrity sha512-fZEwUGbVl7kouZs1jCdMLdt95hdIv0ZeHg6L7qPeciMZhZ+/gdesW4wgTARkrFWEpspjEATAzUGPG8N2jJiwbg==
 
-safe-json-stringify@~1:
+safe-json-stringify@^1.2.0, safe-json-stringify@~1:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/safe-json-stringify/-/safe-json-stringify-1.2.0.tgz#356e44bc98f1f93ce45df14bcd7c01cda86e0afd"
   integrity sha512-gH8eh2nZudPQO6TytOvbxnuhYBOvDBBLW52tz5q6X58lJcd/tkmqFR+5Z9adS8aJtURSXWThWy/xJtJwixErvg==

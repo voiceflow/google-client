@@ -1,10 +1,11 @@
 import Client, { EventType } from '@voiceflow/client';
 
 import { F, S } from '@/lib/constants';
+import { Config } from '@/types';
 
-import { AbstractManager, injectServices } from '../types';
+import { FullServiceMap as Services } from '../index';
 import { RESUME_DIAGRAM_ID, ResumeDiagram } from './diagrams/resume';
-import handlers from './handlers';
+import Handlers from './handlers';
 
 const utilsObj = {
   Client,
@@ -12,40 +13,38 @@ const utilsObj = {
     ResumeDiagram,
     RESUME_DIAGRAM_ID,
   },
-  handlers,
+  Handlers,
 };
-@injectServices({ utils: utilsObj })
-class VoiceflowManager extends AbstractManager<{ utils: typeof utilsObj }> {
-  client(): Client {
-    const { utils } = this.services;
 
-    const client = new utils.Client({
-      secret: this.services.secretsProvider.get('VF_DATA_SECRET'),
-      endpoint: this.config.VF_DATA_ENDPOINT,
-      handlers: utils.handlers,
-    });
+const VoiceflowManager = (services: Services, config: Config, utils = utilsObj) => {
+  const handlers = utils.Handlers(config);
 
-    client.setEvent(EventType.frameDidFinish, ({ context }) => {
-      if (context.stack.top()?.storage.get(F.CALLED_COMMAND)) {
-        context.stack.top().storage.delete(F.CALLED_COMMAND);
+  const client = new utils.Client({
+    secret: services.secretsProvider.get('VF_DATA_SECRET'),
+    endpoint: config.VF_DATA_ENDPOINT,
+    handlers,
+  });
 
-        const output = context.stack.top().storage.get(F.SPEAK);
-        if (output) {
-          context.storage.produce((draft) => {
-            draft[S.OUTPUT] += output;
-          });
-        }
+  client.setEvent(EventType.frameDidFinish, ({ context }) => {
+    if (context.stack.top()?.storage.get(F.CALLED_COMMAND)) {
+      context.stack.top().storage.delete(F.CALLED_COMMAND);
+
+      const output = context.stack.top().storage.get(F.SPEAK);
+      if (output) {
+        context.storage.produce((draft) => {
+          draft[S.OUTPUT] += output;
+        });
       }
-    });
+    }
+  });
 
-    client.setEvent(EventType.diagramWillFetch, ({ diagramID, override }) => {
-      if (diagramID === utils.resume.RESUME_DIAGRAM_ID) {
-        override(utils.resume.ResumeDiagram);
-      }
-    });
+  client.setEvent(EventType.diagramWillFetch, ({ diagramID, override }) => {
+    if (diagramID === utils.resume.RESUME_DIAGRAM_ID) {
+      override(utils.resume.ResumeDiagram);
+    }
+  });
 
-    return client;
-  }
-}
+  return { client };
+};
 
 export default VoiceflowManager;

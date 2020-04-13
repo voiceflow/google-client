@@ -3,7 +3,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { T } from '@/lib/constants';
-import ChoiceHandler, { ChipsResponseBuilderGenerator, ChoiceHandlerGenerator } from '@/lib/services/voiceflow/handlers/choice';
+import DefaultChoiceHandler, { ChipsResponseBuilderGenerator, ChoiceHandler } from '@/lib/services/voiceflow/handlers/choice';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
 describe('choice handler unit tests', async () => {
@@ -13,7 +13,7 @@ describe('choice handler unit tests', async () => {
     it('false', async () => {
       const block = {};
 
-      const result = ChoiceHandler.canHandle(block as any, null as any, null as any, null as any);
+      const result = DefaultChoiceHandler().canHandle(block as any, null as any, null as any, null as any);
 
       expect(result).to.eql(false);
     });
@@ -21,7 +21,7 @@ describe('choice handler unit tests', async () => {
     it('true', async () => {
       const block = { choices: { foo: 'bar' } };
 
-      const result = ChoiceHandler.canHandle(block as any, null as any, null as any, null as any);
+      const result = DefaultChoiceHandler().canHandle(block as any, null as any, null as any, null as any);
 
       expect(result).to.eql(true);
     });
@@ -33,7 +33,7 @@ describe('choice handler unit tests', async () => {
         addRepromptIfExists: sinon.stub(),
         addChipsIfExists: sinon.stub(),
       };
-      const choiceHandler = ChoiceHandlerGenerator(utils as any);
+      const choiceHandler = ChoiceHandler(utils as any);
 
       const block = { blockID: 'block-id' };
       const context = { turn: { get: sinon.stub().returns(null) } };
@@ -49,7 +49,7 @@ describe('choice handler unit tests', async () => {
         addRepromptIfExists: sinon.stub(),
         addChipsIfExists: sinon.stub(),
       };
-      const choiceHandler = ChoiceHandlerGenerator(utils as any);
+      const choiceHandler = ChoiceHandler(utils as any);
 
       const block = { blockID: 'block-id' };
       const context = { turn: { get: sinon.stub().returns({ type: 'random-type' }) } };
@@ -65,7 +65,7 @@ describe('choice handler unit tests', async () => {
         const utils = {
           getBestScore: sinon.stub().returns(1),
         };
-        const choiceHandler = ChoiceHandlerGenerator(utils as any);
+        const choiceHandler = ChoiceHandler(utils as any);
 
         const block = {
           blockID: 'block-id',
@@ -115,12 +115,12 @@ describe('choice handler unit tests', async () => {
 
           const utils = {
             getBestScore: sinon.stub().returns(null),
-            CommandHandler: {
+            commandHandler: {
               canHandle: sinon.stub().returns(true),
               handle: sinon.stub().returns(output),
             },
           };
-          const choiceHandler = ChoiceHandlerGenerator(utils as any);
+          const choiceHandler = ChoiceHandler(utils as any);
 
           const block = {
             blockID: 'block-id',
@@ -137,19 +137,19 @@ describe('choice handler unit tests', async () => {
           const variables = { var: '1' };
 
           expect(choiceHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(output);
-          expect(utils.CommandHandler.canHandle.args).to.eql([[context]]);
-          expect(utils.CommandHandler.handle.args).to.eql([[context, variables]]);
+          expect(utils.commandHandler.canHandle.args).to.eql([[context]]);
+          expect(utils.commandHandler.handle.args).to.eql([[context, variables]]);
         });
 
         describe('command cannot handle', () => {
           it('with elseId', () => {
             const utils = {
               getBestScore: sinon.stub().returns(null),
-              CommandHandler: {
+              commandHandler: {
                 canHandle: sinon.stub().returns(false),
               },
             };
-            const choiceHandler = ChoiceHandlerGenerator(utils as any);
+            const choiceHandler = ChoiceHandler(utils as any);
 
             const block = {
               blockID: 'block-id',
@@ -173,11 +173,11 @@ describe('choice handler unit tests', async () => {
           it('without elseId', () => {
             const utils = {
               getBestScore: sinon.stub().returns(null),
-              CommandHandler: {
+              commandHandler: {
                 canHandle: sinon.stub().returns(false),
               },
             };
-            const choiceHandler = ChoiceHandlerGenerator(utils as any);
+            const choiceHandler = ChoiceHandler(utils as any);
 
             const block = {
               blockID: 'block-id',

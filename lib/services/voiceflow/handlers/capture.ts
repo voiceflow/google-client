@@ -1,4 +1,4 @@
-import { Handler } from '@voiceflow/client';
+import { HandlerFactory } from '@voiceflow/client';
 import wordsToNumbers from 'words-to-numbers';
 
 import { T } from '@/lib/constants';
@@ -18,10 +18,10 @@ const utilsObj = {
   wordsToNumbers,
   addChipsIfExists,
   addRepromptIfExists,
-  CommandHandler,
+  commandHandler: CommandHandler(),
 };
 
-export const CaptureHandlerGenerator = (utils: typeof utilsObj): Handler<Capture> => ({
+export const CaptureHandler: HandlerFactory<Capture, typeof utilsObj> = (utils) => ({
   canHandle: (block) => {
     return !!block.variable;
   },
@@ -38,8 +38,8 @@ export const CaptureHandlerGenerator = (utils: typeof utilsObj): Handler<Capture
     let nextId: string | null = null;
 
     // check if there is a command in the stack that fulfills intent
-    if (utils.CommandHandler.canHandle(context)) {
-      return utils.CommandHandler.handle(context, variables);
+    if (utils.commandHandler.canHandle(context)) {
+      return utils.commandHandler.handle(context, variables);
     }
 
     const { input } = request.payload;
@@ -63,4 +63,4 @@ export const CaptureHandlerGenerator = (utils: typeof utilsObj): Handler<Capture
   },
 });
 
-export default CaptureHandlerGenerator(utilsObj);
+export default () => CaptureHandler(utilsObj);

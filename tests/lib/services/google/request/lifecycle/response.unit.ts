@@ -3,7 +3,7 @@ import _ from 'lodash';
 import sinon from 'sinon';
 
 import { S, T } from '@/lib/constants';
-import ResponseManager from '@/lib/services/google/handler/lifecycle/response';
+import ResponseManager from '@/lib/services/google/request/lifecycle/response';
 
 describe('responseManager unit tests', async () => {
   afterEach(() => sinon.restore());
