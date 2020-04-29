@@ -6,7 +6,9 @@ import Handler from './request';
 @injectServices({ handler: Handler })
 class GoogleManager extends AbstractManager<{ handler: Handler }> {
   async handleRequest(request: Request, response: Response) {
-    const { WebhookClient, handler } = this.services;
+    const { WebhookClient, handler, metrics } = this.services;
+
+    metrics.increment('google.invocation');
 
     request.body.versionID = request.params.versionID;
 

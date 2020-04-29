@@ -620,6 +620,11 @@
   dependencies:
     "@types/express" "*"
 
+"@types/datadog-metrics@^0.6.0":
+  version "0.6.0"
+  resolved "https://registry.yarnpkg.com/@types/datadog-metrics/-/datadog-metrics-0.6.0.tgz#786c9b8669738327e8a742728e34e9b150011364"
+  integrity sha512-MBOPUAvG6xRSgQaOtdEUnF1qwx0JGTjTVhKPzw9a3C9hguaWMNM3KUjRJMRlkgjw8AhV56IXfl2cQH9Tqd5ydA==
+
 "@types/debug@^0.0.30":
   version "0.0.30"
   resolved "https://registry.yarnpkg.com/@types/debug/-/debug-0.0.30.tgz#dc1e40f7af3b9c815013a7860e6252f6352a84df"
@@ -1604,6 +1609,11 @@ bignumber.js@^7.0.0:
   version "7.2.1"
   resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-7.2.1.tgz#80c048759d826800807c4bfd521e50edbba57a5f"
   integrity sha512-S4XzBk5sMB+Rcb/LNcpzXr57VRTxgAvaAEDAl1AwRx27j00hT84O6OkteE7u8UB3NuaaygCRrEpqox4uDOrbdQ==
+
+bignumber.js@~1.1.1:
+  version "1.1.1"
+  resolved "https://registry.yarnpkg.com/bignumber.js/-/bignumber.js-1.1.1.tgz#1a415d9ac014c13256af1feed9d1a3e5717a8cf7"
+  integrity sha1-GkFdmsAUwTJWrx/u2dGj5XF6jPc=
 
 bin-links@^1.1.2, bin-links@^1.1.7:
   version "1.1.7"
@@ -2659,6 +2669,14 @@ dasherize@2.0.0:
   resolved "https://registry.yarnpkg.com/dasherize/-/dasherize-2.0.0.tgz#6d809c9cd0cf7bb8952d80fc84fa13d47ddb1308"
   integrity sha1-bYCcnNDPe7iVLYD8hPoT1H3bEwg=
 
+datadog-metrics@^0.8.1:
+  version "0.8.1"
+  resolved "https://registry.yarnpkg.com/datadog-metrics/-/datadog-metrics-0.8.1.tgz#be87237109a7084193c668d80112533ef00e3f21"
+  integrity sha512-qTSKnddO6GxTJW9FYpmWjvvift3qfyMurDjwNjJnJhBk76pBdDhC0B5V9V+XwPdn4r42qu48kwXNuHJslXlDOA==
+  dependencies:
+    debug "3.1.0"
+    dogapi "1.1.0"
+
 date-fns@^1.27.2:
   version "1.30.1"
   resolved "https://registry.yarnpkg.com/date-fns/-/date-fns-1.30.1.tgz#2e71bf0b119153dbb4cc4e88d9ea5acfb50dc05c"
@@ -2922,6 +2940,16 @@ doctrine@^3.0.0:
   integrity sha512-yS+Q5i3hBf7GBkd4KG8a7eBNNWNGLTaEwwYWUijIYM7zrlYDM0BFXHjjPWlWZ1Rg7UaddZeIDmi9jF3HmqiQ2w==
   dependencies:
     esutils "^2.0.2"
+
+dogapi@1.1.0:
+  version "1.1.0"
+  resolved "https://registry.yarnpkg.com/dogapi/-/dogapi-1.1.0.tgz#71a43865ad4bb4cb18bc3e13cf769971f501030a"
+  integrity sha1-caQ4Za1LtMsYvD4Tz3aZcfUBAwo=
+  dependencies:
+    extend "^3.0.0"
+    json-bigint "^0.1.4"
+    minimist "^1.1.1"
+    rc "^1.0.0"
 
 dont-sniff-mimetype@1.1.0:
   version "1.1.0"
@@ -5651,6 +5679,13 @@ jsesc@^2.5.1:
   resolved "https://registry.yarnpkg.com/jsesc/-/jsesc-2.5.2.tgz#80564d2e483dacf6e8ef209650a67df3f0c283a4"
   integrity sha512-OYu7XEzjkCQ3C5Ps3QIZsQfNpqoJyZZA99wd9aWd05NCtC5pWOkShK2mkL6HXQR6/Cy2lbNdPlZBpuQHXE63gA==
 
+json-bigint@^0.1.4:
+  version "0.1.4"
+  resolved "https://registry.yarnpkg.com/json-bigint/-/json-bigint-0.1.4.tgz#b5d40b8a9009e92f157f7c079db097001830e01e"
+  integrity sha1-tdQLipAJ6S8Vf3wHnbCXABgw4B4=
+  dependencies:
+    bignumber.js "~1.1.1"
+
 json-bigint@^0.3.0:
   version "0.3.0"
   resolved "https://registry.yarnpkg.com/json-bigint/-/json-bigint-0.3.0.tgz#0ccd912c4b8270d05f056fbd13814b53d3825b1e"
@@ -6707,6 +6742,11 @@ minimist@1.2.0, minimist@^1.2.0:
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.0.tgz#a35008b20f41383eec1fb914f4cd5df79a264284"
   integrity sha1-o1AIsg9BOD7sH7kU9M1d95omQoQ=
+
+minimist@^1.1.1:
+  version "1.2.5"
+  resolved "https://registry.yarnpkg.com/minimist/-/minimist-1.2.5.tgz#67d66014b66a6a8aaa0c083c5fd58df4e4e97602"
+  integrity sha512-FM9nNUYrRBAELZQT3xeZQ7fmMOBg6nWNmJKTcgsJeaLstP/UODVpGsr5OhXhhXg6f+qtJ8uiZ+PUxkDWcgIXLw==
 
 minimist@~0.0.1, minimist@~0.0.7:
   version "0.0.10"
@@ -8359,7 +8399,7 @@ rc@^0.6.0:
     minimist "~0.0.7"
     strip-json-comments "0.1.x"
 
-rc@^1.0.1, rc@^1.1.6, rc@^1.2.8:
+rc@^1.0.0, rc@^1.0.1, rc@^1.1.6, rc@^1.2.8:
   version "1.2.8"
   resolved "https://registry.yarnpkg.com/rc/-/rc-1.2.8.tgz#cd924bf5200a075b83c188cd6b9e211b7fc0d3ed"
   integrity sha512-y3bGgqKj3QBdxLbLkomlohkvsA8gdAiUQlSBJnBhfn+BPxg4bc62d8TcBW15wavDfgexCgccckhcZvywyQYPOw==
