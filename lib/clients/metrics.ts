@@ -3,14 +3,20 @@ import { BufferedMetricsLogger } from 'datadog-metrics';
 
 import { Config } from '@/types';
 
-const Metrics = (config: Config) => {
-  return new BufferedMetricsLogger({
-    apiKey: secretsProvider.get('DATADOG_API_KEY'),
-    prefix: `vf-server.${config.NODE_ENV}`,
-    flushIntervalSeconds: 5,
-  });
-};
+class Metrics {
+  private client: BufferedMetricsLogger;
 
-export type MetricsType = BufferedMetricsLogger;
+  constructor(config: Config) {
+    this.client = new BufferedMetricsLogger({
+      apiKey: secretsProvider.get('DATADOG_API_KEY'),
+      prefix: `vf-server.${config.NODE_ENV}`,
+      flushIntervalSeconds: 5,
+    });
+  }
+
+  invocation() {
+    this.client.increment('google.invocation');
+  }
+}
 
 export default Metrics;

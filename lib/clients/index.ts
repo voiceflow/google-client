@@ -7,7 +7,7 @@ import uuid4 from 'uuid/v4';
 import { Config } from '@/types';
 
 import Dynamo from './dynamo';
-import Metrics, { MetricsType } from './metrics';
+import Metrics from './metrics';
 import Static from './static';
 
 export interface ClientMap {
@@ -16,7 +16,7 @@ export interface ClientMap {
   WebhookClient: WebhookClientConstructor;
   uuid4: typeof uuid4;
   randomstring: typeof randomstring;
-  metrics: MetricsType;
+  metrics: Metrics;
 }
 
 /**
@@ -26,7 +26,7 @@ const buildClients = (config: Config) => {
   const clients = { ...Static } as ClientMap;
 
   clients.docClient = Dynamo(config);
-  clients.metrics = Metrics(config);
+  clients.metrics = new Metrics(config);
 
   return clients;
 };

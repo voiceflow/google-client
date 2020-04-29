@@ -8,7 +8,7 @@ class GoogleManager extends AbstractManager<{ handler: Handler }> {
   async handleRequest(request: Request, response: Response) {
     const { WebhookClient, handler, metrics } = this.services;
 
-    metrics.increment('google.invocation');
+    metrics.invocation();
 
     request.body.versionID = request.params.versionID;
 
