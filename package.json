@@ -12,7 +12,6 @@
     }
   },
   "dependencies": {
-    "@types/bluebird": "^3.5.29",
     "@voiceflow/backend-utils": "2.0.0",
     "@voiceflow/client": "^1.6.0",
     "@voiceflow/common": "^6.2.0",
@@ -53,6 +52,7 @@
     "@commitlint/config-conventional": "^8.2.0",
     "@istanbuljs/nyc-config-typescript": "^1.0.1",
     "@types/actions-on-google": "^2.0.1",
+    "@types/bluebird": "^3.5.29",
     "@types/bunyan-prettystream": "^0.1.31",
     "@types/chai": "^4.2.7",
     "@types/chai-as-promised": "^7.1.2",
@@ -116,20 +116,20 @@
   "homepage": "https://github.com/voiceflow/google#readme",
   "husky": {
     "hooks": {
-      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-commit": "lint-staged",
+      "commit-msg": "commitlint -E HUSKY_GIT_PARAMS",
       "pre-push": "git-branch-check"
     }
   },
   "license": "ISC",
   "lint-staged": {
-    "package.json": [
-      "fixpack",
-      "git add"
-    ],
     "**/*.{js,ts}": [
       "eslint --fix",
       "prettier-eslint --write",
+      "git add"
+    ],
+    "package.json": [
+      "fixpack",
       "git add"
     ]
   },
