@@ -27,9 +27,26 @@ class StateManager extends AbstractManager {
     // process.exit(0);
 
     return {
-      stack: [],
+      stack: state.diagrams?.reduce((acc: any, d: any, index: any) => {
+        const frame = {
+          blockID: d.line,
+          variables: {}, // todo: d.variable_state
+          storage: {},
+          diagramID: d.id,
+          commands: d.commands,
+        };
+
+        if (index === state.diagrams.length - 1) {
+          frame.blockID = state.line_id;
+          frame.storage = { ...frame.storage, outputMap: [], speak: state.output };
+        }
+
+        acc.push(frame);
+
+        return acc;
+      }, []),
       storage: {
-        output: state.lastOutput,
+        output: state.output,
         sessions: state.sessions,
         locale: state.locale,
         user: state.user,
