@@ -51,7 +51,7 @@ class StateManager extends AbstractManager {
         repeat: state.repeat,
         locale: state.locale,
         user: state.user,
-        // randoms:
+        randoms: state.randoms,
       },
       variables: {
         // everything in variables
