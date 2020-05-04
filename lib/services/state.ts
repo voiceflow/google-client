@@ -27,18 +27,31 @@ class StateManager extends AbstractManager {
     // process.exit(0);
 
     return {
-      stack: state.diagrams?.reduce((acc: any, d: any, index: any) => {
+      stack: state.diagrams?.reduce((acc: any[], d: any, index: any) => {
         const frame = {
           blockID: d.line,
-          variables: {}, // todo: d.variable_state
-          storage: {},
           diagramID: d.id,
-          commands: d.commands,
+          variables: d.variable_state,
+          storage: {
+            ...(state.diagrams[index - 1]?.output_map && { outputMap: state.diagrams[index - 1]?.output_map }),
+          },
+          commands: Object.keys(d.commands).reduce((commandsAcc: any[], key) => {
+            const oldCommand = d.commands[key];
+            const command = {
+              diagram_id: oldCommand.diagram_id,
+              mappings: oldCommand.mappings, // todo: check format
+              end: oldCommand.end, // todo: what is this?
+              intent: key,
+            };
+            commandsAcc.push(command);
+
+            return commandsAcc;
+          }, [] as any),
         };
 
         if (index === state.diagrams.length - 1) {
           frame.blockID = state.line_id;
-          frame.storage = { ...frame.storage, outputMap: [], speak: state.output };
+          frame.storage = { ...frame.storage, /* outputMap: [], */ speak: state.output };
         }
 
         acc.push(frame);
@@ -51,14 +64,14 @@ class StateManager extends AbstractManager {
         repeat: state.repeat,
         locale: state.locale,
         user: state.user,
-        randoms: state.randoms,
+        ...(state.randoms && { randoms: state.randoms }), // conditionally add randoms
       },
       variables: {
         // everything in variables
         ...state.globals[0],
         // filter out not needed keys in vf specific variables
         voiceflow: Object.keys(state.globals[0].voiceflow).reduce((acc: Record<string, any>, key: string) => {
-          if (['event'].includes(key)) {
+          if (['events'].includes(key)) {
             acc[key] = state.globals[0].voiceflow[key];
           }
 
