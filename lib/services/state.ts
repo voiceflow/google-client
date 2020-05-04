@@ -48,19 +48,22 @@ class StateManager extends AbstractManager {
       storage: {
         output: state.output,
         sessions: state.sessions,
+        repeat: state.repeat,
         locale: state.locale,
         user: state.user,
-        repeat: state.repeat,
+        // randoms:
       },
       variables: {
-        sessions: state.globals[0].sessions,
-        voiceflow: {
-          events: state.globals[0].voiceflow.events,
-        },
-        locale: state.globals[0].locale,
-        user_id: state.globals[0].user_id,
-        platform: state.globals[0].platform,
-        timestamp: state.globals[0].timestamp,
+        // everything in variables
+        ...state.globals[0],
+        // filter out not needed keys in vf specific variables
+        voiceflow: Object.keys(state.globals[0].voiceflow).reduce((acc: Record<string, any>, key: string) => {
+          if (['event'].includes(key)) {
+            acc[key] = state.globals[0].voiceflow[key];
+          }
+
+          return acc;
+        }, {}),
       },
     };
   }
