@@ -22,25 +22,26 @@ class StateManager extends AbstractManager {
 
   async contextAdapter(state: Record<any, any>) {
     // eslint-disable-next-line no-console
-    console.log('CONTEXT ADAPTER', state);
+    // console.log('CONTEXT ADAPTER', state);
     // eslint-disable-next-line no-process-exit
     // process.exit(0);
 
     return {
       stack: state.diagrams?.reduce((acc: any[], d: any, index: any) => {
         const frame = {
-          blockID: d.line,
+          blockID: d.line === false ? null : d.line,
           diagramID: d.id,
           variables: d.variable_state,
           storage: {
+            // output map is stored in previous frame in old server
             ...(state.diagrams[index - 1]?.output_map && { outputMap: state.diagrams[index - 1]?.output_map }),
-          },
+          } as any,
           commands: Object.keys(d.commands).reduce((commandsAcc: any[], key) => {
             const oldCommand = d.commands[key];
             const command = {
               diagram_id: oldCommand.diagram_id,
-              mappings: oldCommand.mappings, // todo: check format
-              end: oldCommand.end, // todo: what is this?
+              mappings: oldCommand.mappings,
+              end: oldCommand.end,
               intent: key,
             };
             commandsAcc.push(command);
@@ -51,7 +52,8 @@ class StateManager extends AbstractManager {
 
         if (index === state.diagrams.length - 1) {
           frame.blockID = state.line_id;
-          frame.storage = { ...frame.storage, /* outputMap: [], */ speak: state.output };
+          // speak for each frame is the output they produced. we dont keep track of this in old server
+          // frame.storage = { ...frame.storage, /* outputMap: [], */ speak: state.output };
         }
 
         acc.push(frame);
@@ -107,7 +109,7 @@ class StateManager extends AbstractManager {
     }
 
     // eslint-disable-next-line no-console
-    console.log('rawContext', rawContext);
+    // console.log('rawContext', rawContext);
 
     return rawContext;
   }
