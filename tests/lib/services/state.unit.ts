@@ -54,21 +54,25 @@ describe('stateManager unit tests', async () => {
       expect(services.docClient.get.callCount).to.eql(0);
     });
 
-    it('no state in item', async () => {
+    it('attributes in item', async () => {
+      const attributes = { foo: 'bar' };
+      const newContext = { foo1: 'bar1' };
       const config = {
         SESSIONS_DYNAMO_TABLE: 'session-table',
       };
       const services = {
         docClient: {
-          get: sinon.stub().returns({ promise: sinon.stub().returns({ Item: {} }) }),
+          get: sinon.stub().returns({ promise: sinon.stub().returns({ Item: { attributes } }) }),
         },
+        adapter: { context: sinon.stub().returns(newContext) },
       };
       const stateManager = new StateManager(services as any, config as any);
 
       const userId = '1';
 
-      expect(await stateManager.getFromDb(userId as any)).to.eql({});
+      expect(await stateManager.getFromDb(userId as any)).to.eql(newContext);
       expect(services.docClient.get.callCount).to.eql(1);
+      expect(services.adapter.context.args).to.eql([[attributes]]);
     });
 
     it('no item', async () => {

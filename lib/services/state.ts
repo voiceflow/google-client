@@ -37,14 +37,7 @@ class StateManager extends AbstractManager {
 
     const data = await docClient.get(params).promise();
 
-    let rawContext: Record<string, any>;
-    if (data.Item) {
-      rawContext = data.Item.state ? data.Item.state : await adapter.context(data.Item.attributes);
-    } else {
-      rawContext = {};
-    }
-
-    return rawContext;
+    return data.Item?.state ?? (data.Item?.attributes ? adapter.context(data.Item.attributes) : {});
   }
 }
 
