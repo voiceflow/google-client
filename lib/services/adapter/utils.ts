@@ -4,10 +4,11 @@ export const commandAdapter = (oldCommands: OldCommands): Commands =>
   Object.keys(oldCommands).reduce((commandsAcc, key) => {
     const oldCommand = oldCommands[key];
     const command = {
-      diagram_id: oldCommand.diagram_id,
       mappings: oldCommand.mappings,
-      end: oldCommand.end,
       intent: key,
+      ...(oldCommand.diagram_id && { diagram_id: oldCommand.diagram_id }), // command
+      ...(oldCommand.end !== undefined && { end: oldCommand.end }), // command
+      ...(oldCommand.next && { next: oldCommand.next }), // intent
     };
     commandsAcc.push(command);
 
@@ -31,6 +32,8 @@ export const stackAdapter = (oldContext: OldContextRaw): NewContextStack =>
     // blockID for top of the stack frame is kept in line_id in old context
     if (index === oldContext.diagrams.length - 1) {
       frame.blockID = oldContext.line_id;
+      // old server only keeps what the last diagram spoke
+      if (oldContext.last_speak) frame.storage.speak = oldContext.last_speak;
     }
 
     acc.push(frame);

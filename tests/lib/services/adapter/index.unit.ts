@@ -5,6 +5,7 @@ import AdapterManager from '@/lib/services/adapter';
 
 import {
   newCommands,
+  newExit,
   newFramesVariables,
   newMalformed,
   newMissing,
@@ -12,6 +13,7 @@ import {
   newRandoms,
   oldCommands,
   oldDiagramsVariables,
+  oldExit,
   oldMalformed,
   oldMissing,
   oldOutputMap,
@@ -29,6 +31,7 @@ describe('adapterManager unit tests', async () => {
       { text: 'outputmap', old: oldOutputMap, new: newOutputMap },
       { text: 'local variables', old: oldDiagramsVariables, new: newFramesVariables },
       { text: 'commands', old: oldCommands, new: newCommands },
+      { text: 'resume after exiting', old: oldExit, new: newExit },
     ];
 
     tests.forEach((test) => {
