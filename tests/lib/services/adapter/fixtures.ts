@@ -477,7 +477,6 @@ export const newFramesVariables = {
 
 // context containing commands
 export const oldCommands = {
-  last_speak: 'say smth',
   sessions: 1,
   reprompt: 0,
   globals: [
@@ -570,9 +569,7 @@ export const newCommands = {
     {
       blockID: 'ck9u1k6hj000s3h5sy6fa2z3b',
       variables: {},
-      storage: {
-        speak: 'say smth',
-      },
+      storage: {},
       diagramID: '0umP0s4TF7v00ueZy9R8EFiPPqxOWyCO',
       commands: [
         {
@@ -631,24 +628,25 @@ export const oldExit = {
         capabilities: {
           list: [
             {
-              name: 'actions.capability.AUDIO_OUTPUT',
-            },
-            {
               name: 'actions.capability.MEDIA_RESPONSE_AUDIO',
             },
             {
-              name: 'actions.capability.SCREEN_OUTPUT',
+              name: 'actions.capability.AUDIO_OUTPUT',
             },
             {
               name: 'actions.capability.ACCOUNT_LINKING',
             },
+            {
+              name: 'actions.capability.SCREEN_OUTPUT',
+            },
           ],
         },
       },
+      citySlot: 0,
       locale: 'en-US',
-      age: 16,
+      age: 18,
       platform: 'google',
-      timestamp: 1588780252,
+      timestamp: 1588793982,
     },
   ],
   transformed_input: null,
@@ -658,10 +656,15 @@ export const oldExit = {
       commands: {
         travel_intent: {
           next: 'ck9viadwg001l3h5spc9irn8s',
-          mappings: [],
+          mappings: [
+            {
+              variable: 'citySlot',
+              slot: 'citySlot',
+            },
+          ],
         },
       },
-      id: 'EOVlzo41zxblFiYYTpFECgjpad8Mq52g',
+      id: 'aH2arEqONjAij7JwN9014xri7Neg26iC',
     },
   ],
   enteringNewDiagram: false,
@@ -672,27 +675,27 @@ export const oldExit = {
   output: 'Where are you from?',
   repeat: 100,
   customer_info: {},
-  skill_id: 27,
+  skill_id: 28,
   end: false,
   alexa_permissions: [],
   supported_interfaces: {
     list: [
       {
-        name: 'actions.capability.AUDIO_OUTPUT',
-      },
-      {
         name: 'actions.capability.MEDIA_RESPONSE_AUDIO',
       },
       {
-        name: 'actions.capability.SCREEN_OUTPUT',
+        name: 'actions.capability.AUDIO_OUTPUT',
       },
       {
         name: 'actions.capability.ACCOUNT_LINKING',
       },
+      {
+        name: 'actions.capability.SCREEN_OUTPUT',
+      },
     ],
   },
   user: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
-  timestamp: 1588780248243,
+  timestamp: 1588793943118,
 };
 
 export const newExit = {
@@ -703,12 +706,17 @@ export const newExit = {
       storage: {
         speak: 'Where are you from?',
       },
-      diagramID: 'EOVlzo41zxblFiYYTpFECgjpad8Mq52g',
+      diagramID: 'aH2arEqONjAij7JwN9014xri7Neg26iC',
       commands: [
         {
           next: 'ck9viadwg001l3h5spc9irn8s',
           intent: 'travel_intent',
-          mappings: [],
+          mappings: [
+            {
+              variable: 'citySlot',
+              slot: 'citySlot',
+            },
+          ],
         },
       ],
     },
@@ -721,8 +729,9 @@ export const newExit = {
     locale: 'en-US',
     user_id: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
     platform: 'google',
-    timestamp: 1588780252,
-    age: 16,
+    timestamp: 1588793982,
+    age: 18,
+    citySlot: 0,
     country: 0,
   },
   storage: {
