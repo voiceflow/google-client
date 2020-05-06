@@ -1,8 +1,16 @@
-export type OldCommands = { [key: string]: { diagram_id: string; mappings: Array<{ variable: string; slot: string }>; end: boolean } };
+export type OldCommands = {
+  [key: string]: {
+    mappings: Array<{ variable: string; slot: string }>; // TODO: check this for intent
+    diagram_id: string; // when command
+    end: boolean; // when command
+    next: string; // when intent
+  };
+};
 
 export type OldContextRaw = {
   line_id: string;
   output: string;
+  last_speak?: string;
   sessions: number;
   repeat: number;
   locale: string;
@@ -23,7 +31,13 @@ export type OldContextRaw = {
   }>;
 };
 
-export type Command = { diagram_id: string; mappings: Array<{ variable: string; slot: string }>; end: boolean; intent: string };
+export type Command = {
+  diagram_id?: string; // when command
+  next?: string; // when intent
+  mappings: Array<{ variable: string; slot: string }>;
+  end?: boolean; // when command
+  intent: string;
+};
 export type Commands = Array<Command>;
 
 export type Frame = {

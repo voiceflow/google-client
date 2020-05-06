@@ -300,7 +300,7 @@ export const newOutputMap = {
       },
       storage: {
         outputMap: [['homeCounter', 'secondCounter']],
-        // speak: 'in second flow. say smth to continue',
+        speak: 'in second flow. say smth to continue',
       },
       diagramID: '0Sf0IVfecjYPJgcuWJpiTmdkjW29Yd8r',
       commands: [],
@@ -450,8 +450,7 @@ export const newFramesVariables = {
       },
       storage: {
         outputMap: [['secondCounter', 'thirdCounter']],
-        // speak: 'say smth',
-        // speak: 'home flowsecond flowthird flowsay smth',
+        speak: 'say smth',
       },
       diagramID: 'BU0pizWMFXVFqmHt0cYGVp7hhqnKeH80',
       commands: [],
@@ -572,7 +571,7 @@ export const newCommands = {
       blockID: 'ck9u1k6hj000s3h5sy6fa2z3b',
       variables: {},
       storage: {
-        // speak: 'say smth',
+        speak: 'say smth',
       },
       diagramID: '0umP0s4TF7v00ueZy9R8EFiPPqxOWyCO',
       commands: [
@@ -609,6 +608,125 @@ export const newCommands = {
   },
   storage: {
     output: 'say smth',
+    sessions: 1,
+    locale: 'en-US',
+    user: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
+    repeat: 100,
+  },
+};
+
+// resume after exiting
+export const oldExit = {
+  last_speak: 'Where are you from?',
+  sessions: 1,
+  reprompt: 0,
+  globals: [
+    {
+      country: 0,
+      sessions: 1,
+      user_id: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
+      voiceflow: {
+        permissions: [],
+        events: [],
+        capabilities: {
+          list: [
+            {
+              name: 'actions.capability.AUDIO_OUTPUT',
+            },
+            {
+              name: 'actions.capability.MEDIA_RESPONSE_AUDIO',
+            },
+            {
+              name: 'actions.capability.SCREEN_OUTPUT',
+            },
+            {
+              name: 'actions.capability.ACCOUNT_LINKING',
+            },
+          ],
+        },
+      },
+      locale: 'en-US',
+      age: 16,
+      platform: 'google',
+      timestamp: 1588780252,
+    },
+  ],
+  transformed_input: null,
+  diagrams: [
+    {
+      variable_state: {},
+      commands: {
+        travel_intent: {
+          next: 'ck9viadwg001l3h5spc9irn8s',
+          mappings: [],
+        },
+      },
+      id: 'EOVlzo41zxblFiYYTpFECgjpad8Mq52g',
+    },
+  ],
+  enteringNewDiagram: false,
+  locale: 'en-US',
+  line_id: 'ck9vic27h00483h5sp53j41dj',
+  platform: 'google',
+  lastOutput: 'How old are you?',
+  output: 'Where are you from?',
+  repeat: 100,
+  customer_info: {},
+  skill_id: 27,
+  end: false,
+  alexa_permissions: [],
+  supported_interfaces: {
+    list: [
+      {
+        name: 'actions.capability.AUDIO_OUTPUT',
+      },
+      {
+        name: 'actions.capability.MEDIA_RESPONSE_AUDIO',
+      },
+      {
+        name: 'actions.capability.SCREEN_OUTPUT',
+      },
+      {
+        name: 'actions.capability.ACCOUNT_LINKING',
+      },
+    ],
+  },
+  user: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
+  timestamp: 1588780248243,
+};
+
+export const newExit = {
+  stack: [
+    {
+      blockID: 'ck9vic27h00483h5sp53j41dj',
+      variables: {},
+      storage: {
+        speak: 'Where are you from?',
+      },
+      diagramID: 'EOVlzo41zxblFiYYTpFECgjpad8Mq52g',
+      commands: [
+        {
+          next: 'ck9viadwg001l3h5spc9irn8s',
+          intent: 'travel_intent',
+          mappings: [],
+        },
+      ],
+    },
+  ],
+  variables: {
+    sessions: 1,
+    voiceflow: {
+      events: [],
+    },
+    locale: 'en-US',
+    user_id: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
+    platform: 'google',
+    timestamp: 1588780252,
+    age: 16,
+    country: 0,
+  },
+  storage: {
+    output: 'Where are you from?',
     sessions: 1,
     locale: 'en-US',
     user: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
