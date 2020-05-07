@@ -1,6 +1,6 @@
 export type OldCommands = {
   [key: string]: {
-    mappings: Array<{ variable: string; slot: string }>; // TODO: check this for intent
+    mappings: Array<{ variable: string; slot: string }>;
     diagram_id: string; // when command
     end: boolean; // when command
     next: string; // when intent
