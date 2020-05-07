@@ -87,7 +87,24 @@ export const newRandoms = {
   variables: {
     sessions: 1,
     voiceflow: {
+      permissions: [],
       events: [],
+      capabilities: {
+        list: [
+          {
+            name: 'actions.capability.MEDIA_RESPONSE_AUDIO',
+          },
+          {
+            name: 'actions.capability.AUDIO_OUTPUT',
+          },
+          {
+            name: 'actions.capability.ACCOUNT_LINKING',
+          },
+          {
+            name: 'actions.capability.SCREEN_OUTPUT',
+          },
+        ],
+      },
     },
     locale: 'en-US',
     user_id: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
@@ -220,12 +237,10 @@ export const oldOutputMap = {
         stop: {
           diagram_id: 'XNZy6PvjhttVIxbQCGMgzbeVQYxtqkzv',
           mappings: [],
-          end: false,
         },
         help: {
           diagram_id: 'SK1f5m6RvqueRYuJHpmYaTgFWoXgcx92',
           mappings: [],
-          end: false,
         },
       },
       line: 'ck9so2dv000dc3h5scpdwu8pb',
@@ -282,13 +297,11 @@ export const newOutputMap = {
         {
           diagram_id: 'XNZy6PvjhttVIxbQCGMgzbeVQYxtqkzv',
           mappings: [],
-          end: false,
           intent: 'stop',
         },
         {
           diagram_id: 'SK1f5m6RvqueRYuJHpmYaTgFWoXgcx92',
           mappings: [],
-          end: false,
           intent: 'help',
         },
       ],
@@ -309,7 +322,24 @@ export const newOutputMap = {
   variables: {
     sessions: 1,
     voiceflow: {
+      permissions: [],
       events: [],
+      capabilities: {
+        list: [
+          {
+            name: 'actions.capability.AUDIO_OUTPUT',
+          },
+          {
+            name: 'actions.capability.MEDIA_RESPONSE_AUDIO',
+          },
+          {
+            name: 'actions.capability.SCREEN_OUTPUT',
+          },
+          {
+            name: 'actions.capability.ACCOUNT_LINKING',
+          },
+        ],
+      },
     },
     locale: 'en-US',
     user_id: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
@@ -459,7 +489,24 @@ export const newFramesVariables = {
   variables: {
     sessions: 1,
     voiceflow: {
+      permissions: [],
       events: [],
+      capabilities: {
+        list: [
+          {
+            name: 'actions.capability.MEDIA_RESPONSE_AUDIO',
+          },
+          {
+            name: 'actions.capability.AUDIO_OUTPUT',
+          },
+          {
+            name: 'actions.capability.ACCOUNT_LINKING',
+          },
+          {
+            name: 'actions.capability.SCREEN_OUTPUT',
+          },
+        ],
+      },
     },
     locale: 'en-US',
     user_id: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
@@ -522,12 +569,10 @@ export const oldCommands = {
               slot: 'numberSlot',
             },
           ],
-          end: false,
         },
         help: {
           diagram_id: 'vYaNNmof4rINFUUuso9qWCTPbyTkIuo2',
           mappings: [],
-          end: false,
         },
       },
       id: '0umP0s4TF7v00ueZy9R8EFiPPqxOWyCO',
@@ -580,13 +625,11 @@ export const newCommands = {
               slot: 'numberSlot',
             },
           ],
-          end: false,
           intent: 'stop',
         },
         {
           diagram_id: 'vYaNNmof4rINFUUuso9qWCTPbyTkIuo2',
           mappings: [],
-          end: false,
           intent: 'help',
         },
       ],
@@ -594,12 +637,29 @@ export const newCommands = {
   ],
   variables: {
     sessions: 1,
-    voiceflow: {
-      events: [],
-    },
-    locale: 'en-US',
     user_id: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
     numberSlot: 0,
+    voiceflow: {
+      permissions: [],
+      events: [],
+      capabilities: {
+        list: [
+          {
+            name: 'actions.capability.ACCOUNT_LINKING',
+          },
+          {
+            name: 'actions.capability.SCREEN_OUTPUT',
+          },
+          {
+            name: 'actions.capability.MEDIA_RESPONSE_AUDIO',
+          },
+          {
+            name: 'actions.capability.AUDIO_OUTPUT',
+          },
+        ],
+      },
+    },
+    locale: 'en-US',
     platform: 'google',
     timestamp: 1588691586,
   },
@@ -722,17 +782,34 @@ export const newExit = {
     },
   ],
   variables: {
+    country: 0,
     sessions: 1,
-    voiceflow: {
-      events: [],
-    },
-    locale: 'en-US',
     user_id: 'f1ad99de-d11d-4bda-aa39-0bfeccf218c2',
+    voiceflow: {
+      permissions: [],
+      events: [],
+      capabilities: {
+        list: [
+          {
+            name: 'actions.capability.MEDIA_RESPONSE_AUDIO',
+          },
+          {
+            name: 'actions.capability.AUDIO_OUTPUT',
+          },
+          {
+            name: 'actions.capability.ACCOUNT_LINKING',
+          },
+          {
+            name: 'actions.capability.SCREEN_OUTPUT',
+          },
+        ],
+      },
+    },
+    citySlot: 0,
+    locale: 'en-US',
+    age: 18,
     platform: 'google',
     timestamp: 1588793982,
-    age: 18,
-    citySlot: 0,
-    country: 0,
   },
   storage: {
     output: 'Where are you from?',
