@@ -57,6 +57,7 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
       // hidden system variables (code block only)
       [InitializeManager.VAR_VF]: {
         // TODO: implement all exposed voiceflow variables
+        capabilities: conv.surface.capabilities,
         events: [],
       },
     });

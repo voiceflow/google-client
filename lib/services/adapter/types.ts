@@ -28,6 +28,7 @@ export type OldContextRaw = {
     variable_state: Record<string, any>;
     output_map?: Array<[string, string]>;
     commands: OldCommands;
+    speak: string;
   }>;
 };
 
@@ -67,6 +68,7 @@ export type NewContextStorage = {
 export type NewVoiceflowVars = {
   [key: string]: any;
   events: any[];
+  capabilities?: string;
 };
 
 export type NewContextVariables = {
