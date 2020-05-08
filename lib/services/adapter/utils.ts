@@ -29,8 +29,8 @@ export const stackAdapter = (oldContext: OldContextRaw): NewContextStack =>
       commands: commandAdapter(d.commands),
     };
 
-    // blockID for top of the stack frame is kept in line_id in old context
     if (index === oldContext.diagrams.length - 1) {
+      // blockID for top of the stack frame is kept in line_id in old context
       frame.blockID = oldContext.line_id;
       // old server only keeps what the last diagram spoke
       if (oldContext.last_speak) frame.storage.speak = oldContext.last_speak;

@@ -575,6 +575,7 @@ export const oldCommands = {
           mappings: [],
         },
       },
+      speak: 'command speak',
       id: '0umP0s4TF7v00ueZy9R8EFiPPqxOWyCO',
     },
   ],
@@ -614,7 +615,10 @@ export const newCommands = {
     {
       blockID: 'ck9u1k6hj000s3h5sy6fa2z3b',
       variables: {},
-      storage: {},
+      storage: {
+        speak: 'command speak',
+        calledCommand: true,
+      },
       diagramID: '0umP0s4TF7v00ueZy9R8EFiPPqxOWyCO',
       commands: [
         {
