@@ -1,4 +1,5 @@
 import { Context, Store } from '@voiceflow/client';
+import _ from 'lodash';
 
 import { T } from '@/lib/constants';
 
@@ -22,6 +23,18 @@ export const regexVariables = (phrase: string, variables: Record<string, any>, m
 
   return phrase.replace(/\{([a-zA-Z0-9_]{1,32})\}/g, (match, inner) => _replacer(match, inner, variables, modifier));
 };
+
+// turn float variables to 2 decimal places
+export const sanitizeVariables = (variables: Record<string, any>) =>
+  Object.entries(variables).reduce<Record<string, any>>((acc, [key, value]) => {
+    if (_.isNumber(value) && !Number.isInteger(value)) {
+      acc[key] = value.toFixed(2);
+    } else {
+      acc[key] = value;
+    }
+
+    return acc;
+  }, {});
 
 export const formatName = (name: string): string => {
   if (!name) return name;
