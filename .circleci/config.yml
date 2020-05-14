@@ -86,14 +86,16 @@ jobs:
 
   build-push-image:
     executor: build-executor
+    environment:
+      IMAGE_TAG: "k8s-$CIRCLE_SHA1"
+      IMAGE_REPO: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
+      IMAGE_NAME: "$IMAGE_REPO:$IMAGE_TAG"
     steps:
       - checkout # special step to check out source code to working directory
       - setup_remote_docker
       - run:
           name: "Build docker image"
           command: |
-            IMAGE_TAG=k8s-$CIRCLE_SHA1
-            IMAGE_NAME="168387678261.dkr.ecr.us-east-1.amazonaws.com/google:$IMAGE_TAG"
             # Fix semantic versioning 
             if [ "$CIRCLE_BRANCH" == "master" ]; then
               npm config set unsafe-perm true # needed for npx to work
@@ -121,31 +123,34 @@ jobs:
           name: "Push docker images"
           command: |
             docker push $IMAGE_NAME
-            docker tag $IMAGE_NAME 168387678261.dkr.ecr.us-east-1.amazonaws.com/google:latest-$CIRCLE_BRANCH
-            docker push 168387678261.dkr.ecr.us-east-1.amazonaws.com/google:latest-$CIRCLE_BRANCH
-      - persist_to_workspace:
-          root: vars
-          paths:
-            - build_num
+            docker tag $IMAGE_NAME $IMAGE_REPO:latest-$CIRCLE_BRANCH
+            docker push $IMAGE_REPO:latest-$CIRCLE_BRANCH
 
   deploy-image:
     executor: build-executor
+    environment:
+      IMAGE_TAG: "k8s-$CIRCLE_SHA1"
+      IMAGE_REPO: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
+      IMAGE_NAME: "$IMAGE_REPO:$IMAGE_TAG"
     steps:
-      - attach_workspace:
-          at: /tmp/vf-build/vars
       - run:
           name: Update kubernetes image
           command: |
             aws eks --region us-east-1 update-kubeconfig --name development
-            BUILD_NUM=$(cat /tmp/vf-build/vars/build_num)
-            kubectl set image --namespace voiceflow-v1 deployment/google-$CIRCLE_BRANCH app=168387678261.dkr.ecr.us-east-1.amazonaws.com/google:k8s-$CIRCLE_SHA1
+            kubectl set image --namespace voiceflow-v1 deployment/google-$CIRCLE_BRANCH app=$IMAGE_NAME
             if [ "$CIRCLE_BRANCH" == "master" ]; then
               aws eks --region us-east-1 update-kubeconfig --name production
-              kubectl set image --namespace voiceflow-v1 deployment/google-production app=168387678261.dkr.ecr.us-east-1.amazonaws.com/google:k8s-$CIRCLE_SHA1
+              kubectl set image --namespace voiceflow-v1 deployment/google-production app=$IMAGE_NAME
             fi
 
   build-deploy-dev-env:
     executor: build-executor
+    environment:
+      IMAGE_TAG: "k8s-$CIRCLE_SHA1"
+      IMAGE_REPO: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
+      IMAGE_NAME: "$IMAGE_REPO:$IMAGE_TAG"
+      ENV_NAME: "$CIRCLE_BRANCH"
+      SEM_VER: "$CIRCLE_BRANCH-$CIRCLE_SHA1"
     steps:
       - checkout # special step to check out source code to working directory
       - setup_remote_docker # Need this to run DinD
@@ -155,10 +160,6 @@ jobs:
       - run:
           name: "Build dev environment image"
           command: |
-            SEM_VER=$CIRCLE_BRANCH-$CIRCLE_SHA1
-            IMAGE_TAG=k8s-$CIRCLE_SHA1
-            IMAGE_NAME="168387678261.dkr.ecr.us-east-1.amazonaws.com/google:$IMAGE_TAG"
-            ENV_NAME=$CIRCLE_BRANCH
             set +e
             DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect $IMAGE_NAME > /dev/null 2>&1
             SEARCH_IMAGE_RESULT=$?
@@ -200,7 +201,6 @@ workflows:
       - deploy-image:
           context: dev-test
           requires:
-            - test
             - build-push-image
           filters:
             branches:
