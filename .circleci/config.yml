@@ -160,7 +160,6 @@ jobs:
           command: |
             IMAGE_TAG="k8s-$CIRCLE_SHA1"
             IMAGE_NAME="$IMAGE_REPO:$IMAGE_TAG"
-            ENV_NAME=$CIRCLE_BRANCH
             SEM_VER="$CIRCLE_BRANCH-$CIRCLE_SHA1"
             set +e
             DOCKER_CLI_EXPERIMENTAL=enabled docker manifest inspect $IMAGE_NAME > /dev/null 2>&1
@@ -183,9 +182,10 @@ jobs:
           command: |
             IMAGE_TAG="k8s-$CIRCLE_SHA1"
             IMAGE_NAME="$IMAGE_REPO:$IMAGE_TAG"
-            ENV_NAME=$CIRCLE_BRANCH
+            ENV_NAME="${CIRCLE_BRANCH%%_*}"
             aws eks --region us-east-1 update-kubeconfig --name development
             kubectl set image --namespace $ENV_NAME deployment/google app=$IMAGE_NAME
+          # TODO: change kubectl set image to use envcli!
 
   release:
     executor: default-executor
