@@ -24,7 +24,7 @@ describe('responseManager unit tests', async () => {
         },
       };
 
-      const contextManager = new ResponseManager(services as any, null as any);
+      const responseManager = new ResponseManager(services as any, null as any);
 
       const contextFinalState = { random: 'context' };
       const output = '';
@@ -43,7 +43,11 @@ describe('responseManager unit tests', async () => {
         },
         turn: {
           set: sinon.stub(),
-          get: sinon.stub().returns(false),
+          get: sinon
+            .stub()
+            .onFirstCall()
+            .returns(false)
+            .returns(null),
         },
       };
 
@@ -59,7 +63,7 @@ describe('responseManager unit tests', async () => {
         ask: sinon.stub(),
       };
 
-      await contextManager.build(context as any, agent as any, conv as any);
+      await responseManager.build(context as any, agent as any, conv as any);
 
       expect(context.stack.isEmpty.callCount).to.eql(1);
       expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.OUTPUT], [S.OUTPUT], [S.USER]]);
@@ -78,6 +82,65 @@ describe('responseManager unit tests', async () => {
       expect(agent.add.args[0][0].user.storage.forceUpdateToken).to.deep.eq(updateToken);
     });
 
+    it('with reprompt', async () => {
+      const response = { foo: 'bar' };
+      const updateToken = 'update-token';
+      const reprompt = 'REPROMPT';
+      const responseHandler1 = sinon.stub();
+      const responseHandler2 = sinon.stub();
+
+      const services = {
+        state: { saveToDb: sinon.stub() },
+        randomstring: { generate: sinon.stub().returns(updateToken) },
+        utils: {
+          responseHandlers: [responseHandler1, responseHandler2],
+          SimpleResponse: sinon.stub().returns(response),
+        },
+      };
+
+      const responseManager = new ResponseManager(services as any, null as any);
+
+      const contextFinalState = { random: 'context' };
+      const output = '';
+      const userId = 'user-id';
+      const storageGet = sinon.stub();
+      storageGet.withArgs(S.OUTPUT).returns(output);
+      storageGet.withArgs(S.USER).returns(userId);
+
+      const context = {
+        getFinalState: sinon.stub().returns(contextFinalState),
+        stack: {
+          isEmpty: sinon.stub().returns(false),
+        },
+        storage: {
+          get: storageGet,
+        },
+        turn: {
+          set: sinon.stub(),
+          get: sinon
+            .stub()
+            .onFirstCall()
+            .returns(false)
+            .returns(reprompt),
+        },
+      };
+
+      const agent = {
+        add: sinon.stub(),
+      };
+
+      const conv = {
+        user: {
+          storage: { forceUpdateToken: '' },
+        },
+        ask: sinon.stub(),
+      };
+
+      await responseManager.build(context as any, agent as any, conv as any);
+
+      expect(_.get(conv, 'noInputs')).to.eql([reprompt]);
+    });
+
     it('empty stack', async () => {
       const response = { foo: 'bar' };
       const updateToken = 'update-token';
@@ -93,7 +156,7 @@ describe('responseManager unit tests', async () => {
         },
       };
 
-      const contextManager = new ResponseManager(services as any, null as any);
+      const responseManager = new ResponseManager(services as any, null as any);
 
       const contextFinalState = { random: 'context' };
       const output = 'random output';
@@ -128,7 +191,7 @@ describe('responseManager unit tests', async () => {
         ask: sinon.stub(),
       };
 
-      await contextManager.build(context as any, agent as any, conv as any);
+      await responseManager.build(context as any, agent as any, conv as any);
 
       expect(context.stack.isEmpty.callCount).to.eql(1);
       expect(context.turn.set.args[0]).to.eql([T.END, true]);
