@@ -41,7 +41,7 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       conv.close(response);
     } else {
       conv.ask(response);
-      conv.noInputs = [storage.get(S.OUTPUT)];
+      conv.noInputs = [turn.get(T.REPROMPT) ?? storage.get(S.OUTPUT)];
     }
 
     // eslint-disable-next-line no-restricted-syntax
