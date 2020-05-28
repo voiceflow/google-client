@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { S, T, V } from '@/lib/constants';
+import { S, T } from '@/lib/constants';
 import ContextManager from '@/lib/services/google/request/lifecycle/context';
 
 describe('contextManager unit tests', async () => {
