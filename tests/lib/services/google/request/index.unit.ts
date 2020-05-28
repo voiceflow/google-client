@@ -1,12 +1,20 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { T } from '@/lib/constants';
+import { T, V } from '@/lib/constants';
 import HandlerManager from '@/lib/services/google/request';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
 describe('handlerManager unit tests', async () => {
-  afterEach(() => sinon.restore());
+  let clock: sinon.SinonFakeTimers;
+
+  beforeEach(() => {
+    clock = sinon.useFakeTimers(Date.now()); // fake Date.now
+  });
+  afterEach(() => {
+    clock.restore(); // restore Date.now
+    sinon.restore();
+  });
 
   describe('dialogflow', () => {
     it('no conv', async () => {
@@ -24,10 +32,14 @@ describe('handlerManager unit tests', async () => {
       expect(agent.conv.callCount).to.eql(1);
       expect(agent.add.callCount).to.eql(1);
     });
+
     it('main intent', async () => {
       const contextObj = {
         stack: {
           isEmpty: sinon.stub().returns(false),
+        },
+        variables: {
+          set: sinon.stub(),
         },
         update: sinon.stub(),
       };
@@ -71,13 +83,18 @@ describe('handlerManager unit tests', async () => {
       expect(agent.conv.callCount).to.eql(1);
       expect(services.context.build.args[0]).to.eql([convObj.body.versionID, convObj.user.storage.userId]);
       expect(services.initialize.build.args[0]).to.eql([contextObj, convObj]);
+      expect(contextObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(contextObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([contextObj, agent, convObj]);
     });
+
     it('default welcome intent', async () => {
       const contextObj = {
         stack: {
           isEmpty: sinon.stub().returns(false),
+        },
+        variables: {
+          set: sinon.stub(),
         },
         update: sinon.stub(),
       };
@@ -124,10 +141,14 @@ describe('handlerManager unit tests', async () => {
       expect(contextObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([contextObj, agent, convObj]);
     });
+
     it('stack empty', async () => {
       const contextObj = {
         stack: {
           isEmpty: sinon.stub().returns(true),
+        },
+        variables: {
+          set: sinon.stub(),
         },
         update: sinon.stub(),
       };
@@ -174,10 +195,14 @@ describe('handlerManager unit tests', async () => {
       expect(contextObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([contextObj, agent, convObj]);
     });
+
     it('existing session', async () => {
       const contextObj = {
         stack: {
           isEmpty: sinon.stub().returns(false),
+        },
+        variables: {
+          set: sinon.stub(),
         },
         update: sinon.stub(),
         turn: {

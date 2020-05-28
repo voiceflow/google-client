@@ -1,7 +1,7 @@
 import { WebhookClient } from 'dialogflow-fulfillment';
 import _ from 'lodash';
 
-import { T } from '@/lib/constants';
+import { T, V } from '@/lib/constants';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
 import { AbstractManager, injectServices } from '../../types';
@@ -43,6 +43,7 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; context: 
       });
     }
 
+    newContext.variables.set(V.TIMESTAMP, Math.floor(Date.now() / 1000));
     await newContext.update();
 
     await response.build(newContext, agent, conv);

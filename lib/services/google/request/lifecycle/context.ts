@@ -1,6 +1,6 @@
 import { Context, State } from '@voiceflow/client';
 
-import { S, T, V } from '@/lib/constants';
+import { S, T } from '@/lib/constants';
 
 import { AbstractManager } from '../../../types';
 
@@ -14,7 +14,6 @@ class ContextManager extends AbstractManager {
 
     context.turn.set(T.PREVIOUS_OUTPUT, context.storage.get(S.OUTPUT));
     context.storage.set(S.OUTPUT, '');
-    context.variables.set(V.TIMESTAMP, Math.floor(Date.now() / 1000));
 
     return context;
   }
