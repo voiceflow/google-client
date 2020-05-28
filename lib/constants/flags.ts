@@ -21,6 +21,10 @@ export enum Frame {
   CALLED_COMMAND = 'calledCommand',
 }
 
+export enum Variables {
+  TIMESTAMP = 'timestamp',
+}
+
 export default {
   Storage,
   Turn,
