@@ -20,6 +20,7 @@ type Interaction = {
   reprompt?: string;
   interactions: Choice[];
   chips?: string[];
+  randomize?: boolean;
 };
 
 const utilsObj = {

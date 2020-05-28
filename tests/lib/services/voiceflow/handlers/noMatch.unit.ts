@@ -77,5 +77,30 @@ describe('noMatch handler unit tests', () => {
       cb1(draft);
       expect(draft).to.eql({ [S.OUTPUT]: '' });
     });
+
+    it('with noMatch randomized', () => {
+      const block = {
+        blockID: 'block-id',
+        noMatches: ['A', 'B', 'C'],
+        randomize: true,
+      };
+      const context = {
+        storage: {
+          produce: sinon.stub(),
+          get: sinon.stub().returns(1),
+        },
+      };
+      const variables = {
+        getState: sinon.stub().returns({}),
+      };
+
+      const noMatchHandler = NoMatchHandler();
+      expect(noMatchHandler.handle(block as any, context as any, variables as any)).to.eql(block.blockID);
+
+      const cb2 = context.storage.produce.args[1][0];
+      const draft3 = { [S.OUTPUT]: '' };
+      cb2(draft3);
+      expect(block.noMatches.includes(draft3[S.OUTPUT])).to.eql(true);
+    });
   });
 });
