@@ -5,8 +5,6 @@ import { S, T } from '@/lib/constants';
 import ContextManager from '@/lib/services/google/request/lifecycle/context';
 
 describe('contextManager unit tests', async () => {
-  afterEach(() => sinon.restore());
-
   describe('build', () => {
     it('works', async () => {
       const outputString = 'output';
