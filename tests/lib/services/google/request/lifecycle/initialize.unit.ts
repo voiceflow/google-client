@@ -6,16 +6,6 @@ import { F, S } from '@/lib/constants';
 import InitializeManager from '@/lib/services/google/request/lifecycle/initialize';
 
 describe('initializeManager unit tests', async () => {
-  let clock: sinon.SinonFakeTimers;
-
-  beforeEach(() => {
-    clock = sinon.useFakeTimers(Date.now()); // fake Date.now
-  });
-  afterEach(() => {
-    clock.restore(); // restore Date.now
-    sinon.restore();
-  });
-
   describe('build', () => {
     const generateFakes = () => {
       const randomUserId = 'random-user-id';
@@ -122,7 +112,7 @@ describe('initializeManager unit tests', async () => {
       expect(context.storage.set.args[3]).to.eql([S.REPEAT, metaObj.repeat]);
       expect(context.variables.merge.args[0]).to.eql([
         {
-          timestamp: Math.floor(clock.now / 1000),
+          timestamp: 0,
           locale,
           user_id: userId,
           sessions: 1,
