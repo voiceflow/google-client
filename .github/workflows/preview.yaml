@@ -53,12 +53,12 @@ jobs:
           else
             echo "no env-related labels detected! No actions taken..."
           fi
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v2
-        env:
-          ENVCLI_API_KEY: ${{ secrets.ENVCLI_API_KEY }}
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v2
+      #   env:
+      #     ENVCLI_API_KEY: ${{ secrets.ENVCLI_API_KEY }}
+      #     AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+      #     AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
       # - name: curl env API to create new env
       #   run: |
       #     curl something TODO
