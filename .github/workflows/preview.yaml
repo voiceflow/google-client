@@ -37,6 +37,8 @@ jobs:
           curl -J -L -H "Accept: application/octet-stream" "$API_URL/releases/assets/$ASSET_ID" --output envcli.tar.gz
           tar -xf envcli.tar.gz
       - name: conditionals
+        env:
+          ENVCLI_API_KEY: $ {{ secrets.ENVCLI_API_KEY }}
         run: |
           if [[ "${{ steps.envNameLabel.outputs.label }}" == "" && "${{ steps.newEnvLabel.outputs.hasLabel }}" == "true" ]]; then
             echo "Creating new environment..."
@@ -44,7 +46,7 @@ jobs:
             echo "multiple env labels detected! No actions taken..."
           elif [[ "${{ steps.envNameLabel.outputs.multiple }}" == "false" && "${{ steps.envNameLabel.outputs.label }}" != "" ]]; then 
             echo "deploying to env ${{ steps.envNameLabel.outputs.label }}"
-            yarn preview:new ${{ steps.envNameLabel.outputs.label }}
+            ./envcli preview -n ${{ steps.envNameLabel.outputs.label }}
           else
             echo "no env-related labels detected! No actions taken..."
           fi
