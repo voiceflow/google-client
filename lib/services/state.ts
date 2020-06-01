@@ -21,7 +21,7 @@ class StateManager extends AbstractManager {
   }
 
   async getFromDb(userId: string) {
-    const { docClient } = this.services;
+    const { docClient, adapter } = this.services;
     const { SESSIONS_DYNAMO_TABLE } = this.config;
 
     if (!userId) {
@@ -37,7 +37,7 @@ class StateManager extends AbstractManager {
 
     const data = await docClient.get(params).promise();
 
-    return data.Item?.state ?? {};
+    return data.Item?.state ?? (data.Item?.attributes ? adapter.context(data.Item.attributes) : {});
   }
 }
 

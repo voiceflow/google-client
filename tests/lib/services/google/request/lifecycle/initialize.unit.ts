@@ -68,6 +68,9 @@ describe('initializeManager unit tests', async () => {
           locale: 'en',
           storage: {},
         },
+        surface: {
+          capabilities: 'c',
+        },
       };
 
       return {
@@ -119,6 +122,7 @@ describe('initializeManager unit tests', async () => {
           platform: 'google',
           [InitializeManager.VAR_VF]: {
             events: [],
+            capabilities: 'c',
           },
         },
       ]);
