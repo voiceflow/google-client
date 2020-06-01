@@ -1,5 +1,5 @@
-name: PR-label -> dev env
-# This workflow is triggered on pushes to the repository.
+name: PR-label -> preview dev env
+
 on:
   pull_request:
     types: [opened, synchronize, labeled, edited]

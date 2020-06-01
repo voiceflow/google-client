@@ -1,0 +1,49 @@
+name: PR-label -> clean-up dev env
+
+on:
+  pull_request:
+    types: [closed, unlabeled]
+
+jobs:
+  preview:
+    name: Clean up dev environment
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR env labels
+        uses: voiceflow/pr-label-match@master
+        with:
+          regex: "env-"
+        id: envNameLabel
+      - name: Results
+        run: |
+          echo -e "multiple: ${{ steps.envNameLabel.outputs.multiple }}" 
+          echo -e "label: ${{ steps.envNameLabel.outputs.label }}"
+          echo -e "new env: ${{ steps.newEnvLabel.outputs.hasLabel }}"
+      - name: Install envcli
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
+        run: |
+          API_URL="https://$GITHUB_TOKEN:@api.github.com/repos/voiceflow/envcli"
+          ASSET_ID=$(curl $API_URL/releases/latest | jq -r '.assets[2].id')
+          curl -J -L -H "Accept: application/octet-stream" "$API_URL/releases/assets/$ASSET_ID" --output envcli.tar.gz
+          tar -xf envcli.tar.gz
+      - name: Conditionally delete dev env
+        env:
+          ENVCLI_API_KEY: ${{ secrets.ENVCLI_API_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+        run: |
+          if [[ "${{ steps.envNameLabel.outputs.multiple }}" == "false" && "${{ steps.envNameLabel.outputs.label }}" != "" ]]; then
+            echo "Deleting environment ${{ steps.envNameLabel.outputs.label }}"
+            NON_INTERACTIVE=true ./envcli delete env -n ${{ steps.envNameLabel.outputs.label }}
+          elif [[ "${{ steps.envNameLabel.outputs.multiple }}" == "true" ]]; then 
+            echo "multiple env labels detected! No actions taken..."
+          else
+            echo "no env-related labels detected! No actions taken..."
+          fi
+      - name: Comment PR
+        uses: thollander/actions-comment-pull-request@master
+        if: ${{ "${{ steps.envNameLabel.outputs.multiple }}" == "false" && "${{ steps.envNameLabel.outputs.label }}" != "" }}
+        with:
+          message: "Dev environment ${{ steps.envNameLabel.outputs.label }} destroyed!"
+          GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
