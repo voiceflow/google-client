@@ -23,6 +23,7 @@ jobs:
           ENVCLI_API_KEY: ${{ secrets.ENVCLI_API_KEY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
         run: |
           FILENAME=$(echo "${GITHUB_REPOSITORY}-${PR_NUM}.json" | sed 's:.*/::')
           aws s3 cp s3://com.voiceflow.ci.states/github-actions/dev-env/$FILENAME $FILENAME
@@ -35,3 +36,11 @@ jobs:
         with:
           message: "Dev environment ${{ steps.getEnv.outputs.envName }} destroyed!"
           GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
+      - name: Delete S3 state file
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
+        run: |
+          FILENAME=$(echo "${GITHUB_REPOSITORY}-${PR_NUM}.json" | sed 's:.*/::')
+          aws s3 rm s3://com.voiceflow.ci.states/github-actions/dev-env/$FILENAME
