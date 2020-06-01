@@ -24,7 +24,7 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
-          FILENAME=${GITHUB_REPOSITORY}-${PR_NUM}.json
+          FILENAME=$(echo "${GITHUB_REPOSITORY}-${PR_NUM}.json" | sed 's:.*/::')
           aws s3 cp s3://com.voiceflow.ci.states/github-actions/dev-env/$FILENAME $FILENAME
           ENV_NAME=$( cat $FILENAME | jq '.env' )
           NON_INTERACTIVE=true ./envcli delete env -n $ENV_NAME
