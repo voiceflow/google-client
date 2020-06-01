@@ -49,7 +49,7 @@ jobs:
         run: |
           if [[ "${{ steps.envNameLabel.outputs.label }}" == "" && "${{ steps.newEnvLabel.outputs.hasLabel }}" == "true" ]]; then
             echo "Creating new environment..."
-            OUTPUT=$(NON_INTERACTIVE=true ./envcli new stack)
+            OUTPUT=$(NON_INTERACTIVE=true ./envcli create stack)
             NEW_ENV_NAME=$(echo "$OUTPUT" | grep -o "env-.*" | sort --unique)
             SLEEP_SECONDS=120
             echo "Waiting for environment to become READY... [${SLEEP_SECONDS}s]"
