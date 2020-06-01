@@ -26,9 +26,11 @@ jobs:
           echo -e "multiple: ${{ steps.envNameLabel.outputs.multiple }}" 
           echo -e "label: ${{ steps.envNameLabel.outputs.label }}"
           echo -e "new env: ${{ steps.newEnvLabel.outputs.hasLabel }}"
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v2
+      # - name: Setup tmate session
+      #   uses: mxschmitt/action-tmate@v2
       - name: Install envcli
+        env:
+          GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
         run: |
           API_URL="https://$GITHUB_TOKEN:@api.github.com/repos/voiceflow/envcli"
           ASSET_ID=$(curl $API_URL/releases/latest | jq -r '.assets[2].id')
