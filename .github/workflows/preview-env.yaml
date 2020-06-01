@@ -70,8 +70,6 @@ jobs:
           else
             echo "no env-related labels detected! No actions taken..."
           fi
-      - name: Setup tmate session
-        uses: mxschmitt/action-tmate@v2
       - name: Remove new-env label
         uses: buildsville/add-remove-label@v1
         if: steps.conditionals.outputs.newEnvName != ''
@@ -91,6 +89,5 @@ jobs:
         if: steps.conditionals.outputs.newEnvName != ''
         with:
           message: |
-            Created new: 
-            ${{ steps.conditionals.outputs.compURLs }}
+            Created new environment: ${{ steps.conditionals.outputs.newEnvName }}
           GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
