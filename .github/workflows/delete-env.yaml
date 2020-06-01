@@ -43,7 +43,7 @@ jobs:
           fi
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@master
-        if: steps.envNameLabel.outputs.multiple == "false" && steps.envNameLabel.outputs.label != ""
+        if: steps.envNameLabel.outputs.multiple == 'false' && steps.envNameLabel.outputs.label != ''
         with:
           message: "Dev environment ${{ steps.envNameLabel.outputs.label }} destroyed!"
           GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
