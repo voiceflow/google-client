@@ -31,7 +31,13 @@ jobs:
           ENV_NAME=$( cat $FILE_NAME | jq '.env' )
           echo -e "::set-output name=envName::${ENV_NAME}"
           echo -e "::set-output name=fileName::${FILE_NAME}"
+      - name: Check for existence of the specific env name label
+        uses: Dreamcodeio/pr-has-label-action@master
+        id: envLabel
+        with:
+          label: ${{ steps.getState.outputs.envName}}
       - name: Conditionally delete dev env
+        if: steps.envLabel.outputs.hasLabel != true
         env:
           ENVCLI_API_KEY: ${{ secrets.ENVCLI_API_KEY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
@@ -41,11 +47,12 @@ jobs:
           NON_INTERACTIVE=true ./envcli delete env -n ${{ steps.getState.outputs.envName}}
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@master
-        if: steps.getState.outputs.envName != ''
+        if: steps.envLabel.outputs.hasLabel != true
         with:
           message: "Dev environment ${{ steps.getState.outputs.envName }} destroyed!"
           GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
       - name: Delete S3 state file
+        if: steps.envLabel.outputs.hasLabel != true
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
