@@ -1,0 +1,54 @@
+name: PR-label -> dev env
+# This workflow is triggered on pushes to the repository.
+on:
+  pull_request:
+    types: [opened, synchronize, labeled, edited]
+  issue_comment:
+    types: [created]
+
+jobs:
+  preview:
+    name: Greeting
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check PR env labels
+        uses: voiceflow/pr-label-match@master
+        with:
+          regex: "env-"
+        id: envNameLabel
+      - name: Check for new env request
+        uses: Dreamcodeio/pr-has-label-action@master
+        id: newEnvLabel
+        with:
+          label: new-env
+      - name: Results
+        run: |
+          echo -e "multiple: ${{ steps.envNameLabel.outputs.multiple }}" 
+          echo -e "label: ${{ steps.envNameLabel.outputs.label }}"
+          echo -e "new env: ${{ steps.newEnvLabel.outputs.hasLabel }}"
+      - name: Install envcli
+        run: |
+          API_URL="https://$GITHUB_TOKEN:@api.github.com/repos/voiceflow/envcli"
+          ASSET_ID=$(curl $API_URL/releases/latest | jq -r '.assets[2].id')
+          curl -J -L -H "Accept: application/octet-stream" "$API_URL/releases/assets/$ASSET_ID" --output envcli.tar.gz
+          tar -xf envcli.tar.gz
+      - name: conditionals
+        run: |
+          if [[ "${{ steps.envNameLabel.outputs.label }}" == "" && "${{ steps.newEnvLabel.outputs.hasLabel }}" == "true" ]]; then
+            echo "Creating new environment..."
+          elif [[ "${{ steps.envNameLabel.outputs.multiple }}" == "true" ]]; then 
+            echo "multiple env labels detected! No actions taken..."
+          elif [[ "${{ steps.envNameLabel.outputs.multiple }}" == "false" && "${{ steps.envNameLabel.outputs.label }}" != "" ]]; then 
+            echo "deploying to env ${{ steps.envNameLabel.outputs.label }}"
+            yarn preview:new ${{ steps.envNameLabel.outputs.label }}
+          else
+            echo "no env-related labels detected! No actions taken..."
+          fi
+      # - name: curl env API to create new env
+      #   run: |
+      #     curl something TODO
+      # - name: Comment PR
+      #   uses: thollander/actions-comment-pull-request@master
+      #   with:
+      #     message: 'Trigger a create/deploy action'
+      #     GITHUB_TOKEN: ${{ secrets.TEST_GITHUB_TOKEN }}
