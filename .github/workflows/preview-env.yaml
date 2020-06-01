@@ -2,7 +2,7 @@ name: PR-label -> preview dev env
 
 on:
   pull_request:
-    types: [opened, synchronize, labeled, edited]
+    types: [opened, reopened, synchronize, labeled, edited]
   issue_comment:
     types: [created]
 
@@ -54,9 +54,9 @@ jobs:
             echo "deploying to env ${{ steps.envNameLabel.outputs.label }}"
             NON_INTERACTIVE=true ./envcli preview -n ${{ steps.envNameLabel.outputs.label }}  
             PR_NUM=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-            FILENAME=$(echo "${GITHUB_REPOSITORY}-${PR_NUM}.json" | sed 's:.*/::')
-            echo "{}" | jq '. += {"env":"${{ steps.envNameLabel.outputs.label }}"}' > $FILENAME
-            aws s3 cp $FILENAME s3://com.voiceflow.ci.states/github-actions/dev-env/$FILENAME
+            FILE_NAME=$(echo "${GITHUB_REPOSITORY}-${PR_NUM}.json" | sed 's:.*/::')
+            echo "{}" | jq '. += {"env":"${{ steps.envNameLabel.outputs.label }}"}' > $FILE_NAME
+            aws s3 cp $FILE_NAME s3://com.voiceflow.ci.states/github-actions/dev-env/$FILE_NAME
           else
             echo "no env-related labels detected! No actions taken..."
           fi

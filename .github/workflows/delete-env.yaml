@@ -41,7 +41,7 @@ jobs:
           NON_INTERACTIVE=true ./envcli delete env -n ${{ steps.getState.outputs.envName}}
       - name: Comment PR
         uses: thollander/actions-comment-pull-request@master
-        if: steps.getEnv.outputs.envName != ''
+        if: steps.getState.outputs.envName != ''
         with:
           message: "Dev environment ${{ steps.getState.outputs.envName }} destroyed!"
           GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
