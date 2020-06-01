@@ -8,7 +8,7 @@ on:
 
 jobs:
   preview:
-    name: Greeting
+    name: Preview commit on env
     runs-on: ubuntu-latest
     steps:
       - name: Check PR env labels
@@ -39,6 +39,8 @@ jobs:
       - name: conditionals
         env:
           ENVCLI_API_KEY: $ {{ secrets.ENVCLI_API_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
         run: |
           if [[ "${{ steps.envNameLabel.outputs.label }}" == "" && "${{ steps.newEnvLabel.outputs.hasLabel }}" == "true" ]]; then
             echo "Creating new environment..."
@@ -46,7 +48,7 @@ jobs:
             echo "multiple env labels detected! No actions taken..."
           elif [[ "${{ steps.envNameLabel.outputs.multiple }}" == "false" && "${{ steps.envNameLabel.outputs.label }}" != "" ]]; then 
             echo "deploying to env ${{ steps.envNameLabel.outputs.label }}"
-            ./envcli preview -n ${{ steps.envNameLabel.outputs.label }}
+            NON_INTERACTIVE=true ./envcli preview -n ${{ steps.envNameLabel.outputs.label }}
           else
             echo "no env-related labels detected! No actions taken..."
           fi
