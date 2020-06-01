@@ -55,6 +55,7 @@ jobs:
             echo "Waiting for environment to become READY... [${SLEEP_SECONDS}s]"
             sleep $SLEEP_SECONDS
             COMPONENT_URLS=$(NON_INTERACTIVE=true ./envcli list component --url)
+            echo "${COMPONENT_URLS}"
             echo -e "::set-output name=newEnvName::${NEW_ENV_NAME}"
             echo -e "::set-output name=compURLs::${COMPONENT_URLS}"
           elif [[ "${{ steps.envNameLabel.outputs.multiple }}" == "true" ]]; then 
@@ -69,6 +70,8 @@ jobs:
           else
             echo "no env-related labels detected! No actions taken..."
           fi
+      - name: Setup tmate session
+        uses: mxschmitt/action-tmate@v2
       - name: Remove new-env label
         uses: buildsville/add-remove-label@v1
         if: steps.conditionals.outputs.newEnvName != ''
@@ -88,6 +91,6 @@ jobs:
         if: steps.conditionals.outputs.newEnvName != ''
         with:
           message: |
-            Created new environment: ${{ steps.conditionals.outputs.newEnvName }}
+            Created new: 
             ${{ steps.conditionals.outputs.compURLs }}
           GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
