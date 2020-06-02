@@ -90,3 +90,28 @@ jobs:
           message: |
             Created new environment: ${{ steps.conditionals.outputs.newEnvName }}
           GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
+      - name: Check for notification label
+        uses: voiceflow/pr-label-match@master
+        with:
+          regex: "notify-"
+        id: notifyLabel
+      - name: Parse notification label
+        if: steps.notifyLabel.outputs.label != '' && steps.notifyLabel.outputs.multiple == 'false'
+        id: parseNotification
+        run: |
+          OUTPUT=$(echo "${{steps.notifyLabel.outputs.label}}" | sed -n -e 's/^.*notify-//p')
+          echo -e "::set-output name=channelName::${OUTPUT}"
+      - name: Send Slack notification
+        if: steps.parseNotification.outputs.channelName != ''
+        uses: archive/github-actions-slack@master
+        with:
+          slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
+          slack-channel: ${{steps.parseNotification.outputs.channelName}}
+          slack-text: "<!here> https://creator-${{ steps.envNameLabel.outputs.label }}.development.voiceflow.com for"
+      - name: Remove notification label
+        uses: buildsville/add-remove-label@v1
+        if: steps.notifyLabel.outputs.label != '' && steps.notifyLabel.outputs.multiple == 'false'
+        with:
+          token: ${{secrets.GH_SA_TOKEN}}
+          label: ${{ steps.notifyLabel.outputs.label }}
+          type: remove
