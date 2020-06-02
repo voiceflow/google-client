@@ -31,13 +31,6 @@ jobs:
           ASSET_ID=$(curl $API_URL/releases/latest | jq -r '.assets[2].id')
           curl -J -L -H "Accept: application/octet-stream" "$API_URL/releases/assets/$ASSET_ID" --output envcli.tar.gz
           tar -xf envcli.tar.gz
-      - name: Remove new-env label (if exist)
-        uses: buildsville/add-remove-label@v1
-        if: steps.conditionals.outputs.newEnvName != ''
-        with:
-          token: ${{secrets.GH_SA_TOKEN}}
-          label: new-env
-          type: remove
       - name: conditionals
         id: conditionals
         env:
@@ -71,6 +64,13 @@ jobs:
           else
             echo "no env-related labels detected! No actions taken..."
           fi
+      - name: Remove new-env label (if exist)
+        uses: buildsville/add-remove-label@v1
+        if: steps.conditionals.outputs.newEnvName != ''
+        with:
+          token: ${{secrets.GH_SA_TOKEN}}
+          label: new-env
+          type: remove
       - name: Tag PR with new environment name
         uses: buildsville/add-remove-label@v1
         if: steps.conditionals.outputs.newEnvName != ''
