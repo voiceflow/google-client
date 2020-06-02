@@ -104,10 +104,10 @@ jobs:
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           slack-channel: ${{steps.parseNotification.outputs.channelName}}
-          slack-text: "<!here> <https://creator-${{ steps.envNameLabel.outputs.label }}.development.voiceflow.com|preview> ready for <https://voiceflow.atlassian.net/browse/${{ steps.envNameLabel.outputs.ticket }}|${{ steps.envNameLabel.outputs.ticket }}>"
+          slack-text: "<!here> <https://creator-${{ steps.envNameLabel.outputs.label }}.development.voiceflow.com|preview> ready for <https://voiceflow.atlassian.net/browse/${{ steps.parseNotification.outputs.ticket }}|${{ steps.parseNotification.outputs.ticket }}>"
       - name: Remove notification label
         uses: buildsville/add-remove-label@v1
-        if: steps.notifyLabel.outputs.label != '' && steps.notifyLabel.outputs.multiple == 'false'
+        if: steps.newEnvLabel.outputs.hasLabel != 'true' && steps.notifyLabel.outputs.label != '' && steps.notifyLabel.outputs.multiple == 'false'
         with:
           token: ${{secrets.GH_SA_TOKEN}}
           label: ${{ steps.notifyLabel.outputs.label }}
