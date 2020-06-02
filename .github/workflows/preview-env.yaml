@@ -91,7 +91,7 @@ jobs:
           regex: "notify-"
         id: notifyLabel
       - name: Parse notification label
-        if: steps.notifyLabel.outputs.label != '' && steps.notifyLabel.outputs.multiple == 'false'
+        if: steps.newEnvLabel.outputs.hasLabel != 'true' && steps.notifyLabel.outputs.label != '' && steps.notifyLabel.outputs.multiple == 'false' && steps.envNameLabel.outputs.multiple == 'false' && steps.envNameLabel.outputs.label != ''
         id: parseNotification
         run: |
           OUTPUT=$(echo "${{steps.notifyLabel.outputs.label}}" | sed -n -e 's/^.*notify-//p')
@@ -107,7 +107,7 @@ jobs:
           slack-text: "<!here> <https://creator-${{ steps.envNameLabel.outputs.label }}.development.voiceflow.com|preview> ready for <https://voiceflow.atlassian.net/browse/${{ steps.parseNotification.outputs.ticket }}|${{ steps.parseNotification.outputs.ticket }}>"
       - name: Remove notification label
         uses: buildsville/add-remove-label@v1
-        if: steps.newEnvLabel.outputs.hasLabel != 'true' && steps.notifyLabel.outputs.label != '' && steps.notifyLabel.outputs.multiple == 'false'
+        if: steps.parseNotification.outputs.channelName != ''
         with:
           token: ${{secrets.GH_SA_TOKEN}}
           label: ${{ steps.notifyLabel.outputs.label }}
