@@ -26,7 +26,8 @@ jobs:
           AWS_DEFAULT_REGION: "us-east-1"
         run: |
           PR_NUM=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
-          FILE_NAME=$(echo "${GITHUB_REPOSITORY}-${PR_NUM}.json" | sed 's:.*/::')
+          REPO_NAME=$(echo "${GITHUB_REPOSITORY}" | sed 's:.*/::')
+          FILE_NAME="${REPO_NAME}-${PR_NUM}.json" 
           aws s3 cp s3://com.voiceflow.ci.states/github-actions/dev-env/$FILE_NAME $FILE_NAME
           ENV_NAME=$( cat $FILE_NAME | jq '.env' )
           echo -e "::set-output name=envName::${ENV_NAME}"
