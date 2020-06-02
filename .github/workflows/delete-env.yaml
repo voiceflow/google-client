@@ -8,6 +8,7 @@ jobs:
   preview:
     name: Clean up dev environment
     runs-on: ubuntu-latest
+    continue-on-error: true # Ignore errors
     steps:
       - name: Install envcli
         env:

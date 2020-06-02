@@ -23,11 +23,6 @@ jobs:
         id: newEnvLabel
         with:
           label: new-env
-      - name: Results
-        run: |
-          echo -e "multiple: ${{ steps.envNameLabel.outputs.multiple }}" 
-          echo -e "label: ${{ steps.envNameLabel.outputs.label }}"
-          echo -e "new env: ${{ steps.newEnvLabel.outputs.hasLabel }}"
       - name: Install envcli
         env:
           GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
@@ -100,14 +95,16 @@ jobs:
         id: parseNotification
         run: |
           OUTPUT=$(echo "${{steps.notifyLabel.outputs.label}}" | sed -n -e 's/^.*notify-//p')
+          TICKET=$(echo "${{github.head_ref}}" | sed 's:.*/::')
           echo -e "::set-output name=channelName::${OUTPUT}"
+          echo -e "::set-output name=ticket::${TICKET}"
       - name: Send Slack notification
         if: steps.parseNotification.outputs.channelName != ''
         uses: archive/github-actions-slack@master
         with:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           slack-channel: ${{steps.parseNotification.outputs.channelName}}
-          slack-text: "<!here> https://creator-${{ steps.envNameLabel.outputs.label }}.development.voiceflow.com for"
+          slack-text: "<!here> <https://creator-${{ steps.envNameLabel.outputs.label }}.development.voiceflow.com|preview> ready for <https://voiceflow.atlassian.net/browse/${{ steps.envNameLabel.outputs.ticket }}|${{ steps.envNameLabel.outputs.ticket }}>"
       - name: Remove notification label
         uses: buildsville/add-remove-label@v1
         if: steps.notifyLabel.outputs.label != '' && steps.notifyLabel.outputs.multiple == 'false'
