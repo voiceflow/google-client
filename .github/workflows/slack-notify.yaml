@@ -1,9 +1,5 @@
 name: PR-comment -> Slack notification
-on:
-  pull_request:
-    types: [opened, synchronize]
-  issue_comment:
-    types: [created]
+on: issue_comment
 
 jobs:
   get-notify-config:
