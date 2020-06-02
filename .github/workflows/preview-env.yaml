@@ -31,16 +31,36 @@ jobs:
           ASSET_ID=$(curl $API_URL/releases/latest | jq -r '.assets[2].id')
           curl -J -L -H "Accept: application/octet-stream" "$API_URL/releases/assets/$ASSET_ID" --output envcli.tar.gz
           tar -xf envcli.tar.gz
-      - name: conditionals
-        id: conditionals
+
+      - name: Set common vars
+        id: vars
+        run: |
+          PR_NUM=$(jq --raw-output .pull_request.number "$GITHUB_EVENT_PATH")
+          REPO_NAME=$(echo "${GITHUB_REPOSITORY}" | sed 's:.*/::')
+          FILE_NAME_PREFIX="${REPO_NAME}-${PR_NUM}.json" 
+          S3_BUCKET="com.voiceflow.ci.states"
+          S3_PATH_PREFIX="github-actions/dev-env"
+
+          echo -e "::set-output name=filePrefix::${FILE_NAME_PREFIX}"
+          echo -e "::set-output name=s3Bucket::${S3_BUCKET}"
+          echo -e "::set-output name=s3PathPrefix::${S3_PATH_PREFIX}"
+
+      - name: Create new environment if applicable
+        if: steps.newEnvLabel.outputs.hasLabel == 'true' && steps.envNameLabel.outputs.label == ''
+        id: createNewEnv
         env:
-          ENVCLI_API_KEY: ${{ secrets.ENVCLI_API_KEY }}
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           AWS_DEFAULT_REGION: "us-east-1"
-          GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
         run: |
-          if [[ "${{ steps.envNameLabel.outputs.label }}" == "" && "${{ steps.newEnvLabel.outputs.hasLabel }}" == "true" ]]; then
+          LOCKFILE="${{steps.vars.outputs.s3PathPrefix}}/${{steps.vars.outputs.filePrefix}}-new.json"
+          set +e
+          aws s3api head-object --bucket ${{steps.vars.outputs.s3Bucket}} --key $LOCKFILE || not_exist=true
+          set -e
+
+          if [ $not_exist ]; then
+            echo "{}" > lock
+            aws s3 cp lock s3://${{steps.vars.outputs.s3Bucket}}/$LOCKFILE
             echo "Creating new environment..."
             OUTPUT=$(NON_INTERACTIVE=true ./envcli create stack)
             NEW_ENV_NAME=$(echo "$OUTPUT" | grep -o "env-.*" | sort --unique)
@@ -49,9 +69,38 @@ jobs:
             sleep $SLEEP_SECONDS
             COMPONENT_URLS=$(NON_INTERACTIVE=true ./envcli list component --url)
             echo "${COMPONENT_URLS}"
+
+            aws s3 rm s3://${{steps.vars.outputs.s3Bucket}}/$LOCKFILE
             echo -e "::set-output name=newEnvName::${NEW_ENV_NAME}"
-            echo -e "::set-output name=compURLs::${COMPONENT_URLS}"
-          elif [[ "${{ steps.envNameLabel.outputs.multiple }}" == "true" ]]; then 
+          fi
+
+      - name: Remove new-env label (if exist)
+        uses: buildsville/add-remove-label@v1
+        if: steps.createNewEnv.outputs.newEnvName != ''
+        with:
+          token: ${{secrets.GH_SA_TOKEN}}
+          label: new-env
+          type: remove
+
+      - name: Tag PR with new environment name
+        uses: buildsville/add-remove-label@v1
+        if: steps.createNewEnv.outputs.newEnvName != ''
+        with:
+          token: ${{secrets.GH_SA_TOKEN}}
+          label: ${{ steps.createNewEnv.outputs.newEnvName }}
+          type: add
+
+      - name: Preview tracking
+        if: steps.createNewEnv.outputs.newEnvName == '' # Only run this step if the new environment was not created
+        id: preview
+        env:
+          ENVCLI_API_KEY: ${{ secrets.ENVCLI_API_KEY }}
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          AWS_DEFAULT_REGION: "us-east-1"
+          GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
+        run: |
+          if [[ "${{ steps.envNameLabel.outputs.multiple }}" == "true" ]]; then 
             echo "multiple env labels detected! No actions taken..."
           elif [[ "${{ steps.envNameLabel.outputs.multiple }}" == "false" && "${{ steps.envNameLabel.outputs.label }}" != "" ]]; then 
             echo "deploying to env ${{ steps.envNameLabel.outputs.label }}"
@@ -64,40 +113,24 @@ jobs:
           else
             echo "no env-related labels detected! No actions taken..."
           fi
-      - name: Remove new-env label (if exist)
-        uses: buildsville/add-remove-label@v1
-        if: steps.conditionals.outputs.newEnvName != ''
-        with:
-          token: ${{secrets.GH_SA_TOKEN}}
-          label: new-env
-          type: remove
-      - name: Tag PR with new environment name
-        uses: buildsville/add-remove-label@v1
-        if: steps.conditionals.outputs.newEnvName != ''
-        with:
-          token: ${{secrets.GH_SA_TOKEN}}
-          label: ${{ steps.conditionals.outputs.newEnvName }}
-          type: add
-      - name: Comment PR
-        uses: thollander/actions-comment-pull-request@master
-        if: steps.conditionals.outputs.newEnvName != ''
-        with:
-          message: |
-            Created new environment: ${{ steps.conditionals.outputs.newEnvName }}
-          GITHUB_TOKEN: ${{ secrets.GH_SA_TOKEN }}
+
       - name: Check for notification label
+        if: steps.createNewEnv.outputs.newEnvName == '' # Only care about notification when we are not running a new stack
         uses: voiceflow/pr-label-match@master
         with:
           regex: "notify-"
         id: notifyLabel
+
       - name: Parse notification label
-        if: steps.newEnvLabel.outputs.hasLabel != 'true' && steps.notifyLabel.outputs.label != '' && steps.notifyLabel.outputs.multiple == 'false' && steps.envNameLabel.outputs.multiple == 'false' && steps.envNameLabel.outputs.label != ''
+        # Ensure there is only one notify and env label present
+        if: steps.notifyLabel.outputs.label != '' && steps.notifyLabel.outputs.multiple == 'false' && steps.envNameLabel.outputs.multiple == 'false' && steps.envNameLabel.outputs.label != ''
         id: parseNotification
         run: |
-          OUTPUT=$(echo "${{steps.notifyLabel.outputs.label}}" | sed -n -e 's/^.*notify-//p')
+          CHANNEL=$(echo "${{steps.notifyLabel.outputs.label}}" | sed -n -e 's/^.*notify-//p')
           TICKET=$(echo "${{github.head_ref}}" | sed 's:.*/::')
-          echo -e "::set-output name=channelName::${OUTPUT}"
+          echo -e "::set-output name=channelName::${CHANNEL}"
           echo -e "::set-output name=ticket::${TICKET}"
+
       - name: Send Slack notification
         if: steps.parseNotification.outputs.channelName != ''
         uses: archive/github-actions-slack@master
@@ -105,6 +138,7 @@ jobs:
           slack-bot-user-oauth-access-token: ${{ secrets.SLACK_BOT_USER_OAUTH_ACCESS_TOKEN }}
           slack-channel: ${{steps.parseNotification.outputs.channelName}}
           slack-text: "<!here> <https://creator-${{ steps.envNameLabel.outputs.label }}.development.voiceflow.com|preview> ready for <https://voiceflow.atlassian.net/browse/${{ steps.parseNotification.outputs.ticket }}|${{ steps.parseNotification.outputs.ticket }}>"
+
       - name: Remove notification label
         uses: buildsville/add-remove-label@v1
         if: steps.parseNotification.outputs.channelName != ''
