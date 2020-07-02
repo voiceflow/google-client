@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   codecov: codecov/codecov@1.0.2
-  common: voiceflow/common@dev:first
+  vfcommon: voiceflow/common@dev:first
 
 executors:
   test-executor:
@@ -24,8 +24,8 @@ jobs:
     executor: test-executor
     steps:
       - checkout
-      - common/install_node_modules
-      - common/setup_test_env
+      - vfcommon/install_node_modules
+      - vfcommon/setup_test_env
       - run:
           name: "Build package"
           command: |
@@ -37,31 +37,31 @@ jobs:
       - codecov/upload:
           file: nyc_coverage/lcov.info
       # temp steps
-      - common/install_aws_cli
+      - vfcommon/install_aws_cli
       - clone_s3_assets
       - run:
           name: Run smoke tests
           command: yarn test:smoke
 
   build-push-image:
-    executor: common/build-executor
+    executor: vfcommon/build-executor
     steps:
-      - common/build-push-image:
+      - vfcommon/build_push_image:
           image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
           release_pkg: "@voiceflow/google"
 
   deploy-image:
-    executor: common/build-executor
+    executor: vfcommon/build-executor
     steps:
-      - common/deploy-image:
+      - vfcommon/deploy_image:
           image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
           namespace: "voiceflow-v1"
           target: "deployment/google"
 
   build-deploy-dev-env:
-    executor: build-executor
+    executor: vfcommon/build-executor
     steps:
-      - common/build-deploy-dev-env:
+      - vfcommon/build_deploy_dev_env:
           image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
           component: "google"
           ssh_key: "0d:70:64:7b:cf:1e:f2:63:ed:a0:98:3d:a9:e2:35:b9"
@@ -119,7 +119,7 @@ workflows:
             branches:
               only:
                 - master
-      - common/release:
+      - vfcommon/release:
           context: dev-test
           requires:
             - test
