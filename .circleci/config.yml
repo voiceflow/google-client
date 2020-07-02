@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   codecov: codecov/codecov@1.0.2
-  vfcommon: voiceflow/common@dev:first
+  vfcommon: voiceflow/common@dev:3
 
 executors:
   test-executor:
@@ -43,43 +43,25 @@ jobs:
           name: Run smoke tests
           command: yarn test:smoke
 
-  build-push-image:
-    executor: vfcommon/build-executor
-    steps:
-      - vfcommon/build_push_image:
-          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
-          release_pkg: "@voiceflow/google"
-
-  deploy-image:
-    executor: vfcommon/build-executor
-    steps:
-      - vfcommon/deploy_image:
-          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
-          namespace: "voiceflow-v1"
-          target: "deployment/google"
-
-  build-deploy-dev-env:
-    executor: vfcommon/build-executor
-    steps:
-      - vfcommon/build_deploy_dev_env:
-          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
-          component: "google"
-          ssh_key: "0d:70:64:7b:cf:1e:f2:63:ed:a0:98:3d:a9:e2:35:b9"
-
 # When should each job run and what are their dependencies?
 workflows:
   build-deploy-staging:
     jobs:
-      - build-push-image:
+      - vfcommon/build_push_image:
+          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
+          release_pkg: "@voiceflow/google"
           context: dev-test
           filters:
             branches:
               only:
                 - staging
-      - deploy-image:
+      - vfcommon/deploy_image:
+          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
+          namespace: "voiceflow-v1"
+          target: "deployment/google"
           context: dev-test
           requires:
-            - build-push-image
+            - vfcommon/build_push_image
           filters:
             branches:
               only:
@@ -88,7 +70,10 @@ workflows:
   # Development environments
   build-deploy-environment:
     jobs:
-      - build-deploy-dev-env:
+      - vfcommon/build_deploy_dev_env:
+          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
+          component: "google"
+          ssh_key: "0d:70:64:7b:cf:1e:f2:63:ed:a0:98:3d:a9:e2:35:b9"
           context: dev-test
           filters:
             branches:
@@ -104,17 +89,22 @@ workflows:
               ignore:
                 - /env-.*/
                 - staging
-      - build-push-image:
+      - vfcommon/build_push_image:
+          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
+          release_pkg: "@voiceflow/google"
           context: dev-test
           filters:
             branches:
               only:
                 - master
-      - deploy-image:
+      - vfcommon/deploy_image:
+          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
+          namespace: "voiceflow-v1"
+          target: "deployment/google"
           context: dev-test
           requires:
             - test
-            - build-push-image
+            - vfcommon/build_push_image
           filters:
             branches:
               only:
