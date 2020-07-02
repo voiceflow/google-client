@@ -2,7 +2,7 @@ version: 2.1
 
 orbs:
   codecov: codecov/codecov@1.0.2
-  vfcommon: voiceflow/common@dev:3
+  vfcommon: voiceflow/common@0.0.1
 
 executors:
   test-executor:
@@ -25,7 +25,7 @@ jobs:
     steps:
       - checkout
       - vfcommon/install_node_modules
-      - vfcommon/setup_test_env
+      - vfcommon/setup_dynamodb
       - run:
           name: "Build package"
           command: |
