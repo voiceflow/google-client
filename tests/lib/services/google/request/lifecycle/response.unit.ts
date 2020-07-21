@@ -74,7 +74,7 @@ describe('responseManager unit tests', async () => {
         },
       ]);
       expect(conv.ask.args[0]).to.eql([response]);
-      expect(_.get(conv, 'noInputs')).to.eql([output]);
+      expect(_.get(conv, 'noInputs')).to.eql([{ ssml: `<speak>${output}</speak>` }]);
       expect(responseHandler1.args).to.eql([[context, conv]]);
       expect(responseHandler2.args).to.eql([[context, conv]]);
       expect(services.state.saveToDb.args[0]).to.eql([userId, contextFinalState]);
@@ -138,7 +138,7 @@ describe('responseManager unit tests', async () => {
 
       await responseManager.build(context as any, agent as any, conv as any);
 
-      expect(_.get(conv, 'noInputs')).to.eql([reprompt]);
+      expect(_.get(conv, 'noInputs')).to.eql([{ ssml: `<speak>${reprompt}</speak>` }]);
     });
 
     it('empty stack', async () => {
