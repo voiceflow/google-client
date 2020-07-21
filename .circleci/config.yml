@@ -67,6 +67,7 @@ jobs:
           image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
           namespace: "voiceflow-v1"
           target: "deployment/google"
+          tagged: true
 
   build-deploy-dev-env:
     executor: vfcommon/build-executor
