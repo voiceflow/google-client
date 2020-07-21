@@ -13,8 +13,9 @@ export const _replacer = (match: string, inner: string, variables: Record<string
 };
 
 const _stringToNumIfNumeric = (str: string | null): number | string | null => {
-  const number = Number(str);
+  if (str?.startsWith('0')) return str;
 
+  const number = Number(str);
   return Number.isNaN(number) ? str : number;
 };
 
