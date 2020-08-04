@@ -1,7 +1,7 @@
 import Promise from 'bluebird';
 import { Request, Response } from 'express';
 
-import log from '../../../logger';
+import log from '../../logger';
 import { AbstractController } from './utils';
 
 class GoogleController extends AbstractController {
