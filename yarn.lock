@@ -655,6 +655,13 @@
     "@types/bunyan" "*"
     "@types/express" "*"
 
+"@types/express-pino-logger@^4.0.2":
+  version "4.0.2"
+  resolved "https://registry.yarnpkg.com/@types/express-pino-logger/-/express-pino-logger-4.0.2.tgz#0ac505e0e597ecb42a88e21bbe7cd6bfecfd2f42"
+  integrity sha512-pjFbznTQ/h9Dht4YP1Zqfj2+4S8K4u7K+EowklXhf0aL43KUIYo126w2h8mtwoHfa91Z3BYA8w2wfUfwNAHroA==
+  dependencies:
+    "@types/pino-http" "*"
+
 "@types/express-serve-static-core@*":
   version "4.17.2"
   resolved "https://registry.yarnpkg.com/@types/express-serve-static-core/-/express-serve-static-core-4.17.2.tgz#f6f41fa35d42e79dbf6610eccbb2637e6008a0cf"
@@ -772,6 +779,29 @@
     "@types/node" "*"
     "@types/pg-types" "*"
 
+"@types/pino-http@*":
+  version "5.0.3"
+  resolved "https://registry.yarnpkg.com/@types/pino-http/-/pino-http-5.0.3.tgz#21460710117fd290ad9193a2f17ffed429b32100"
+  integrity sha512-t4dndRXBxr3CBLJWgQvbDUXY0lwJ23uR1A8xcam4vL2t1Z5Dijl14U140h1j6pdyljvul2FgsEj1FO52KKhNZg==
+  dependencies:
+    "@types/pino" "*"
+
+"@types/pino-std-serializers@*":
+  version "2.4.1"
+  resolved "https://registry.yarnpkg.com/@types/pino-std-serializers/-/pino-std-serializers-2.4.1.tgz#f8bd52a209c8b3c97d1533b1ba27f57c816382bf"
+  integrity sha512-17XcksO47M24IVTVKPeAByWUd3Oez7EbIjXpSbzMPhXVzgjGtrOa49gKBwxH9hb8dKv58OelsWQ+A1G1l9S3wQ==
+  dependencies:
+    "@types/node" "*"
+
+"@types/pino@*", "@types/pino@^6.3.0":
+  version "6.3.0"
+  resolved "https://registry.yarnpkg.com/@types/pino/-/pino-6.3.0.tgz#a4ad317278eca19becbc87f5ceafebb99d486604"
+  integrity sha512-AuZ32IbQlzW3XY9jA9X8iXkhMTtloKWHz1Ze23ClPx7L8ES69BNGfH308LsU2tHnDCLLCFoZvMn8+1njBx2EKg==
+  dependencies:
+    "@types/node" "*"
+    "@types/pino-std-serializers" "*"
+    "@types/sonic-boom" "*"
+
 "@types/randomstring@^1.1.6":
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/@types/randomstring/-/randomstring-1.1.6.tgz#45cdc060a6f043d610bcd46503a6887db2a209c3"
@@ -804,6 +834,13 @@
   version "7.5.1"
   resolved "https://registry.yarnpkg.com/@types/sinon/-/sinon-7.5.1.tgz#d27b81af0d1cfe1f9b24eebe7a24f74ae40f5b7c"
   integrity sha512-EZQUP3hSZQyTQRfiLqelC9NMWd1kqLcmQE0dMiklxBkgi84T+cHOhnKpgk4NnOWpGX863yE6+IaGnOXUNFqDnQ==
+
+"@types/sonic-boom@*":
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/@types/sonic-boom/-/sonic-boom-0.7.0.tgz#38337036293992a1df65dd3161abddf8fb9b7176"
+  integrity sha512-AfqR0fZMoUXUNwusgXKxcE9DPlHNDHQp6nKYUd4PSRpLobF5CCevSpyTEBcVZreqaWKCnGBr9KI1fHMTttoB7A==
+  dependencies:
+    "@types/node" "*"
 
 "@types/superagent@*":
   version "4.1.7"
@@ -998,6 +1035,18 @@
     express-pino-logger "^4.0.0"
     pino "^5.14.0"
 
+"@voiceflow/logger@^1.1.10":
+  version "1.1.10"
+  resolved "https://registry.yarnpkg.com/@voiceflow/logger/-/logger-1.1.10.tgz#cb4700029ef411e46fbbbe51ac8493d7b5056d8c"
+  integrity sha512-FgFf9PnGNjcjkmC/LZtGTzWubP7qxccPLNbcux6mmelMOpAtXUOLg5V3MUSwgflOOSn7BPyl9X6yqZLK8RPMKg==
+  dependencies:
+    "@types/express-pino-logger" "^4.0.2"
+    "@types/pino" "^6.3.0"
+    "@voiceflow/pino-pretty" "^3.5.0"
+    "@zerollup/ts-transform-paths" "^1.7.18"
+    express-pino-logger "^4.0.0"
+    pino "^5.14.0"
+
 "@voiceflow/pino-pretty@^3.5.0":
   version "3.5.0"
   resolved "https://registry.yarnpkg.com/@voiceflow/pino-pretty/-/pino-pretty-3.5.0.tgz#f9459135a0eb258d214f16b32bfe879ac90d714a"
@@ -1057,6 +1106,20 @@
   integrity sha512-cERUHFQpRyWdrHZUKq7fKB8UGTx88cF/X7I5vuSs3ZNG1E0CYa2onPnqtvZ/ZDs1+z0pK9xwOduKE9juO4ak+w==
   dependencies:
     resolve "^1.12.0"
+
+"@zerollup/ts-helpers@^1.7.18":
+  version "1.7.18"
+  resolved "https://registry.yarnpkg.com/@zerollup/ts-helpers/-/ts-helpers-1.7.18.tgz#747177f6d5abc06c3a0f5dffe7362d365cf0391d"
+  integrity sha512-S9zN+y+i5yN/evfWquzSO3lubqPXIsPQf6p9OiPMpRxDx/0totPLF39XoRw48Dav5dSvbIE8D2eAPpXXJxvKwg==
+  dependencies:
+    resolve "^1.12.0"
+
+"@zerollup/ts-transform-paths@^1.7.18":
+  version "1.7.18"
+  resolved "https://registry.yarnpkg.com/@zerollup/ts-transform-paths/-/ts-transform-paths-1.7.18.tgz#72f705c66690879e51d53c73dc76c4e2518a8c50"
+  integrity sha512-YPVUxvWQVzRx1OBN0Pmkd58+R9FcfUJuwTaPUSoi5rKxuXMtxevTXdfi0w5mEaIH8b0DfL+wg0wFDHiJE+S2zA==
+  dependencies:
+    "@zerollup/ts-helpers" "^1.7.18"
 
 "@zerollup/ts-transform-paths@^1.7.9":
   version "1.7.11"

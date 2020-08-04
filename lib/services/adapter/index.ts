@@ -1,3 +1,4 @@
+import log from '../../../logger';
 import { AbstractManager } from '../types';
 import { NewContextRaw, OldContextRaw } from './types';
 import { stackAdapter, storageAdapter, variablesAdapter } from './utils';
@@ -16,7 +17,7 @@ class AdapterManager extends AbstractManager {
       };
     } catch (err) {
       // eslint-disable-next-line no-console
-      console.log('context adapter err: ', err.message);
+      log.error('context adapter err: ', err.message);
       return {};
     }
   }
