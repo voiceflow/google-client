@@ -65,6 +65,22 @@ describe('google controller unit tests', () => {
         expect(res.status.args[0]).to.eql([errObj.code]);
         expect(resSend.args[0]).to.eql([errObj.message]);
       });
+
+      it('headers already sent', async () => {
+        const services = {
+          google: {
+            handleRequest: sinon.stub().throws({}),
+          },
+        };
+        const google = new Google(services as any, null as any);
+
+        const req = {};
+        const res = { status: sinon.stub(), headersSent: true };
+
+        await google.handler(req as any, res as any);
+
+        expect(res.status.callCount).to.eql(0);
+      });
     });
   });
 });
