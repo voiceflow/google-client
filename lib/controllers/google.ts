@@ -15,7 +15,7 @@ class GoogleController extends AbstractController {
     await Promise.try(() => google.handleRequest(req, res)).catch((err) => {
       // eslint-disable-next-line no-console
       log.error('google handler err: ', err);
-      res.status(err.code || 500).send(err.message ?? 'error');
+      if (!res.headersSent) res.status(err.code || 500).send(err.message ?? 'error');
     });
   };
 }
