@@ -1,3 +1,4 @@
+import { Prompt } from '@voiceflow/alexa-types';
 import { Diagram, Frame } from '@voiceflow/client';
 
 export const RESUME_DIAGRAM_ID = '__RESUME_FLOW__';
@@ -24,12 +25,12 @@ export const promptToSSML = (content = '', voice: string | undefined) => {
   return content;
 };
 
-export const createResumeFrame = (resumePrompt: ResumePrompt) => {
+export const createResumeFrame = (resume: Prompt, follow: Prompt | null) => {
   return new Frame({
     diagramID: RESUME_DIAGRAM_ID,
     variables: {
-      [ResumeVariables.CONTENT]: promptToSSML(resumePrompt.content, resumePrompt.voice),
-      [ResumeVariables.FOLLOW_CONTENT]: promptToSSML(resumePrompt.follow_content, resumePrompt.follow_voice),
+      [ResumeVariables.CONTENT]: promptToSSML(resume.content, resume.voice),
+      [ResumeVariables.FOLLOW_CONTENT]: follow ? promptToSSML(follow.content, follow.voice) : '',
     },
   });
 };

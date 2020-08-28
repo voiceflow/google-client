@@ -12,8 +12,9 @@ describe('resume diagram', () => {
 
     it('not audio', () => {
       const content = 'random content';
+      const voice = 'not audio';
 
-      expect(promptToSSML(content, 'not audio')).to.eql(content);
+      expect(promptToSSML(content, voice)).to.eql(content);
     });
 
     it('empty content', () => {
@@ -26,15 +27,30 @@ describe('resume diagram', () => {
       const resumePrompt = {
         content: 'content',
         voice: 'not audio',
-        follow_content: 'follow content',
-        follow_voice: 'not audio',
+      };
+      const followPrompt = {
+        content: 'follow content',
+        voice: 'not followaudio',
       };
 
-      const frame = createResumeFrame(resumePrompt);
+      const frame = createResumeFrame(resumePrompt as any, followPrompt as any);
 
       expect(frame.getDiagramID()).to.eql(RESUME_DIAGRAM_ID);
       expect(frame.variables.get(ResumeVariables.CONTENT)).to.eql(resumePrompt.content);
-      expect(frame.variables.get(ResumeVariables.FOLLOW_CONTENT)).to.eql(resumePrompt.follow_content);
+      expect(frame.variables.get(ResumeVariables.FOLLOW_CONTENT)).to.eql(followPrompt.content);
+    });
+
+    it('no follow prompt', () => {
+      const resumePrompt = {
+        content: 'content',
+        voice: 'not audio',
+      };
+
+      const frame = createResumeFrame(resumePrompt as any, null);
+
+      expect(frame.getDiagramID()).to.eql(RESUME_DIAGRAM_ID);
+      expect(frame.variables.get(ResumeVariables.CONTENT)).to.eql(resumePrompt.content);
+      expect(frame.variables.get(ResumeVariables.FOLLOW_CONTENT)).to.eql('');
     });
   });
 });
