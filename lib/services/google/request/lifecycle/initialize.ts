@@ -1,10 +1,11 @@
+import { AlexaVersion, SessionType } from '@voiceflow/alexa-types';
 import { Context, Frame, Store } from '@voiceflow/client';
 import { DialogflowConversation } from 'actions-on-google';
 
 import { F, S, V } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
 
-import { AbstractManager, injectServices, SkillMetadata } from '../../../types';
+import { AbstractManager, injectServices } from '../../../types';
 
 const utils = {
   resume: {
@@ -25,7 +26,11 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
     const { resume, client } = this.services.utils;
 
     // fetch the metadata for this version (project)
-    const meta = (await context.fetchMetadata()) as SkillMetadata;
+    const {
+      platformData: { settings, slots },
+      variables: versionVariables,
+      rootDiagramID,
+    } = await context.fetchVersion<AlexaVersion>();
 
     const { stack, storage, variables } = context;
 
@@ -42,9 +47,6 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
     storage.set(S.LOCALE, conv.user.locale);
     if (!conv.user.storage.userId) conv.user.storage.userId = this.services.uuid4();
     storage.set(S.USER, conv.user.storage.userId);
-
-    // set based on metadata
-    storage.set(S.REPEAT, meta.repeat ?? 100);
 
     // default global variables
     variables.merge({
@@ -63,15 +65,21 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
     });
 
     // initialize all the global variables
-    client.Store.initialize(variables, meta.global, 0);
+    client.Store.initialize(variables, versionVariables, 0);
+    client.Store.initialize(
+      variables,
+      slots.map((slot) => slot.name),
+      0
+    );
 
+    const { session = { type: SessionType.RESTART } } = settings;
     // restart logic
-    const shouldRestart = stack.isEmpty() || meta.restart || variables.get(InitializeManager.VAR_VF)?.resume === false;
+    const shouldRestart = stack.isEmpty() || session.type === SessionType.RESTART || variables.get(InitializeManager.VAR_VF)?.resume === false;
     if (shouldRestart) {
       // start the stack with just the root flow
       stack.flush();
-      stack.push(new client.Frame({ diagramID: meta.diagram }));
-    } else if (meta.resume_prompt) {
+      stack.push(new client.Frame({ diagramID: rootDiagramID }));
+    } else if (session.type === SessionType.RESUME && session.resume) {
       // resume prompt flow - use command flow logic
       stack.top().storage.set(F.CALLED_COMMAND, true);
 
@@ -81,7 +89,7 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
         stack.popTo(resumeStackIndex);
       }
 
-      stack.push(resume.createResumeFrame(meta.resume_prompt));
+      stack.push(resume.createResumeFrame(session.resume, session.follow));
     } else {
       // give context to where the user left off with last speak block
       stack.top().storage.delete(F.CALLED_COMMAND);
