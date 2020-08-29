@@ -108,7 +108,7 @@
     "ts-node": "^8.5.4",
     "tsconfig-paths": "^3.9.0",
     "ttypescript": "^1.5.8",
-    "typescript": "^3.7.4"
+    "typescript": "^3.9.7"
   },
   "homepage": "https://github.com/voiceflow/google#readme",
   "husky": {
@@ -136,7 +136,7 @@
     "url": "git+https://github.com/voiceflow/google.git"
   },
   "scripts": {
-    "build": "npm run clean && ttsc --project ./tsconfig.build.json && cp app.config.js yarn.lock build/",
+    "build": "yarn clean && ttsc --project ./tsconfig.build.json && cp app.config.js yarn.lock build/",
     "clean": "rimraf build",
     "deploy:staging": "git push origin $(git branch | grep \\* | cut -d ' ' -f2):staging -f",
     "gen-certs": "scripts/generate_certs.sh",
