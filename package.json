@@ -1,5 +1,5 @@
 {
-  "name": "@voiceflow/google",
+  "name": "@voiceflow/google-client",
   "description": "voiceflow google runtime client",
   "version": "0.1.0",
   "author": "Voiceflow",
