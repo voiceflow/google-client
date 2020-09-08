@@ -945,12 +945,12 @@
     regenerator-runtime "^0.13.5"
     superstruct "^0.10.12"
 
-"@voiceflow/backend-utils@2.0.0":
-  version "2.0.0"
-  resolved "https://registry.yarnpkg.com/@voiceflow/backend-utils/-/backend-utils-2.0.0.tgz#77a4eb8188b42a067abe4288807770d697d5b44d"
-  integrity sha512-Ohkb/+MMioo51sI+IDRevlt0jmN08+LS9rLRa37hPA6QSkkWLcvJZD5J898l+sdWQmQX9Tgvh3+PbptOD+Kl0A==
+"@voiceflow/backend-utils@^2.1.1":
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/@voiceflow/backend-utils/-/backend-utils-2.1.1.tgz#8727feca0099ef360801232c69fd362f020da5e7"
+  integrity sha512-Y8pm7P2stXFNXyQaLDwIxDdJj9LcrKdSRb3eQ1ifoXUkGoTrVHRkuV5lQEEMSy+++KdNEps5/6f4b/GMov6MDA==
   dependencies:
-    "@voiceflow/logger" "^1.1.0"
+    "@voiceflow/logger" "^1.1.10"
     "@voiceflow/verror" "^1.1.0"
     bluebird "^3.7.2"
     chai "^4.2.0"
@@ -1021,15 +1021,6 @@
   integrity sha512-C6cTvGXBcWxVhGyWnVmCIOjweKYO0kifocoEZ2Xac7ZHNyaJYA/8OjqjqLv/d/fUTdVifin24BFDCOq0flPavw==
   dependencies:
     current-git-branch "^1.1.0"
-
-"@voiceflow/logger@^1.1.0":
-  version "1.1.0"
-  resolved "https://registry.yarnpkg.com/@voiceflow/logger/-/logger-1.1.0.tgz#e1ca90c54220a0d9e0efccbf171b43e3dce64b93"
-  integrity sha512-doaBNQJWAgbpzQKP4Pm0kKV1wPZlFBNJhuv63JEwgmbFHDmTwYm8EvrvOdEujMeoJkPiw4eSneADR16Sl8eHtQ==
-  dependencies:
-    "@voiceflow/pino-pretty" "^3.5.0"
-    express-pino-logger "^4.0.0"
-    pino "^5.14.0"
 
 "@voiceflow/logger@^1.1.10":
   version "1.3.0"
@@ -3712,13 +3703,6 @@ express-bunyan-logger@^1.3.3:
     lodash.set "^4.3.2"
     useragent "^2.2.1"
     uuid "^3.1.0"
-
-express-pino-logger@^4.0.0:
-  version "4.0.0"
-  resolved "https://registry.yarnpkg.com/express-pino-logger/-/express-pino-logger-4.0.0.tgz#775cf253a4e0e7ee2c24804f8a32900d6d0168ca"
-  integrity sha512-BTJwjQXMSR6tFiyvTOOr6aosJkJOuJpW0mXE+icv3ae/0WXBGnLaumINGHJvWMuDO1RSLHBLfRrJaghMjMhVrg==
-  dependencies:
-    pino-http "^4.0.0"
 
 express-validator@^6.3.0:
   version "6.4.0"
@@ -7779,15 +7763,6 @@ pify@^4.0.0:
   resolved "https://registry.yarnpkg.com/pify/-/pify-4.0.1.tgz#4b2cd25c50d598735c50292224fd8c6df41e3231"
   integrity sha512-uB80kBFb/tfd68bVleG9T5GGsGPjJrLAUpR5PZIrhBnIaRTQRjqdJSsIKkOP6OAIFbj7GOrcudc5pNjZ+geV2g==
 
-pino-http@^4.0.0:
-  version "4.4.0"
-  resolved "https://registry.yarnpkg.com/pino-http/-/pino-http-4.4.0.tgz#9bb26db026aa6a7b73492c76c58157d3ffd31f12"
-  integrity sha512-uPGPNGT9WV5GrRydEPR8A1bCXUutmI4M7VIQ6InoJTC1ddjgScQPZt/uxDOQkdTTjP2RJ1dJH5ML+V1f5Q/JKg==
-  dependencies:
-    fast-url-parser "^1.1.3"
-    pino "^5.0.0"
-    pino-std-serializers "^2.4.0"
-
 pino-http@^5.2.0:
   version "5.2.0"
   resolved "https://registry.yarnpkg.com/pino-http/-/pino-http-5.2.0.tgz#d51da7981ab6ea7ca9f17c4db24a427e4ba9c546"
@@ -7802,7 +7777,7 @@ pino-std-serializers@^2.4.0, pino-std-serializers@^2.4.2:
   resolved "https://registry.yarnpkg.com/pino-std-serializers/-/pino-std-serializers-2.4.2.tgz#cb5e3e58c358b26f88969d7e619ae54bdfcc1ae1"
   integrity sha512-WaL504dO8eGs+vrK+j4BuQQq6GLKeCCcHaMB2ItygzVURcL1CycwNEUHTD/lHFHs/NL5qAz2UKrjYWXKSf4aMQ==
 
-pino@^5.0.0, pino@^5.14.0:
+pino@^5.14.0:
   version "5.16.0"
   resolved "https://registry.yarnpkg.com/pino/-/pino-5.16.0.tgz#94d01cb38b5f4a16dd4d7c47aa489fbfe40c3c06"
   integrity sha512-k9cDzHd9S/oYSQ9B9g9+7RXkfsZX78sQXERC8x4p2XArECZXULx9nqNwZvJHsLj779wPCt+ybN+dG8jFR70p6Q==

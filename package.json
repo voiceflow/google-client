@@ -13,7 +13,7 @@
   },
   "dependencies": {
     "@voiceflow/alexa-types": "^1.6.1",
-    "@voiceflow/backend-utils": "2.0.0",
+    "@voiceflow/backend-utils": "^2.1.1",
     "@voiceflow/client": "^1.8.0",
     "@voiceflow/common": "^6.2.0",
     "@voiceflow/logger": "^1.4.0",
