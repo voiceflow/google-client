@@ -1,6 +1,5 @@
+import { ConversationV3 } from '@assistant/conversation';
 import { Context } from '@voiceflow/client';
-import { DialogflowConversation, SimpleResponse } from 'actions-on-google';
-import { WebhookClient } from 'dialogflow-fulfillment';
 
 import { S, T } from '@/lib/constants';
 import { responseHandlers } from '@/lib/services/voiceflow/handlers';
@@ -9,55 +8,43 @@ import { AbstractManager, injectServices } from '../../../types';
 
 const utilsObj = {
   responseHandlers,
-  SimpleResponse,
 };
 @injectServices({ utils: utilsObj })
 class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
-  async build(context: Context, agent: WebhookClient, conv: DialogflowConversation<any>) {
-    const { state, randomstring, utils } = this.services;
+  async build(context: Context, conv: ConversationV3) {
+    const { state, randomstring /* , utils */ } = this.services;
     const { storage, turn } = context;
 
     if (context.stack.isEmpty()) {
       turn.set(T.END, true);
     }
 
-    let displayText;
-
-    if (
-      storage
-        .get(S.OUTPUT)
-        .replace(/<[^><]+\/?>/g, '')
-        .trim().length === 0
-    ) {
-      displayText = '🔊';
-    }
-
-    const response = new utils.SimpleResponse({
-      speech: `<speak>${storage.get(S.OUTPUT)}</speak>`,
-      text: displayText,
-    });
+    const response = `<speak>${storage
+      .get(S.OUTPUT)
+      .replace(/<[^><]+\/?>/g, '')
+      .trim() || '🔊'}</speak>`;
 
     if (turn.get(T.END)) {
-      conv.close(response);
+      conv.add(response);
+      conv.response();
     } else {
-      conv.ask(response);
-      conv.noInputs = [
-        {
-          ssml: `<speak>${turn.get(T.REPROMPT) ?? storage.get(S.OUTPUT)}</speak>`,
-        },
-      ];
+      conv.add(response);
+      // conv.noInputs = [
+      //   {
+      //     ssml: `<speak>${turn.get(T.REPROMPT) ?? storage.get(S.OUTPUT)}</speak>`,
+      //   },
+      // ];
     }
 
     // eslint-disable-next-line no-restricted-syntax
-    for (const handler of utils.responseHandlers) {
-      // eslint-disable-next-line no-await-in-loop
-      await handler(context, conv);
-    }
+    // for (const handler of utils.responseHandlers) {
+    //   // eslint-disable-next-line no-await-in-loop
+    //   await handler(context, conv);
+    // }
 
     await state.saveToDb(storage.get(S.USER), context.getFinalState());
 
-    conv.user.storage.forceUpdateToken = randomstring.generate();
-    agent.add(conv);
+    conv.user.params.forceUpdateToken = randomstring.generate();
   }
 }
 

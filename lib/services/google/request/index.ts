@@ -1,4 +1,4 @@
-import { WebhookClient } from 'dialogflow-fulfillment';
+import { ConversationV3 } from '@assistant/conversation';
 import _ from 'lodash';
 
 import { T, V } from '@/lib/constants';
@@ -11,24 +11,17 @@ import Response from './lifecycle/response';
 
 @injectServices({ initialize: Initialize, context: Context, response: Response })
 class HandlerManager extends AbstractManager<{ initialize: Initialize; context: Context; response: Response }> {
-  async dialogflow(agent: WebhookClient) {
+  async dialogflow(conv: ConversationV3) {
     const { initialize, context, response } = this.services;
-    const conv = agent.conv();
 
-    if (!conv) {
-      agent.add('Hello there! Unfortunately, this platform is currently not supported by Voiceflow.');
-      return;
-    }
+    const { intent } = conv;
+    const input = intent.query;
 
-    const input = conv.input.raw;
+    const { slots } = conv.scene;
 
-    const { intent } = agent;
+    const { userId } = conv.user.params;
 
-    const { parameters: slots } = agent;
-
-    const { userId } = conv.user.storage;
-
-    const newContext = await context.build(_.get(conv.body, 'versionID'), userId);
+    const newContext = await context.build(_.get(conv.request, 'versionID'), userId);
 
     if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || newContext.stack.isEmpty()) {
       await initialize.build(newContext, conv);
@@ -46,7 +39,7 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; context: 
     newContext.variables.set(V.TIMESTAMP, Math.floor(Date.now() / 1000));
     await newContext.update();
 
-    await response.build(newContext, agent, conv);
+    await response.build(newContext, conv);
   }
 }
 

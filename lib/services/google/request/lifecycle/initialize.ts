@@ -1,6 +1,6 @@
+import { ConversationV3 } from '@assistant/conversation';
 import { AlexaVersion, SessionType } from '@voiceflow/alexa-types';
 import { Context, Frame, Store } from '@voiceflow/client';
-import { DialogflowConversation } from 'actions-on-google';
 
 import { F, S, V } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
@@ -22,7 +22,7 @@ const utils = {
 class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
   static VAR_VF = 'voiceflow';
 
-  async build(context: Context, conv: DialogflowConversation<any>): Promise<void> {
+  async build(context: Context, conv: ConversationV3): Promise<void> {
     const { resume, client } = this.services.utils;
 
     // fetch the metadata for this version (project)
@@ -45,8 +45,8 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
 
     // set based on input
     storage.set(S.LOCALE, conv.user.locale);
-    if (!conv.user.storage.userId) conv.user.storage.userId = this.services.uuid4();
-    storage.set(S.USER, conv.user.storage.userId);
+    if (!conv.user.params.userId) conv.user.params.userId = this.services.uuid4();
+    storage.set(S.USER, conv.user.params.userId);
 
     // default global variables
     variables.merge({
@@ -59,7 +59,7 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
       // hidden system variables (code block only)
       [InitializeManager.VAR_VF]: {
         // TODO: implement all exposed voiceflow variables
-        capabilities: conv.surface.capabilities,
+        capabilities: conv.device.capabilities,
         events: [],
       },
     });
