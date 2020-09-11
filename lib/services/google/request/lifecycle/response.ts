@@ -25,9 +25,11 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       .trim() || '🔊'}</speak>`;
 
     if (turn.get(T.END)) {
+      conv.scene.next!.name = 'actions.scene.END_CONVERSATION';
       conv.add(response);
-      conv.response();
     } else {
+      // conv.scene.next!.name = 'choice'; // this needs to be a response builder for 'interaction'
+      // if we set intents as local to scene (no need if intents are global)!
       conv.add(response);
       // conv.noInputs = [
       //   {

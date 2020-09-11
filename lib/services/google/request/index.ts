@@ -23,13 +23,13 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; context: 
 
     const newContext = await context.build(_.get(conv.request, 'versionID'), userId);
 
-    if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || newContext.stack.isEmpty()) {
+    if (intent.name === 'actions.intent.MAIN' || intent.name === 'Default Welcome Intent' || newContext.stack.isEmpty()) {
       await initialize.build(newContext, conv);
     } else {
       newContext.turn.set(T.REQUEST, {
         type: RequestType.INTENT,
         payload: {
-          intent,
+          intent: intent.name,
           input,
           slots,
         },
