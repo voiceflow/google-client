@@ -1,4 +1,4 @@
-import { ConversationV3 } from '@assistant/conversation';
+import { ConversationV3, Simple } from '@assistant/conversation';
 import { Context } from '@voiceflow/client';
 
 import { S, T } from '@/lib/constants';
@@ -8,21 +8,33 @@ import { AbstractManager, injectServices } from '../../../types';
 
 const utilsObj = {
   responseHandlers,
+  Simple,
 };
 @injectServices({ utils: utilsObj })
 class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
   async build(context: Context, conv: ConversationV3) {
-    const { state, randomstring /* , utils */ } = this.services;
+    const { state, randomstring, utils } = this.services;
     const { storage, turn } = context;
 
     if (context.stack.isEmpty()) {
       turn.set(T.END, true);
     }
 
-    const response = `<speak>${storage
-      .get(S.OUTPUT)
-      .replace(/<[^><]+\/?>/g, '')
-      .trim() || '🔊'}</speak>`;
+    let displayText;
+
+    if (
+      storage
+        .get(S.OUTPUT)
+        .replace(/<[^><]+\/?>/g, '')
+        .trim().length === 0
+    ) {
+      displayText = '🔊';
+    }
+
+    const response = new utils.Simple({
+      speech: `<speak>${storage.get(S.OUTPUT)}</speak>`,
+      text: displayText,
+    });
 
     if (turn.get(T.END)) {
       conv.scene.next!.name = 'actions.scene.END_CONVERSATION';
