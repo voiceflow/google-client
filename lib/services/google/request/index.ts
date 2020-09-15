@@ -17,7 +17,11 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; context: 
     const { intent } = conv;
     const input = intent.query;
 
-    const { slots } = conv.scene;
+    const rawSlots = conv.intent.params || {};
+    const slots = Object.keys(rawSlots).reduce((acc, key) => {
+      acc[key] = rawSlots[key].resolved;
+      return acc;
+    }, {} as Record<string, string>);
 
     const { userId } = conv.user.params;
 
