@@ -15,6 +15,12 @@ class GoogleManager extends AbstractManager<{ handler: Handler }> {
     request.body.handler.originalName = request.body.handler.name;
     request.body.handler.name = 'main';
 
+    // slot filling - dialog management
+    const SLOT_FILLING_PREFIX = 'slot_filling_';
+    if (request.body.handler.originalName.startsWith(SLOT_FILLING_PREFIX)) {
+      request.body.intent.name = request.body.handler.originalName.substring(SLOT_FILLING_PREFIX.length);
+    }
+
     request.body.versionID = request.params.versionID;
 
     const app = conversation();
