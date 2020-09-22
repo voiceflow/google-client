@@ -38,15 +38,9 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
 
     if (turn.get(T.END)) {
       conv.scene.next!.name = 'actions.scene.END_CONVERSATION';
-      conv.add(response);
-    } else {
-      conv.add(response);
-      // conv.noInputs = [
-      //   {
-      //     ssml: `<speak>${turn.get(T.REPROMPT) ?? storage.get(S.OUTPUT)}</speak>`,
-      //   },
-      // ];
     }
+
+    conv.add(response);
 
     // eslint-disable-next-line no-restricted-syntax
     for (const handler of utils.responseHandlersV2) {
