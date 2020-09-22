@@ -18,10 +18,10 @@ import ChoiceHandler, { ChipsResponseBuilder, ChipsResponseBuilderV2 } from './c
 import InteractionHandler from './interaction';
 import ResetHandler from './reset';
 import SpeakHandler from './speak';
-import StreamHandler, { StreamResponseBuilder } from './stream';
+import StreamHandler, { StreamResponseBuilder, StreamResponseBuilderV2 } from './stream';
 
 export const responseHandlers = [CardResponseBuilder, StreamResponseBuilder, ChipsResponseBuilder];
-export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2];
+export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2, StreamResponseBuilderV2];
 
 // google handlers for V2 (conversational actions)
 export const HandlersV2 = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLER_ENDPOINT, CODE_HANDLER_ENDPOINT }: Config) => [

@@ -1,4 +1,4 @@
-import { Suggestion } from '@assistant/conversation';
+import { Suggestion as GoogleSuggestion } from '@assistant/conversation';
 import { HandlerFactory } from '@voiceflow/client';
 import { Suggestions } from 'actions-on-google';
 
@@ -27,14 +27,14 @@ export const ChipsResponseBuilderGenerator = (SuggestionsBuilder: typeof Suggest
 
 export const ChipsResponseBuilder = ChipsResponseBuilderGenerator(Suggestions);
 
-export const ChipsResponseBuilderGeneratorV2 = (SuggestionsBuilder: typeof Suggestion): ResponseBuilderV2 => (context, conv) => {
+export const ChipsResponseBuilderGeneratorV2 = (SuggestionsBuilder: typeof GoogleSuggestion): ResponseBuilderV2 => (context, conv) => {
   const chips = context.turn.get(T.CHIPS) as string[];
   if (chips) {
     chips.forEach((chip) => conv.add(new SuggestionsBuilder({ title: chip })));
   }
 };
 
-export const ChipsResponseBuilderV2 = ChipsResponseBuilderGeneratorV2(Suggestion);
+export const ChipsResponseBuilderV2 = ChipsResponseBuilderGeneratorV2(GoogleSuggestion);
 
 const utilsObj = {
   addRepromptIfExists,
