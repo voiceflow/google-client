@@ -1,3 +1,4 @@
+import { conversation as GoogleConversation } from '@assistant/conversation';
 import axios from 'axios';
 import { WebhookClient } from 'dialogflow-fulfillment';
 import randomstring from 'randomstring';
@@ -8,4 +9,5 @@ export default {
   WebhookClient,
   uuid4,
   randomstring,
+  GoogleConversation,
 };

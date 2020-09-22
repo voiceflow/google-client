@@ -9,6 +9,7 @@ export default (_middlewares: MiddlewareMap, controllers: ControllerMap) => {
 
   router.use(bodyParser.json({ limit: BODY_PARSER_SIZE_LIMIT }));
   router.post('/state/skill/gactions/:versionID', controllers.google.handler);
+  router.post('/webhook/:versionID', controllers.google.handlerV2);
 
   return router;
 };
