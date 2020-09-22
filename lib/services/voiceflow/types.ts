@@ -1,3 +1,4 @@
+import { ConversationV3 } from '@assistant/conversation';
 import { Context, Request } from '@voiceflow/client';
 import { DialogflowConversation } from 'actions-on-google';
 
@@ -23,3 +24,4 @@ export interface IntentRequest extends Request {
 }
 
 export type ResponseBuilder = (context: Context, conv: DialogflowConversation<any>) => void | boolean;
+export type ResponseBuilderV2 = (context: Context, conv: ConversationV3) => void | boolean;

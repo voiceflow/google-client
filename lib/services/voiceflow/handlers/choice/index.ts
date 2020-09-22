@@ -1,9 +1,10 @@
+import { Suggestion } from '@assistant/conversation';
 import { HandlerFactory } from '@voiceflow/client';
 import { Suggestions } from 'actions-on-google';
 
 import { T } from '@/lib/constants';
 
-import { IntentRequest, RequestType, ResponseBuilder } from '../../types';
+import { IntentRequest, RequestType, ResponseBuilder, ResponseBuilderV2 } from '../../types';
 import { addChipsIfExists, addRepromptIfExists } from '../../utils';
 import CommandHandler from '../command';
 import getBestScore from './score';
@@ -25,6 +26,15 @@ export const ChipsResponseBuilderGenerator = (SuggestionsBuilder: typeof Suggest
 };
 
 export const ChipsResponseBuilder = ChipsResponseBuilderGenerator(Suggestions);
+
+export const ChipsResponseBuilderGeneratorV2 = (SuggestionsBuilder: typeof Suggestion): ResponseBuilderV2 => (context, conv) => {
+  const chips = context.turn.get(T.CHIPS) as string[];
+  if (chips) {
+    chips.forEach((chip) => conv.add(new SuggestionsBuilder({ title: chip })));
+  }
+};
+
+export const ChipsResponseBuilderV2 = ChipsResponseBuilderGeneratorV2(Suggestion);
 
 const utilsObj = {
   addRepromptIfExists,

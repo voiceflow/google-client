@@ -2,12 +2,12 @@ import { ConversationV3, Simple } from '@assistant/conversation';
 import { Context } from '@voiceflow/client';
 
 import { S, T } from '@/lib/constants';
-import { responseHandlers } from '@/lib/services/voiceflow/handlers';
+import { responseHandlersV2 } from '@/lib/services/voiceflow/handlers';
 
 import { AbstractManager, injectServices } from '../../../types';
 
 const utilsObj = {
-  responseHandlers,
+  responseHandlersV2,
   Simple,
 };
 @injectServices({ utils: utilsObj })
@@ -40,8 +40,6 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       conv.scene.next!.name = 'actions.scene.END_CONVERSATION';
       conv.add(response);
     } else {
-      // conv.scene.next!.name = 'choice'; // this needs to be a response builder for 'interaction'
-      // if we set intents as local to scene (no need if intents are global)!
       conv.add(response);
       // conv.noInputs = [
       //   {
@@ -51,10 +49,10 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
     }
 
     // eslint-disable-next-line no-restricted-syntax
-    // for (const handler of utils.responseHandlers) {
-    //   // eslint-disable-next-line no-await-in-loop
-    //   await handler(context, conv);
-    // }
+    for (const handler of utils.responseHandlersV2) {
+      // eslint-disable-next-line no-await-in-loop
+      await handler(context, conv);
+    }
 
     await state.saveToDb(storage.get(S.USER), context.getFinalState());
 

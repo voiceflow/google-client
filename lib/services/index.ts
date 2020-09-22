@@ -15,6 +15,7 @@ export interface ServiceMap {
   google: Google;
   googleV2: GoogleV2;
   voiceflow: ReturnType<typeof Voiceflow>;
+  voiceflowV2: ReturnType<typeof Voiceflow>;
 }
 
 export interface FullServiceMap extends ClientMap, ServiceMap {
@@ -33,6 +34,7 @@ const buildServices = (config: Config, clients: ClientMap): FullServiceMap => {
   services.adapter = new Adapter(services, config);
   services.state = new State(services, config);
   services.voiceflow = Voiceflow(services, config);
+  services.voiceflowV2 = Voiceflow(services, config, 'v2');
   services.google = new Google(services, config);
   services.googleV2 = new GoogleV2(services, config);
 
