@@ -8,7 +8,15 @@ export default (_middlewares: MiddlewareMap, controllers: ControllerMap) => {
   const router = express.Router();
 
   router.use(bodyParser.json({ limit: BODY_PARSER_SIZE_LIMIT }));
+
+  /**
+   * webhook endpoint for legacy dialogflow google actions system
+   */
   router.post('/state/skill/gactions/:versionID', controllers.google.handler);
+
+  /**
+   * webhook endpoint for current conversational actions google system
+   */
   router.post('/webhook/:versionID', controllers.google.handlerV2);
 
   return router;
