@@ -19,6 +19,19 @@ const tests = [
       validations: {},
     },
   },
+  {
+    method: 'post',
+    calledPath: '/webhook/:versionID',
+    expected: {
+      controllers: {
+        google: {
+          handlerV2: 1,
+        },
+      },
+      middlewares: {},
+      validations: {},
+    },
+  },
 ];
 
 describe('google route unit tests', () => {
