@@ -3,7 +3,11 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { T } from '@/lib/constants';
-import DefaultChoiceHandler, { ChipsResponseBuilderGenerator, ChoiceHandler } from '@/lib/services/voiceflow/handlers/choice';
+import DefaultChoiceHandler, {
+  ChipsResponseBuilderGenerator,
+  ChipsResponseBuilderGeneratorV2,
+  ChoiceHandler,
+} from '@/lib/services/voiceflow/handlers/choice';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
 describe('choice handler unit tests', async () => {
@@ -218,7 +222,7 @@ describe('choice handler unit tests', async () => {
 
       const ChipsResponseBuilder = ChipsResponseBuilderGenerator(SuggestionsBuilder as any);
 
-      const chips = { foo: 'bar' };
+      const chips = ['yes', 'no'];
       const context = { turn: { get: sinon.stub().returns(chips) } };
       const conv = { add: sinon.stub() };
       ChipsResponseBuilder(context as any, conv as any);
@@ -226,6 +230,39 @@ describe('choice handler unit tests', async () => {
       expect(context.turn.get.args).to.eql([[T.CHIPS]]);
       expect(SuggestionsBuilder.args).to.eql([[chips]]);
       expect(conv.add.args).to.eql([[{}]]);
+    });
+  });
+
+  describe('responseBuilderV2', () => {
+    it('no chips', () => {
+      const SuggestionsBuilder = sinon.stub();
+
+      const ChipsResponseBuilderV2 = ChipsResponseBuilderGeneratorV2(SuggestionsBuilder as any);
+
+      const context = { turn: { get: sinon.stub().returns(null) } };
+      ChipsResponseBuilderV2(context as any, null as any);
+
+      expect(context.turn.get.args).to.eql([[T.CHIPS]]);
+    });
+
+    it('with chips', () => {
+      const SuggestionsBuilder = sinon
+        .stub()
+        .onFirstCall()
+        .returns('yes')
+        .onSecondCall()
+        .returns('no');
+
+      const ChipsResponseBuilderV2 = ChipsResponseBuilderGeneratorV2(SuggestionsBuilder as any);
+
+      const chips = ['yes', 'no'];
+      const context = { turn: { get: sinon.stub().returns(chips) } };
+      const conv = { add: sinon.stub() };
+      ChipsResponseBuilderV2(context as any, conv as any);
+
+      expect(context.turn.get.args).to.eql([[T.CHIPS]]);
+      expect(SuggestionsBuilder.args).to.eql([[{ title: 'yes' }], [{ title: 'no' }]]);
+      expect(conv.add.args).to.eql([[{}], [{}]]);
     });
   });
 });
