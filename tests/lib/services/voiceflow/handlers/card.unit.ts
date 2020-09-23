@@ -7,6 +7,8 @@ import DefaultCardHandler, {
   CardHandler,
   CardResponseBuilder,
   CardResponseBuilderGenerator,
+  CardResponseBuilderGeneratorV2,
+  CardResponseBuilderV2,
   CardType,
 } from '@/lib/services/voiceflow/handlers/card';
 
@@ -264,6 +266,97 @@ describe('card handler unit tests', async () => {
       const result = addVariables(regexVariables as any)(value, variables as any, null as any);
       expect(result).to.eql(actual);
       expect(regexVariables.args[0]).to.eql([value, varState]);
+    });
+  });
+
+  describe('responseBuilderV2', () => {
+    it('no card', async () => {
+      const context = {
+        turn: { get: sinon.stub().returns(null) },
+      };
+
+      CardResponseBuilderV2(context as any, null as any);
+
+      expect(context.turn.get.args[0]).to.eql([T.CARD]);
+    });
+
+    it('unknow card type', async () => {
+      const card = {
+        type: 'random',
+      };
+
+      const context = {
+        turn: { get: sinon.stub().returns(card) },
+      };
+
+      CardResponseBuilderV2(context as any, null as any);
+
+      expect(context.turn.get.args[0]).to.eql([T.CARD]);
+    });
+
+    it('simple card', async () => {
+      const card = {
+        type: CardType.SIMPLE,
+        title: 'TITLE',
+        text: 'CONTENT',
+      };
+
+      const context = {
+        turn: { get: sinon.stub().returns(card) },
+      };
+
+      const conv = { add: sinon.stub() };
+
+      const CardBuilder = sinon.stub();
+
+      CardResponseBuilderGeneratorV2(CardBuilder as any, null as any)(context as any, conv as any);
+
+      expect(context.turn.get.args[0]).to.eql([T.CARD]);
+      expect(CardBuilder.args[0]).to.eql([
+        {
+          text: card.text,
+          title: card.title,
+        },
+      ]);
+      expect(conv.add.args[0]).to.eql([{}]);
+    });
+
+    it('standard card', async () => {
+      const card = {
+        type: CardType.STANDARD,
+        title: 'TITLE',
+        text: 'TEXT',
+        image: {
+          largeImageUrl: 'IMAGE URL',
+        },
+      };
+
+      const context = {
+        turn: { get: sinon.stub().returns(card) },
+      };
+
+      const conv = { add: sinon.stub() };
+
+      const CardBuilder = sinon.stub();
+      const ImageBuilder = sinon.stub();
+
+      CardResponseBuilderGeneratorV2(CardBuilder as any, ImageBuilder as any)(context as any, conv as any);
+
+      expect(context.turn.get.args[0]).to.eql([T.CARD]);
+      expect(ImageBuilder.args[0]).to.eql([
+        {
+          url: card.image.largeImageUrl,
+          alt: 'Image',
+        },
+      ]);
+      expect(CardBuilder.args[0]).to.eql([
+        {
+          text: card.text,
+          title: card.title,
+          image: {},
+        },
+      ]);
+      expect(conv.add.args[0]).to.eql([{}]);
     });
   });
 });
