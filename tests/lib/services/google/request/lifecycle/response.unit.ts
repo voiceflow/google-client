@@ -66,11 +66,10 @@ describe('responseManager unit tests', async () => {
       await responseManager.build(context as any, agent as any, conv as any);
 
       expect(context.stack.isEmpty.callCount).to.eql(1);
-      expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.OUTPUT], [S.OUTPUT], [S.USER]]);
+      expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.OUTPUT], [S.USER]]);
       expect(services.utils.SimpleResponse.args[0]).to.eql([
         {
           speech: `<speak>${output}</speak>`,
-          text: '🔊',
         },
       ]);
       expect(conv.ask.args[0]).to.eql([response]);
@@ -195,11 +194,10 @@ describe('responseManager unit tests', async () => {
 
       expect(context.stack.isEmpty.callCount).to.eql(1);
       expect(context.turn.set.args[0]).to.eql([T.END, true]);
-      expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.OUTPUT], [S.USER]]);
+      expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.USER]]);
       expect(services.utils.SimpleResponse.args[0]).to.eql([
         {
           speech: `<speak>${output}</speak>`,
-          text: undefined,
         },
       ]);
       expect(conv.close.args[0]).to.eql([response]);

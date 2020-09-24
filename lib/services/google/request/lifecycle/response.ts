@@ -21,20 +21,8 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       turn.set(T.END, true);
     }
 
-    let displayText;
-
-    if (
-      storage
-        .get(S.OUTPUT)
-        .replace(/<[^><]+\/?>/g, '')
-        .trim().length === 0
-    ) {
-      displayText = '🔊';
-    }
-
     const response = new utils.SimpleResponse({
       speech: `<speak>${storage.get(S.OUTPUT)}</speak>`,
-      text: displayText,
     });
 
     if (turn.get(T.END)) {
