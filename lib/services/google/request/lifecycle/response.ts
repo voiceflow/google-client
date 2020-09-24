@@ -3,9 +3,9 @@ import { DialogflowConversation, SimpleResponse } from 'actions-on-google';
 import { WebhookClient } from 'dialogflow-fulfillment';
 
 import { S, T } from '@/lib/constants';
+import { AbstractManager, injectServices } from '@/lib/services/types';
+import { generateResponseText } from '@/lib/services/utils';
 import { responseHandlers } from '@/lib/services/voiceflow/handlers';
-
-import { AbstractManager, injectServices } from '../../../types';
 
 const utilsObj = {
   responseHandlers,
@@ -21,8 +21,10 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       turn.set(T.END, true);
     }
 
+    const output = storage.get(S.OUTPUT);
     const response = new utils.SimpleResponse({
-      speech: `<speak>${storage.get(S.OUTPUT)}</speak>`,
+      speech: `<speak>${output}</speak>`,
+      text: generateResponseText(output),
     });
 
     if (turn.get(T.END)) {
@@ -31,7 +33,7 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       conv.ask(response);
       conv.noInputs = [
         {
-          ssml: `<speak>${turn.get(T.REPROMPT) ?? storage.get(S.OUTPUT)}</speak>`,
+          ssml: `<speak>${turn.get(T.REPROMPT) ?? output}</speak>`,
         },
       ];
     }

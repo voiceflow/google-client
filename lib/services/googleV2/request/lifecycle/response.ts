@@ -2,6 +2,7 @@ import { ConversationV3, Simple } from '@assistant/conversation';
 import { Context } from '@voiceflow/client';
 
 import { S, T } from '@/lib/constants';
+import { generateResponseText } from '@/lib/services/utils';
 import { responseHandlersV2 } from '@/lib/services/voiceflow/handlers';
 
 import { AbstractManager, injectServices } from '../../../types';
@@ -20,8 +21,10 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       turn.set(T.END, true);
     }
 
+    const output = storage.get(S.OUTPUT);
     const response = new utils.Simple({
-      speech: `<speak>${storage.get(S.OUTPUT)}</speak>`,
+      speech: `<speak>${output}</speak>`,
+      text: generateResponseText(output),
     });
 
     if (turn.get(T.END)) {
