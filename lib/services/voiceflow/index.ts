@@ -5,7 +5,7 @@ import { Config } from '@/types';
 
 import { FullServiceMap as Services } from '../index';
 import { RESUME_DIAGRAM_ID, ResumeDiagram } from './diagrams/resume';
-import Handlers from './handlers';
+import HandlersMap from './handlers';
 
 const utilsObj = {
   Client,
@@ -13,11 +13,13 @@ const utilsObj = {
     ResumeDiagram,
     RESUME_DIAGRAM_ID,
   },
-  Handlers,
+  HandlersMap,
 };
 
-const VoiceflowManager = (services: Services, config: Config, utils = utilsObj) => {
-  const handlers = utils.Handlers(config);
+type Version = keyof typeof HandlersMap;
+
+const VoiceflowManager = (services: Services, config: Config, v: Version = 'v1', utils = utilsObj) => {
+  const handlers = utils.HandlersMap[v](config);
 
   const client = new utils.Client({
     secret: services.secretsProvider.get('VF_DATA_SECRET'),

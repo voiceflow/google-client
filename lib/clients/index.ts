@@ -1,3 +1,4 @@
+import { conversation as GoogleConversation } from '@assistant/conversation';
 import AWS from 'aws-sdk';
 import { AxiosStatic } from 'axios';
 import { WebhookClientConstructor } from 'dialogflow-fulfillment';
@@ -14,6 +15,7 @@ export interface ClientMap {
   docClient: AWS.DynamoDB.DocumentClient;
   axios: AxiosStatic;
   WebhookClient: WebhookClientConstructor;
+  GoogleConversation: typeof GoogleConversation;
   uuid4: typeof uuid4;
   randomstring: typeof randomstring;
   metrics: MetricsType;
@@ -23,7 +25,7 @@ export interface ClientMap {
  * Build all clients
  */
 const buildClients = (config: Config) => {
-  const clients = { ...Static } as ClientMap;
+  const clients: ClientMap = { ...Static } as any;
 
   clients.docClient = Dynamo(config);
   clients.metrics = Metrics(config);

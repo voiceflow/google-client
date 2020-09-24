@@ -27,7 +27,7 @@ describe('voiceflowManager unit tests', async () => {
           RESUME_DIAGRAM_ID: 'diagram-id',
         },
         Client: sinon.stub().returns(clientObj),
-        Handlers: sinon.stub().returns([]),
+        HandlersMap: { v1: sinon.stub().returns([]) },
       };
 
       return {
@@ -41,22 +41,23 @@ describe('voiceflowManager unit tests', async () => {
     it('works correctly', async () => {
       const { clientObj, services, config, utils } = generateFakes();
 
-      const voiceflowManager = VoiceflowManager(services as any, config as any, utils as any);
+      utils.HandlersMap = { ...utils.HandlersMap, v0: {} } as any;
+      const voiceflowManager = VoiceflowManager(services as any, config as any, 'v1', utils as any);
       const { client } = voiceflowManager;
 
       expect(client).to.eql(clientObj);
       expect(clientObj.setEvent.callCount).to.eql(2);
       expect(clientObj.setEvent.args[0][0]).to.eql(EventType.frameDidFinish);
       expect(clientObj.setEvent.args[1][0]).to.eql(EventType.diagramWillFetch);
-      expect(utils.Handlers.callCount).to.eql(1);
-      expect(utils.Handlers.args[0][0]).to.eql(config);
+      expect(utils.HandlersMap.v1.callCount).to.eql(1);
+      expect(utils.HandlersMap.v1.args[0][0]).to.eql(config);
     });
 
     describe('frameDidFinish', () => {
       it('no top frame', async () => {
         const { clientObj, services, config, utils } = generateFakes();
 
-        VoiceflowManager(services as any, config as any, utils as any);
+        VoiceflowManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[0][1];
 
@@ -74,7 +75,7 @@ describe('voiceflowManager unit tests', async () => {
       it('called command false', async () => {
         const { clientObj, services, config, utils } = generateFakes();
 
-        VoiceflowManager(services as any, config as any, utils as any);
+        VoiceflowManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[0][1];
 
@@ -95,7 +96,7 @@ describe('voiceflowManager unit tests', async () => {
       it('called command true but no output', async () => {
         const { clientObj, services, config, utils } = generateFakes();
 
-        VoiceflowManager(services as any, config as any, utils as any);
+        VoiceflowManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[0][1];
 
@@ -123,7 +124,7 @@ describe('voiceflowManager unit tests', async () => {
       it('called command true with output', async () => {
         const { clientObj, services, config, utils } = generateFakes();
 
-        VoiceflowManager(services as any, config as any, utils as any);
+        VoiceflowManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[0][1];
 
@@ -170,7 +171,7 @@ describe('voiceflowManager unit tests', async () => {
 
         utils.resume.RESUME_DIAGRAM_ID = 'different-id';
 
-        VoiceflowManager(services as any, config as any, utils as any);
+        VoiceflowManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[1][1];
 
@@ -187,7 +188,7 @@ describe('voiceflowManager unit tests', async () => {
 
         utils.resume.RESUME_DIAGRAM_ID = 'diagram-id';
 
-        VoiceflowManager(services as any, config as any, utils as any);
+        VoiceflowManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[1][1];
 

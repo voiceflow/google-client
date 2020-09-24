@@ -1,9 +1,10 @@
+import { Card as GoogleCard, Image as GoogleImage } from '@assistant/conversation';
 import { HandlerFactory, Store } from '@voiceflow/client';
 import { BasicCard, Image } from 'actions-on-google';
 
 import { T } from '@/lib/constants';
 
-import { ResponseBuilder } from '../types';
+import { ResponseBuilder, ResponseBuilderV2 } from '../types';
 import { regexVariables } from '../utils';
 
 export enum CardType {
@@ -55,6 +56,39 @@ export const CardResponseBuilderGenerator = (CardBuilder: typeof BasicCard, Imag
 };
 
 export const CardResponseBuilder = CardResponseBuilderGenerator(BasicCard, Image);
+
+export const CardResponseBuilderGeneratorV2 = (CardBuilder: typeof GoogleCard, ImageBuilder: typeof GoogleImage): ResponseBuilderV2 => (
+  context,
+  conv
+) => {
+  const card: Required<Card> | undefined = context.turn.get(T.CARD);
+
+  if (!card) {
+    return;
+  }
+
+  if (card.type === CardType.SIMPLE) {
+    conv.add(
+      new CardBuilder({
+        text: card.text,
+        title: card.title,
+      })
+    );
+  } else if (card.type === CardType.STANDARD) {
+    conv.add(
+      new CardBuilder({
+        text: card.text,
+        title: card.title,
+        image: new ImageBuilder({
+          url: card.image.largeImageUrl,
+          alt: 'Image',
+        }),
+      })
+    );
+  }
+};
+
+export const CardResponseBuilderV2 = CardResponseBuilderGeneratorV2(GoogleCard, GoogleImage);
 
 export const addVariables = (regex: typeof regexVariables) => (value: string | undefined, variables: Store, defaultValue = '') =>
   value ? regex(value, variables.getState()) : defaultValue;
