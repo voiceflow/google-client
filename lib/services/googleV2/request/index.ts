@@ -5,17 +5,17 @@ import { T, V } from '@/lib/constants';
 import { RequestType } from '@/lib/services/voiceflow/types';
 
 import { AbstractManager, injectServices } from '../../types';
+import GoogleManager from '../index';
 import Context from './lifecycle/context';
 import Initialize from './lifecycle/initialize';
 import Response from './lifecycle/response';
 
-const SLOT_FILLING_PREFIX = 'slot_filling_';
 @injectServices({ initialize: Initialize, context: Context, response: Response })
 class HandlerManager extends AbstractManager<{ initialize: Initialize; context: Context; response: Response }> {
   _extractSlots(conv: ConversationV3) {
     const handler = conv.request.handler as { originalName: string };
 
-    if (handler.originalName.startsWith(SLOT_FILLING_PREFIX)) {
+    if (handler.originalName.startsWith(GoogleManager.SLOT_FILLING_PREFIX)) {
       // slot filling - extract slots from scene
       const rawSlots = conv.scene.slots || {};
       return Object.keys(rawSlots).reduce((acc, key) => {
