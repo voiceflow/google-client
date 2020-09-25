@@ -16,6 +16,70 @@ describe('handlerManager unit tests', async () => {
     sinon.restore();
   });
 
+  describe('_extractSlots', () => {
+    describe('slot filling', () => {
+      it('without slots', () => {
+        const conv = {
+          request: { handler: { originalName: 'slot_filling_travel_intent' } },
+          scene: {},
+        };
+
+        const handlerManager = new HandlerManager({} as any, null as any);
+        expect(handlerManager._extractSlots(conv as any)).to.eql({});
+      });
+
+      it('with slots', () => {
+        const conv = {
+          request: { handler: { originalName: 'slot_filling_travel_intent' } },
+          scene: {
+            slots: {
+              slotone: {
+                value: 'one',
+              },
+              slottwo: {
+                value: 'two',
+              },
+            },
+          },
+        };
+
+        const handlerManager = new HandlerManager({} as any, null as any);
+        expect(handlerManager._extractSlots(conv as any)).to.eql({ slotone: 'one', slottwo: 'two' });
+      });
+    });
+
+    describe('intent matching', () => {
+      it('without slots', () => {
+        const conv = {
+          request: { handler: { originalName: 'main' } },
+          intent: {},
+        };
+
+        const handlerManager = new HandlerManager({} as any, null as any);
+        expect(handlerManager._extractSlots(conv as any)).to.eql({});
+      });
+
+      it('with slots', () => {
+        const conv = {
+          request: { handler: { originalName: 'main' } },
+          intent: {
+            params: {
+              slotone: {
+                resolved: 'one',
+              },
+              slottwo: {
+                resolved: 'two',
+              },
+            },
+          },
+        };
+
+        const handlerManager = new HandlerManager({} as any, null as any);
+        expect(handlerManager._extractSlots(conv as any)).to.eql({ slotone: 'one', slottwo: 'two' });
+      });
+    });
+  });
+
   describe('handle', () => {
     it('main intent', async () => {
       const contextObj = {
@@ -54,6 +118,7 @@ describe('handlerManager unit tests', async () => {
       };
 
       const handlerManager = new HandlerManager(services as any, null as any);
+      handlerManager._extractSlots = sinon.stub().returns({});
 
       await handlerManager.handle(conv as any);
 
@@ -101,6 +166,7 @@ describe('handlerManager unit tests', async () => {
       };
 
       const handlerManager = new HandlerManager(services as any, null as any);
+      handlerManager._extractSlots = sinon.stub().returns({});
 
       await handlerManager.handle(conv as any);
 
@@ -148,6 +214,7 @@ describe('handlerManager unit tests', async () => {
       };
 
       const handlerManager = new HandlerManager(services as any, null as any);
+      handlerManager._extractSlots = sinon.stub().returns({});
 
       await handlerManager.handle(conv as any);
 
@@ -186,7 +253,7 @@ describe('handlerManager unit tests', async () => {
 
       const conv = {
         intent: { name: 'random intent', query: 'input raw' },
-        scene: { slots: { slot1: { value: 'slot_one' }, slot2: { value: 'slot_two' } } },
+        scene: { slots: {} },
         request: {
           versionID: 'version-id',
         },
@@ -197,7 +264,10 @@ describe('handlerManager unit tests', async () => {
         },
       };
 
+      const slots = { slot1: 'slot_one', slot2: 'slot_two' };
+
       const handlerManager = new HandlerManager(services as any, null as any);
+      handlerManager._extractSlots = sinon.stub().returns(slots);
 
       await handlerManager.handle(conv as any);
 
@@ -209,7 +279,7 @@ describe('handlerManager unit tests', async () => {
           payload: {
             intent: conv.intent.name,
             input: conv.intent.query,
-            slots: { slot1: 'slot_one', slot2: 'slot_two' },
+            slots,
           },
         },
       ]);
