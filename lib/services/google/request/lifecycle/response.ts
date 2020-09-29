@@ -33,7 +33,7 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       conv.ask(response);
       conv.noInputs = [
         {
-          ssml: `<speak>${turn.get(T.REPROMPT) ?? output}</speak>`,
+          ssml: `<speak>${storage.get(S.REPROMPT) ?? output}</speak>`,
         },
       ];
     }

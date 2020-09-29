@@ -5,12 +5,12 @@ export enum Storage {
   LOCALE = 'locale',
   USER = 'user',
   NO_MATCHES_COUNTER = 'noMatchesCounter',
+  REPROMPT = 'reprompt',
 }
 
 export enum Turn {
   END = 'end',
   PREVIOUS_OUTPUT = 'lastOutput',
-  REPROMPT = 'reprompt',
   REQUEST = 'request',
   CARD = 'card',
   STREAM_PLAY = 'stream_play',

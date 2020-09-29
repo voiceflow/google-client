@@ -27,7 +27,7 @@ export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2
 export const HandlersV2 = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLER_ENDPOINT, CODE_HANDLER_ENDPOINT }: Config) => [
   SpeakHandler(),
   CaptureHandler(),
-  InteractionHandler(),
+  InteractionHandler('v2'),
   ResetHandler(),
   CardHandler(),
   ChoiceHandler(),

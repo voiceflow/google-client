@@ -1,7 +1,7 @@
 import { Context, Store } from '@voiceflow/client';
 import _ from 'lodash';
 
-import { T } from '@/lib/constants';
+import { S, T } from '@/lib/constants';
 
 import { Mapping } from '../voiceflow/types';
 
@@ -74,7 +74,7 @@ export const mapSlots = (mappings: Mapping[], slots: { [key: string]: string }, 
 
 export const addRepromptIfExists = <B extends { reprompt?: string }>(block: B, context: Context, variables: Store): void => {
   if (block.reprompt) {
-    context.turn.set(T.REPROMPT, regexVariables(block.reprompt, variables.getState()));
+    context.storage.set(S.REPROMPT, regexVariables(block.reprompt, variables.getState()));
   }
 };
 

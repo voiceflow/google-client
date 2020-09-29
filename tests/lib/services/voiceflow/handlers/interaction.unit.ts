@@ -1,3 +1,4 @@
+/* eslint-disable max-nested-callbacks */
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -34,7 +35,7 @@ describe('interaction handler unit tests', async () => {
       expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.blockID);
       expect(utils.addChipsIfExists.args).to.eql([[block, context, variables]]);
       expect(utils.addRepromptIfExists.args).to.eql([[block, context, variables]]);
-      expect(context.storage.delete.args).to.eql([[S.NO_MATCHES_COUNTER]]);
+      expect(context.storage.delete.args).to.eql([[S.REPROMPT], [S.NO_MATCHES_COUNTER]]);
     });
 
     it('request type not intent', () => {
@@ -52,7 +53,7 @@ describe('interaction handler unit tests', async () => {
       expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.blockID);
       expect(utils.addChipsIfExists.args).to.eql([[block, context, variables]]);
       expect(utils.addRepromptIfExists.args).to.eql([[block, context, variables]]);
-      expect(context.storage.delete.args).to.eql([[S.NO_MATCHES_COUNTER]]);
+      expect(context.storage.delete.args).to.eql([[S.REPROMPT], [S.NO_MATCHES_COUNTER]]);
     });
 
     describe('request type is intent', () => {
@@ -236,6 +237,60 @@ describe('interaction handler unit tests', async () => {
           expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.nextIds[0]);
           expect(utils.mapSlots.args).to.eql([[block.interactions[0].mappings, request.payload.slots]]);
           expect(variables.merge.args).to.eql([[mappedSlots]]);
+        });
+
+        describe('v2', () => {
+          it('no noInput', async () => {
+            const utils = {
+              formatName: sinon.stub().returns(false),
+              commandHandler: {
+                canHandle: sinon.stub().returns(false),
+              },
+              noMatchHandler: {
+                canHandle: sinon.stub().returns(false),
+              },
+              noInputHandler: {
+                canHandle: sinon.stub().returns(false),
+              },
+              v: 'v2',
+            };
+
+            const interactionHandler = InteractionHandler(utils as any);
+
+            const block = { blockID: 'block-id', elseId: 'else-id', interactions: [{ intent: 'intent1' }, { intent: 'intent2' }] };
+            const request = { type: RequestType.INTENT, payload: { intent: 'random-intent' } };
+            const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
+            const variables = { foo: 'bar' };
+
+            expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.elseId);
+          });
+
+          it('with noInput', async () => {
+            const nextId = 'next-id';
+            const utils = {
+              formatName: sinon.stub().returns(false),
+              commandHandler: {
+                canHandle: sinon.stub().returns(false),
+              },
+              noMatchHandler: {
+                canHandle: sinon.stub().returns(false),
+              },
+              noInputHandler: {
+                canHandle: sinon.stub().returns(true),
+                handle: sinon.stub().returns(nextId),
+              },
+              v: 'v2',
+            };
+
+            const interactionHandler = InteractionHandler(utils as any);
+
+            const block = { blockID: 'block-id', elseId: 'else-id', interactions: [{ intent: 'intent1' }, { intent: 'intent2' }] };
+            const request = { type: RequestType.INTENT, payload: { intent: 'random-intent' } };
+            const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
+            const variables = { foo: 'bar' };
+
+            expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(nextId);
+          });
         });
       });
     });
