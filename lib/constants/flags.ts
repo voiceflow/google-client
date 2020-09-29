@@ -11,7 +11,6 @@ export enum Storage {
 export enum Turn {
   END = 'end',
   PREVIOUS_OUTPUT = 'lastOutput',
-  REPROMPT = 'reprompt',
   REQUEST = 'request',
   CARD = 'card',
   STREAM_PLAY = 'stream_play',

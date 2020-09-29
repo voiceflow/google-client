@@ -72,10 +72,9 @@ export const mapSlots = (mappings: Mapping[], slots: { [key: string]: string }, 
   return variables;
 };
 
-export const addRepromptIfExists = <B extends { reprompt?: string }>(block: B, context: Context, variables: Store, persistent = false): void => {
+export const addRepromptIfExists = <B extends { reprompt?: string }>(block: B, context: Context, variables: Store): void => {
   if (block.reprompt) {
-    if (persistent) context.storage.set(S.REPROMPT, regexVariables(block.reprompt, variables.getState()));
-    else context.turn.set(T.REPROMPT, regexVariables(block.reprompt, variables.getState()));
+    context.storage.set(S.REPROMPT, regexVariables(block.reprompt, variables.getState()));
   }
 };
 

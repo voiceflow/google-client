@@ -5,6 +5,7 @@ import { S, T } from '@/lib/constants';
 import { IntentRequest, Mapping, RequestType } from '../types';
 import { addChipsIfExists, addRepromptIfExists, formatName, mapSlots } from '../utils';
 import CommandHandler from './command';
+import NoInputHandler from './noInput';
 import NoMatchHandler from './noMatch';
 
 type Choice = {
@@ -30,6 +31,8 @@ const utilsObj = {
   mapSlots,
   commandHandler: CommandHandler(),
   noMatchHandler: NoMatchHandler(),
+  noInputHandler: NoInputHandler(),
+  v: '',
 };
 
 export const InteractionHandler: HandlerFactory<Interaction, typeof utilsObj> = (utils: typeof utilsObj) => ({
@@ -40,6 +43,9 @@ export const InteractionHandler: HandlerFactory<Interaction, typeof utilsObj> = 
     const request = context.turn.get(T.REQUEST) as IntentRequest;
 
     if (request?.type !== RequestType.INTENT) {
+      // clean up reprompt on new interaction
+      context.storage.delete(S.REPROMPT);
+
       utils.addRepromptIfExists(block, context, variables);
       utils.addChipsIfExists(block, context, variables);
 
@@ -73,6 +79,11 @@ export const InteractionHandler: HandlerFactory<Interaction, typeof utilsObj> = 
       return utils.commandHandler.handle(context, variables);
     }
 
+    // check for no input in v2
+    if (utils.v === 'v2' && utils.noInputHandler.canHandle(context)) {
+      return utils.noInputHandler.handle(block, context);
+    }
+
     // request for this turn has been processed, delete request
     context.turn.delete(T.REQUEST);
 
@@ -88,4 +99,4 @@ export const InteractionHandler: HandlerFactory<Interaction, typeof utilsObj> = 
   },
 });
 
-export default () => InteractionHandler(utilsObj);
+export default (v = 'v1') => InteractionHandler({ ...utilsObj, v });
