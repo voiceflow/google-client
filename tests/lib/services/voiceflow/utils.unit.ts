@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { T } from '@/lib/constants';
+import { S, T } from '@/lib/constants';
 import { _replacer, addChipsIfExists, addRepromptIfExists, formatName, mapSlots, regexVariables } from '@/lib/services/voiceflow/utils';
 
 describe('voiceflow manager utils unit tests', async () => {
@@ -16,14 +16,14 @@ describe('voiceflow manager utils unit tests', async () => {
     });
 
     it('has reprompt', () => {
-      const context = { turn: { set: sinon.stub() } };
+      const context = { storage: { set: sinon.stub() } };
       const block = { reprompt: 'hello {var}' };
       const varState = { var: 'there' };
       const variables = { getState: sinon.stub().returns(varState) };
 
       addRepromptIfExists(block as any, context as any, variables as any);
 
-      expect(context.turn.set.args[0]).to.eql([T.REPROMPT, 'hello there']);
+      expect(context.storage.set.args[0]).to.eql([S.REPROMPT, 'hello there']);
     });
   });
 

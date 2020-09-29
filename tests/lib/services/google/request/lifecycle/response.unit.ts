@@ -31,6 +31,7 @@ describe('responseManager unit tests', async () => {
       const userId = 'user-id';
       const storageGet = sinon.stub();
       storageGet.withArgs(S.OUTPUT).returns(output);
+      storageGet.withArgs(S.REPROMPT).returns(null);
       storageGet.withArgs(S.USER).returns(userId);
 
       const context = {
@@ -46,8 +47,7 @@ describe('responseManager unit tests', async () => {
           get: sinon
             .stub()
             .onFirstCall()
-            .returns(false)
-            .returns(null),
+            .returns(false),
         },
       };
 
@@ -66,7 +66,7 @@ describe('responseManager unit tests', async () => {
       await responseManager.build(context as any, agent as any, conv as any);
 
       expect(context.stack.isEmpty.callCount).to.eql(1);
-      expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.USER]]);
+      expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.REPROMPT], [S.USER]]);
       expect(services.utils.SimpleResponse.args[0]).to.eql([
         {
           speech: `<speak>${output}</speak>`,
@@ -105,6 +105,7 @@ describe('responseManager unit tests', async () => {
       const userId = 'user-id';
       const storageGet = sinon.stub();
       storageGet.withArgs(S.OUTPUT).returns(output);
+      storageGet.withArgs(S.REPROMPT).returns(reprompt);
       storageGet.withArgs(S.USER).returns(userId);
 
       const context = {
@@ -120,8 +121,7 @@ describe('responseManager unit tests', async () => {
           get: sinon
             .stub()
             .onFirstCall()
-            .returns(false)
-            .returns(reprompt),
+            .returns(false),
         },
       };
 

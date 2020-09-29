@@ -34,7 +34,7 @@ describe('interaction handler unit tests', async () => {
       expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.blockID);
       expect(utils.addChipsIfExists.args).to.eql([[block, context, variables]]);
       expect(utils.addRepromptIfExists.args).to.eql([[block, context, variables]]);
-      expect(context.storage.delete.args).to.eql([[S.NO_MATCHES_COUNTER]]);
+      expect(context.storage.delete.args).to.eql([[S.REPROMPT], [S.NO_MATCHES_COUNTER]]);
     });
 
     it('request type not intent', () => {
@@ -52,7 +52,7 @@ describe('interaction handler unit tests', async () => {
       expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.blockID);
       expect(utils.addChipsIfExists.args).to.eql([[block, context, variables]]);
       expect(utils.addRepromptIfExists.args).to.eql([[block, context, variables]]);
-      expect(context.storage.delete.args).to.eql([[S.NO_MATCHES_COUNTER]]);
+      expect(context.storage.delete.args).to.eql([[S.REPROMPT], [S.NO_MATCHES_COUNTER]]);
     });
 
     describe('request type is intent', () => {
