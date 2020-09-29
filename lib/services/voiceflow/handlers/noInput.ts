@@ -4,8 +4,6 @@ import { S, T } from '@/lib/constants';
 
 type Block = {
   blockID: string;
-  noMatches?: string[];
-  randomize?: boolean;
 };
 
 const NO_INPUT_PREFIX = 'actions.intent.NO_INPUT';
