@@ -12,7 +12,7 @@ const NO_INPUT_PREFIX = 'actions.intent.NO_INPUT';
 
 export const NoInputHandler = () => ({
   canHandle: (context: Context) => {
-    return context.turn.get(T.REQUEST)?.payload?.intent.startsWith(NO_INPUT_PREFIX);
+    return !!context.turn.get(T.REQUEST)?.payload?.intent.startsWith(NO_INPUT_PREFIX);
   },
   handle: (block: Block, context: Context) => {
     const { storage } = context;
