@@ -5,6 +5,7 @@ export enum Storage {
   LOCALE = 'locale',
   USER = 'user',
   NO_MATCHES_COUNTER = 'noMatchesCounter',
+  REPROMPT = 'reprompt',
 }
 
 export enum Turn {

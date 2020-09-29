@@ -16,6 +16,7 @@ import CaptureHandler from './capture';
 import CardHandler, { CardResponseBuilder, CardResponseBuilderV2 } from './card';
 import ChoiceHandler, { ChipsResponseBuilder, ChipsResponseBuilderV2 } from './choice';
 import InteractionHandler from './interaction';
+import InteractionHandlerV2 from './interactionV2';
 import ResetHandler from './reset';
 import SpeakHandler from './speak';
 import StreamHandler, { StreamResponseBuilder, StreamResponseBuilderV2 } from './stream';
@@ -27,7 +28,7 @@ export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2
 export const HandlersV2 = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLER_ENDPOINT, CODE_HANDLER_ENDPOINT }: Config) => [
   SpeakHandler(),
   CaptureHandler(),
-  InteractionHandler(),
+  InteractionHandlerV2(),
   ResetHandler(),
   CardHandler(),
   ChoiceHandler(),
