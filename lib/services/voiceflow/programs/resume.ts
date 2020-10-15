@@ -1,5 +1,6 @@
-import { Prompt } from '@voiceflow/alexa-types';
-import { Diagram, Frame } from '@voiceflow/client';
+import { Frame, Program } from '@voiceflow/client';
+import { NodeType, Prompt } from '@voiceflow/general-types';
+import { Voice } from '@voiceflow/google-types';
 
 export const RESUME_DIAGRAM_ID = '__RESUME_FLOW__';
 
@@ -25,9 +26,9 @@ export const promptToSSML = (content = '', voice: string | undefined) => {
   return content;
 };
 
-export const createResumeFrame = (resume: Prompt, follow: Prompt | null) => {
+export const createResumeFrame = (resume: Prompt<Voice>, follow: Prompt<Voice> | null) => {
   return new Frame({
-    diagramID: RESUME_DIAGRAM_ID,
+    programID: RESUME_DIAGRAM_ID,
     variables: {
       [ResumeVariables.CONTENT]: promptToSSML(resume.content, resume.voice),
       [ResumeVariables.FOLLOW_CONTENT]: follow ? promptToSSML(follow.content, follow.voice) : '',
@@ -37,14 +38,16 @@ export const createResumeFrame = (resume: Prompt, follow: Prompt | null) => {
 
 const ResumeDiagramRaw = {
   id: RESUME_DIAGRAM_ID,
-  blocks: {
+  lines: {
     1: {
-      blockID: '1',
+      id: '1',
+      type: NodeType.SPEAK,
       speak: `{${ResumeVariables.CONTENT}}`,
       nextId: '2',
     },
     2: {
-      blockID: '2',
+      id: '2',
+      type: 'choice',
       choices: [{ open: true }, { open: true }],
       inputs: [
         // todo: support other languages
@@ -55,15 +58,17 @@ const ResumeDiagramRaw = {
       elseId: '3',
     },
     3: {
-      blockID: '3',
+      id: '3',
+      type: NodeType.SPEAK,
       speak: `{${ResumeVariables.FOLLOW_CONTENT}}`,
     },
     4: {
-      blockID: '4',
+      id: '4',
+      type: 'reset',
       reset: true,
     },
   },
-  startBlockID: '1',
+  startId: '1',
 };
 
-export const ResumeDiagram = new Diagram(ResumeDiagramRaw);
+export const ResumeDiagram = new Program(ResumeDiagramRaw);

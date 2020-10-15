@@ -1,3 +1,4 @@
+import { CardType } from '@voiceflow/google-types/build/nodes/card';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -9,7 +10,6 @@ import DefaultCardHandler, {
   CardResponseBuilderGenerator,
   CardResponseBuilderGeneratorV2,
   CardResponseBuilderV2,
-  CardType,
 } from '@/lib/services/voiceflow/handlers/card';
 
 describe('card handler unit tests', async () => {
@@ -39,11 +39,9 @@ describe('card handler unit tests', async () => {
         addVariables: sinon
           .stub()
           .onFirstCall()
-          .returns('TITLE')
-          .onSecondCall()
           .returns('TEXT')
-          .onThirdCall()
-          .returns('CONTENT'),
+          .onSecondCall()
+          .returns('TITLE'),
       };
 
       const cardHandler = CardHandler(utils);
@@ -52,7 +50,6 @@ describe('card handler unit tests', async () => {
         card: {
           title: 'title',
           text: 'text',
-          content: 'content',
         },
         nextId: 'next-id',
       };
@@ -64,16 +61,14 @@ describe('card handler unit tests', async () => {
       const result = cardHandler.handle(block as any, context as any, variables as any, null as any);
 
       expect(result).to.eql(block.nextId);
-      expect(utils.addVariables.args[0]).to.eql([block.card.title, variables]);
-      expect(utils.addVariables.args[1]).to.eql([block.card.text, variables]);
-      expect(utils.addVariables.args[2]).to.eql([block.card.content, variables]);
+      expect(utils.addVariables.args[0]).to.eql([block.card.text, variables]);
+      expect(utils.addVariables.args[1]).to.eql([block.card.title, variables]);
       expect(context.turn.set.args[0]).to.eql([
         T.CARD,
         {
           type: CardType.SIMPLE,
           title: 'TITLE',
           text: 'TEXT',
-          content: 'CONTENT',
           image: {
             largeImageUrl: '',
           },
@@ -147,7 +142,7 @@ describe('card handler unit tests', async () => {
 
       cardHandler.handle(block as any, context as any, variables as any, null as any);
 
-      expect(utils.addVariables.args[3]).to.eql([block.card.image.largeImageUrl, variables]);
+      expect(utils.addVariables.args[2]).to.eql([block.card.image.largeImageUrl, variables]);
       expect(context.turn.set.args[0][1].image).to.eql({ largeImageUrl: 'url' });
     });
   });
@@ -180,8 +175,8 @@ describe('card handler unit tests', async () => {
     it('simple card', async () => {
       const card = {
         type: CardType.SIMPLE,
+        text: 'CONTENT',
         title: 'TITLE',
-        content: 'CONTENT',
       };
 
       const context = {
@@ -197,7 +192,7 @@ describe('card handler unit tests', async () => {
       expect(context.turn.get.args[0]).to.eql([T.CARD]);
       expect(CardBuilder.args[0]).to.eql([
         {
-          text: card.content,
+          text: card.text,
           title: card.title,
         },
       ]);

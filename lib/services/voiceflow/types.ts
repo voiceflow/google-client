@@ -2,8 +2,6 @@ import { ConversationV3 } from '@assistant/conversation';
 import { Context, Request } from '@voiceflow/client';
 import { DialogflowConversation } from 'actions-on-google';
 
-export type Mapping = { variable: string; slot: string };
-
 export enum RequestType {
   INTENT = 'INTENT',
 }

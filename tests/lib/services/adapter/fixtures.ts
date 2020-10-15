@@ -287,12 +287,12 @@ export const oldOutputMap = {
 export const newOutputMap = {
   stack: [
     {
-      blockID: 'ck9so2dv000dc3h5scpdwu8pb',
+      nodeID: 'ck9so2dv000dc3h5scpdwu8pb',
       variables: {
         homeCounter: 4,
       },
       storage: {},
-      diagramID: 'chpdRRgsmypGRrVPOVRb0g5B80aPJCv1',
+      programID: 'chpdRRgsmypGRrVPOVRb0g5B80aPJCv1',
       commands: [
         {
           diagram_id: 'XNZy6PvjhttVIxbQCGMgzbeVQYxtqkzv',
@@ -307,7 +307,7 @@ export const newOutputMap = {
       ],
     },
     {
-      blockID: 'ck9so1ue400c03h5s3d5nhvji',
+      nodeID: 'ck9so1ue400c03h5s3d5nhvji',
       variables: {
         secondCounter: 6,
       },
@@ -315,7 +315,7 @@ export const newOutputMap = {
         outputMap: [['homeCounter', 'secondCounter']],
         speak: 'in second flow. say smth to continue',
       },
-      diagramID: '0Sf0IVfecjYPJgcuWJpiTmdkjW29Yd8r',
+      programID: '0Sf0IVfecjYPJgcuWJpiTmdkjW29Yd8r',
       commands: [],
     },
   ],
@@ -451,18 +451,18 @@ export const oldDiagramsVariables = {
 export const newFramesVariables = {
   stack: [
     {
-      blockID: 'ck9tyj3yx00943h5s629xvnda',
+      nodeID: 'ck9tyj3yx00943h5s629xvnda',
       variables: {
         homeCounter: 1,
       },
       storage: {
         // speak: 'home flow',
       },
-      diagramID: 'F9QGfXDrhLZDJ1EYhg7c1KxxApAiVyD6',
+      programID: 'F9QGfXDrhLZDJ1EYhg7c1KxxApAiVyD6',
       commands: [],
     },
     {
-      blockID: null,
+      nodeID: null,
       variables: {
         secondCounter: 2,
       },
@@ -470,11 +470,11 @@ export const newFramesVariables = {
         outputMap: [['homeCounter', 'secondCounter']],
         // speak: 'second flow',
       },
-      diagramID: 'GXCNwfzhsxEXN9TfKVi6N98SqDCvb5HQ',
+      programID: 'GXCNwfzhsxEXN9TfKVi6N98SqDCvb5HQ',
       commands: [],
     },
     {
-      blockID: 'ck9tyiqhv007d3h5sbsfrng5x',
+      nodeID: 'ck9tyiqhv007d3h5sbsfrng5x',
       variables: {
         thirdCounter: 3,
       },
@@ -482,7 +482,7 @@ export const newFramesVariables = {
         outputMap: [['secondCounter', 'thirdCounter']],
         speak: 'say smth',
       },
-      diagramID: 'BU0pizWMFXVFqmHt0cYGVp7hhqnKeH80',
+      programID: 'BU0pizWMFXVFqmHt0cYGVp7hhqnKeH80',
       commands: [],
     },
   ],
@@ -613,13 +613,13 @@ export const oldCommands = {
 export const newCommands = {
   stack: [
     {
-      blockID: 'ck9u1k6hj000s3h5sy6fa2z3b',
+      nodeID: 'ck9u1k6hj000s3h5sy6fa2z3b',
       variables: {},
       storage: {
         speak: 'command speak',
         calledCommand: true,
       },
-      diagramID: '0umP0s4TF7v00ueZy9R8EFiPPqxOWyCO',
+      programID: '0umP0s4TF7v00ueZy9R8EFiPPqxOWyCO',
       commands: [
         {
           diagram_id: 'ZwE8jCRkVYkKOMBudoLOvKhWKNckqzb7',
@@ -765,12 +765,12 @@ export const oldExit = {
 export const newExit = {
   stack: [
     {
-      blockID: 'ck9vic27h00483h5sp53j41dj',
+      nodeID: 'ck9vic27h00483h5sp53j41dj',
       variables: {},
       storage: {
         speak: 'Where are you from?',
       },
-      diagramID: 'aH2arEqONjAij7JwN9014xri7Neg26iC',
+      programID: 'aH2arEqONjAij7JwN9014xri7Neg26iC',
       commands: [
         {
           next: 'ck9viadwg001l3h5spc9irn8s',

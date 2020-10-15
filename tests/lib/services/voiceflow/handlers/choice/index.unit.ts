@@ -39,11 +39,11 @@ describe('choice handler unit tests', async () => {
       };
       const choiceHandler = ChoiceHandler(utils as any);
 
-      const block = { blockID: 'block-id' };
+      const block = { id: 'block-id' };
       const context = { turn: { get: sinon.stub().returns(null) } };
       const variables = { var: '1' };
 
-      expect(choiceHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.blockID);
+      expect(choiceHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.id);
       expect(utils.addRepromptIfExists.args).to.eql([[block, context, variables]]);
       expect(utils.addChipsIfExists.args).to.eql([[block, context, variables]]);
     });
@@ -55,11 +55,11 @@ describe('choice handler unit tests', async () => {
       };
       const choiceHandler = ChoiceHandler(utils as any);
 
-      const block = { blockID: 'block-id' };
+      const block = { id: 'block-id' };
       const context = { turn: { get: sinon.stub().returns({ type: 'random-type' }) } };
       const variables = { var: '1' };
 
-      expect(choiceHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.blockID);
+      expect(choiceHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.id);
       expect(utils.addRepromptIfExists.args).to.eql([[block, context, variables]]);
       expect(utils.addChipsIfExists.args).to.eql([[block, context, variables]]);
     });
@@ -72,7 +72,7 @@ describe('choice handler unit tests', async () => {
         const choiceHandler = ChoiceHandler(utils as any);
 
         const block = {
-          blockID: 'block-id',
+          id: 'block-id',
           nextIds: ['one', 'two', 'three'],
           inputs: [
             ['no', 'nah'],
@@ -127,7 +127,7 @@ describe('choice handler unit tests', async () => {
           const choiceHandler = ChoiceHandler(utils as any);
 
           const block = {
-            blockID: 'block-id',
+            id: 'block-id',
             inputs: [
               ['no', 'nah'],
               ['yes', 'yeah'],
@@ -156,7 +156,7 @@ describe('choice handler unit tests', async () => {
             const choiceHandler = ChoiceHandler(utils as any);
 
             const block = {
-              blockID: 'block-id',
+              id: 'block-id',
               elseId: 'else-id',
               inputs: [
                 ['no', 'nah'],
@@ -184,7 +184,7 @@ describe('choice handler unit tests', async () => {
             const choiceHandler = ChoiceHandler(utils as any);
 
             const block = {
-              blockID: 'block-id',
+              id: 'block-id',
               inputs: [
                 ['no', 'nah'],
                 ['yes', 'yeah'],

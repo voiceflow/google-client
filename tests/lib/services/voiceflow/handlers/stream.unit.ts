@@ -23,7 +23,7 @@ describe('stream handler unit tests', async () => {
     });
 
     it('true', async () => {
-      const block = { play: { foo: 'bar' } };
+      const block = { play: 'play' };
 
       const result = DefaultStreamHandler().canHandle(block as any, null as any, null as any, null as any);
 
@@ -32,9 +32,9 @@ describe('stream handler unit tests', async () => {
   });
 
   describe('handle', () => {
-    it('no url but gNextId', async () => {
+    it('no url but nextId', async () => {
       const utils = {
-        regexVariables: sinon.stub().returns(null),
+        replaceVariables: sinon.stub().returns(null),
       };
 
       const streamHandler = StreamHandler(utils as any);
@@ -42,29 +42,29 @@ describe('stream handler unit tests', async () => {
       const varState = { foo: 'bar' };
       const variables = { getState: sinon.stub().returns(varState) };
 
-      const block = { play: 'random-url', gNextId: 'next-id' };
+      const block = { play: 'random-url', nextId: 'next-id' };
 
-      expect(streamHandler.handle(block as any, null as any, variables as any, null as any)).to.eql(block.gNextId);
+      expect(streamHandler.handle(block as any, null as any, variables as any, null as any)).to.eql(block.nextId);
       expect(variables.getState.callCount).to.eql(1);
-      expect(utils.regexVariables.args).to.eql([[block.play, varState]]);
+      expect(utils.replaceVariables.args).to.eql([[block.play, varState]]);
     });
 
     describe('has url', () => {
-      it('with gNextId', async () => {
-        const regexVariables = sinon.stub();
+      it('with nextId', async () => {
+        const replaceVariables = sinon.stub();
         const audioUrl = 'audio-url';
-        regexVariables.onFirstCall().returns(audioUrl);
+        replaceVariables.onFirstCall().returns(audioUrl);
         const streamTitle = 'stream-title';
-        regexVariables.onSecondCall().returns(streamTitle);
+        replaceVariables.onSecondCall().returns(streamTitle);
         const description = 'description';
-        regexVariables.onThirdCall().returns(description);
+        replaceVariables.onThirdCall().returns(description);
         const iconImg = 'icon-img';
-        regexVariables.onCall(3).returns(iconImg);
+        replaceVariables.onCall(3).returns(iconImg);
         const backgroundImg = 'background-img';
-        regexVariables.onCall(4).returns(backgroundImg);
+        replaceVariables.onCall(4).returns(backgroundImg);
 
         const utils = {
-          regexVariables,
+          replaceVariables,
           addChipsIfExists: sinon.stub(),
         };
 
@@ -73,7 +73,7 @@ describe('stream handler unit tests', async () => {
         const varState = { foo: 'bar' };
         const variables = { getState: sinon.stub().returns(varState) };
         const topFrame = {
-          setBlockID: sinon.stub(),
+          setNodeID: sinon.stub(),
           storage: {
             delete: sinon.stub(),
           },
@@ -97,12 +97,12 @@ describe('stream handler unit tests', async () => {
           description: 'description',
           icon_img: 'iconImg',
           background_img: 'backgroundImg',
-          gNextId: 'next-id',
+          nextId: 'next-id',
         };
 
         expect(streamHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(null);
         expect(variables.getState.callCount).to.eql(1);
-        expect(utils.regexVariables.args).to.eql([
+        expect(utils.replaceVariables.args).to.eql([
           [block.play, varState],
           [block.title, varState],
           [block.description, varState],
@@ -121,15 +121,14 @@ describe('stream handler unit tests', async () => {
             },
           ],
         ]);
-        expect(utils.addChipsIfExists.args).to.eql([[block, context, variables]]);
         expect(topFrame.storage.delete.args).to.eql([[F.SPEAK]]);
-        expect(topFrame.setBlockID.args).to.eql([[block.gNextId]]);
+        expect(topFrame.setNodeID.args).to.eql([[block.nextId]]);
         expect(context.end.callCount).to.eql(1);
       });
 
-      it('without gNextId', async () => {
+      it('without nextId', async () => {
         const utils = {
-          regexVariables: sinon.stub().returns('random-string'),
+          replaceVariables: sinon.stub().returns('random-string'),
           addChipsIfExists: sinon.stub(),
         };
 
@@ -156,11 +155,11 @@ describe('stream handler unit tests', async () => {
 
       describe('produce', () => {
         it('no output', async () => {
-          const regexVariables = sinon.stub().returns('random-string');
-          regexVariables.onCall(1).returns(null);
+          const replaceVariables = sinon.stub().returns('random-string');
+          replaceVariables.onCall(1).returns(null);
 
           const utils = {
-            regexVariables,
+            replaceVariables,
             addChipsIfExists: sinon.stub(),
           };
 
@@ -194,10 +193,10 @@ describe('stream handler unit tests', async () => {
         });
 
         it('no but stream output', async () => {
-          const regexVariablesOutput = 'random-string';
+          const replaceVariablesOutput = 'random-string';
 
           const utils = {
-            regexVariables: sinon.stub().returns(regexVariablesOutput),
+            replaceVariables: sinon.stub().returns(replaceVariablesOutput),
             addChipsIfExists: sinon.stub(),
           };
 
@@ -227,14 +226,14 @@ describe('stream handler unit tests', async () => {
 
           fn(draft);
 
-          expect(draft[S.OUTPUT]).to.eql(`Now Playing ${regexVariablesOutput}`);
+          expect(draft[S.OUTPUT]).to.eql(`Now Playing ${replaceVariablesOutput}`);
         });
 
         it('output', () => {
-          const regexVariablesOutput = 'random-string';
+          const replaceVariablesOutput = 'random-string';
 
           const utils = {
-            regexVariables: sinon.stub().returns(regexVariablesOutput),
+            replaceVariables: sinon.stub().returns(replaceVariablesOutput),
             addChipsIfExists: sinon.stub(),
           };
 

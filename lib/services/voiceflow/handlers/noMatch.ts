@@ -1,36 +1,31 @@
-import { Context, Store } from '@voiceflow/client';
+import { Node } from '@voiceflow/api-sdk';
+import { Context, replaceVariables, sanitizeVariables, Store } from '@voiceflow/client';
 import _ from 'lodash';
 
 import { S } from '@/lib/constants';
 
-import { regexVariables, sanitizeVariables } from '../utils';
-
-type Block = {
-  blockID: string;
-  noMatches?: string[];
-  randomize?: boolean;
-};
+type NoMatchNode = Node<any, { noMatches?: string[]; randomize?: boolean }>;
 
 export const NoMatchHandler = () => ({
-  canHandle: (block: Block, context: Context) => {
-    return Array.isArray(block.noMatches) && block.noMatches.length > (context.storage.get(S.NO_MATCHES_COUNTER) ?? 0);
+  canHandle: (node: NoMatchNode, context: Context) => {
+    return Array.isArray(node.noMatches) && node.noMatches.length > (context.storage.get<number>(S.NO_MATCHES_COUNTER) ?? 0);
   },
-  handle: (block: Block, context: Context, variables: Store) => {
-    context.storage.produce((draft) => {
+  handle: (node: NoMatchNode, context: Context, variables: Store) => {
+    context.storage.produce<{ [S.NO_MATCHES_COUNTER]: number }>((draft) => {
       draft[S.NO_MATCHES_COUNTER] = draft[S.NO_MATCHES_COUNTER] ? draft[S.NO_MATCHES_COUNTER] + 1 : 1;
     });
 
-    const speak = (block.randomize ? _.sample(block.noMatches) : block.noMatches?.[context.storage.get(S.NO_MATCHES_COUNTER) - 1]) || '';
+    const speak = (node.randomize ? _.sample(node.noMatches) : node.noMatches?.[context.storage.get<number>(S.NO_MATCHES_COUNTER)! - 1]) || '';
 
     const sanitizedVars = sanitizeVariables(variables.getState());
     // replaces var values
-    const output = regexVariables(speak, sanitizedVars);
+    const output = replaceVariables(speak, sanitizedVars);
 
     context.storage.produce((draft) => {
       draft[S.OUTPUT] += output;
     });
 
-    return block.blockID;
+    return node.id;
   },
 });
 

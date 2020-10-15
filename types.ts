@@ -32,6 +32,7 @@ export interface Config {
   // Logging
   LOG_LEVEL: string | null;
   MIDDLEWARE_VERBOSITY: string | null;
+  PROJECT_SOURCE: string | null;
 }
 
 export interface Request<P extends {} = {}> extends Express.Request<P> {

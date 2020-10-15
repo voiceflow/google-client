@@ -4,8 +4,8 @@ import { F, S } from '@/lib/constants';
 import { Config } from '@/types';
 
 import { FullServiceMap as Services } from '../index';
-import { RESUME_DIAGRAM_ID, ResumeDiagram } from './diagrams/resume';
 import HandlersMap from './handlers';
+import { RESUME_DIAGRAM_ID, ResumeDiagram } from './programs/resume';
 
 const utilsObj = {
   Client,
@@ -18,12 +18,12 @@ const utilsObj = {
 
 type Version = keyof typeof HandlersMap;
 
-const VoiceflowManager = (_: Services, config: Config, v: Version = 'v1', utils = utilsObj) => {
+const VoiceflowManager = (services: Services, config: Config, v: Version = 'v1', utils = utilsObj) => {
   const handlers = utils.HandlersMap[v](config);
 
   const client = new utils.Client({
-    secret: config.VF_DATA_SECRET,
-    endpoint: config.VF_DATA_ENDPOINT,
+    api: services.dataAPI,
+    services,
     handlers,
   });
 
@@ -40,8 +40,8 @@ const VoiceflowManager = (_: Services, config: Config, v: Version = 'v1', utils 
     }
   });
 
-  client.setEvent(EventType.diagramWillFetch, ({ diagramID, override }) => {
-    if (diagramID === utils.resume.RESUME_DIAGRAM_ID) {
+  client.setEvent(EventType.programWillFetch, ({ programID, override }) => {
+    if (programID === utils.resume.RESUME_DIAGRAM_ID) {
       override(utils.resume.ResumeDiagram);
     }
   });

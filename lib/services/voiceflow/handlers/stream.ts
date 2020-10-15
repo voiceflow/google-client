@@ -1,22 +1,12 @@
 import { Image as GoogleImage, Media as GoogleMedia, Suggestion as GoogleSuggestion } from '@assistant/conversation';
 import { Capability, MediaObject as GoogleMediaObject, MediaType, OptionalMediaControl } from '@assistant/conversation/dist/api/schema';
-import { HandlerFactory } from '@voiceflow/client';
+import { HandlerFactory, replaceVariables } from '@voiceflow/client';
+import { Node } from '@voiceflow/google-types/build/nodes/stream';
 import { Image, MediaObject, MediaObjectOptions, Suggestions } from 'actions-on-google';
 
 import { F, S, T } from '@/lib/constants';
 
 import { ResponseBuilder, ResponseBuilderV2 } from '../types';
-import { addChipsIfExists, regexVariables } from '../utils';
-
-type StreamBlock = {
-  play: string;
-  gNextId?: string;
-  icon_img: string;
-  background_img: string;
-  description: string;
-  title: string;
-  chips?: string[];
-};
 
 type StreamPlay = {
   url: string;
@@ -31,9 +21,11 @@ export const StreamResponseBuilderGenerator = (
   MediaObjectBuilder: typeof MediaObject,
   SuggestionsBuilder: typeof Suggestions
 ): ResponseBuilder => (context, conv) => {
-  const streamPlay = context.turn.get(T.STREAM_PLAY);
+  const streamPlay = context.turn.get<StreamPlay>(T.STREAM_PLAY);
 
-  if (!streamPlay) return;
+  if (!streamPlay) {
+    return;
+  }
 
   const { title, description, icon_img, background_img, url } = streamPlay;
 
@@ -73,9 +65,11 @@ export const StreamResponseBuilderGeneratorV2 = (
   MediaObjectBuilder: typeof GoogleMedia,
   SuggestionsBuilder: typeof GoogleSuggestion
 ): ResponseBuilderV2 => (context, conv) => {
-  const streamPlay = context.turn.get(T.STREAM_PLAY);
+  const streamPlay = context.turn.get<StreamPlay>(T.STREAM_PLAY);
 
-  if (!streamPlay) return;
+  if (!streamPlay) {
+    return;
+  }
 
   const { title, description, icon_img, background_img, url } = streamPlay;
 
@@ -125,31 +119,28 @@ export const StreamResponseBuilderGeneratorV2 = (
 export const StreamResponseBuilderV2 = StreamResponseBuilderGeneratorV2(GoogleImage, GoogleMedia, GoogleSuggestion);
 
 const utilsObj = {
-  regexVariables,
-  addChipsIfExists,
+  replaceVariables,
 };
 
-export const StreamHandler: HandlerFactory<StreamBlock, typeof utilsObj> = (utils) => ({
-  canHandle: (block) => {
-    return !!block.play;
-  },
+export const StreamHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => ({
+  canHandle: (block) => !!block.play,
   handle: (block, context, variables) => {
     const variablesMap = variables.getState();
-    const audioUrl = utils.regexVariables(block.play, variablesMap);
+    const audioUrl = utils.replaceVariables(block.play, variablesMap);
 
-    if (!audioUrl && block.gNextId) {
-      return block.gNextId;
+    if (!audioUrl && block.nextId) {
+      return block.nextId;
     }
 
-    const streamTitle = utils.regexVariables(block.title, variablesMap);
+    const streamTitle = utils.replaceVariables(block.title, variablesMap);
 
-    context.turn.set(T.STREAM_PLAY, {
+    context.turn.set<StreamPlay>(T.STREAM_PLAY, {
       url: audioUrl,
       title: streamTitle,
-      description: utils.regexVariables(block.description, variablesMap),
-      icon_img: utils.regexVariables(block.icon_img, variablesMap),
-      background_img: utils.regexVariables(block.background_img, variablesMap),
-    } as StreamPlay);
+      description: utils.replaceVariables(block.description, variablesMap),
+      icon_img: utils.replaceVariables(block.icon_img, variablesMap),
+      background_img: utils.replaceVariables(block.background_img, variablesMap),
+    });
 
     context.storage.produce((draft) => {
       if (!draft[S.OUTPUT].trim()) {
@@ -157,16 +148,15 @@ export const StreamHandler: HandlerFactory<StreamBlock, typeof utilsObj> = (util
       }
     });
 
-    utils.addChipsIfExists(block, context, variables);
-
-    if (block.gNextId) {
+    if (block.nextId) {
       context.stack.top().storage.delete(F.SPEAK);
-      context.stack.top().setBlockID(block.gNextId);
+      context.stack.top().setNodeID(block.nextId);
     } else {
       context.turn.set(T.END, true);
     }
 
     context.end();
+
     return null;
   },
 });

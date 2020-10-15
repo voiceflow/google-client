@@ -22,7 +22,7 @@ describe('noMatch handler unit tests', () => {
   describe('handle', () => {
     it('with noMatch', () => {
       const block = {
-        blockID: 'block-id',
+        id: 'block-id',
         noMatches: ['the counter is {counter}'],
       };
       const context = {
@@ -36,7 +36,7 @@ describe('noMatch handler unit tests', () => {
       };
 
       const noMatchHandler = NoMatchHandler();
-      expect(noMatchHandler.handle(block as any, context as any, variables as any)).to.eql(block.blockID);
+      expect(noMatchHandler.handle(block as any, context as any, variables as any)).to.eql(block.id);
 
       // assert produce
       const cb1 = context.storage.produce.args[0][0];
@@ -57,7 +57,7 @@ describe('noMatch handler unit tests', () => {
 
     it('without noMatch', () => {
       const block = {
-        blockID: 'block-id',
+        id: 'block-id',
       };
       const context = {
         storage: {
@@ -70,7 +70,7 @@ describe('noMatch handler unit tests', () => {
       };
 
       const noMatchHandler = NoMatchHandler();
-      expect(noMatchHandler.handle(block as any, context as any, variables as any)).to.eql(block.blockID);
+      expect(noMatchHandler.handle(block as any, context as any, variables as any)).to.eql(block.id);
       // assert output
       const cb1 = context.storage.produce.args[1][0];
       const draft = { [S.OUTPUT]: '' };
@@ -80,7 +80,7 @@ describe('noMatch handler unit tests', () => {
 
     it('with noMatch randomized', () => {
       const block = {
-        blockID: 'block-id',
+        id: 'block-id',
         noMatches: ['A', 'B', 'C'],
         randomize: true,
       };
@@ -95,7 +95,7 @@ describe('noMatch handler unit tests', () => {
       };
 
       const noMatchHandler = NoMatchHandler();
-      expect(noMatchHandler.handle(block as any, context as any, variables as any)).to.eql(block.blockID);
+      expect(noMatchHandler.handle(block as any, context as any, variables as any)).to.eql(block.id);
 
       const cb2 = context.storage.produce.args[1][0];
       const draft3 = { [S.OUTPUT]: '' };

@@ -1,38 +1,29 @@
 import { HandlerFactory } from '@voiceflow/client';
+import { Node } from '@voiceflow/general-types/build/nodes/capture';
 import wordsToNumbers from 'words-to-numbers';
 
 import { T } from '@/lib/constants';
 
 import { IntentRequest, RequestType } from '../types';
-import { addChipsIfExists, addRepromptIfExists } from '../utils';
+import { addRepromptIfExists } from '../utils';
 import CommandHandler from './command';
-
-export type Capture = {
-  nextId?: string;
-  variable: string | number;
-  reprompt?: string;
-  chips?: string[];
-};
 
 const utilsObj = {
   wordsToNumbers,
-  addChipsIfExists,
   addRepromptIfExists,
   commandHandler: CommandHandler(),
 };
 
-export const CaptureHandler: HandlerFactory<Capture, typeof utilsObj> = (utils) => ({
-  canHandle: (block) => {
-    return !!block.variable;
-  },
-  handle: (block, context, variables) => {
-    const request = context.turn.get(T.REQUEST) as IntentRequest;
+export const CaptureHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => ({
+  canHandle: (node) => !!node.variable,
+  handle: (node, context, variables) => {
+    const request = context.turn.get<IntentRequest>(T.REQUEST);
 
     if (request?.type !== RequestType.INTENT) {
-      utils.addRepromptIfExists(block, context, variables);
-      utils.addChipsIfExists(block, context, variables);
+      utils.addRepromptIfExists(node, context, variables);
+
       // quit cycleStack without ending session by stopping on itself
-      return block.blockID;
+      return node.id;
     }
 
     let nextId: string | null = null;
@@ -48,13 +39,13 @@ export const CaptureHandler: HandlerFactory<Capture, typeof utilsObj> = (utils) 
       const num = utils.wordsToNumbers(input);
 
       if (typeof num !== 'number' || Number.isNaN(num)) {
-        variables.set(block.variable, input);
+        variables.set(node.variable, input);
       } else {
-        variables.set(block.variable, num);
+        variables.set(node.variable, num);
       }
     }
 
-    ({ nextId = null } = block);
+    ({ nextId = null } = node);
 
     // request for this turn has been processed, delete request
     context.turn.delete(T.REQUEST);
