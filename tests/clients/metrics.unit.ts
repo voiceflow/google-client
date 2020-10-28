@@ -1,17 +1,11 @@
-import secretsProvider from '@voiceflow/secrets-provider';
 import { expect } from 'chai';
 import _ from 'lodash';
 import sinon from 'sinon';
 
 import MetricsClient, { Metrics } from '@/lib/clients/metrics';
+import testConfig from '@/tests/testConfig';
 
 describe('metrics client unit tests', () => {
-  before(async () => {
-    await secretsProvider.start({
-      SECRETS_PROVIDER: 'test',
-    });
-  });
-
   beforeEach(() => {
     sinon.restore();
   });
@@ -24,7 +18,7 @@ describe('metrics client unit tests', () => {
       },
     });
 
-    const metrics = new Metrics({ NODE_ENV } as any, loggerStub as any);
+    const metrics = new Metrics({ NODE_ENV, ...testConfig } as any, loggerStub as any);
 
     expect(typeof _.get(metrics, 'client.increment')).to.eql('function');
 
@@ -32,7 +26,7 @@ describe('metrics client unit tests', () => {
     expect(loggerStub.args).to.eql([
       [
         {
-          apiKey: secretsProvider.get('DATADOG_API_KEY'),
+          apiKey: testConfig.DATADOG_API_KEY,
           prefix: `vf_server.${NODE_ENV}.`,
           flushIntervalSeconds: 5,
         },

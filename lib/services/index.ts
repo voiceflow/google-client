@@ -1,5 +1,3 @@
-import secretsProvider, { SecretsProvider } from '@voiceflow/secrets-provider';
-
 import { Config } from '@/types';
 
 import { ClientMap } from '../clients';
@@ -18,9 +16,7 @@ export interface ServiceMap {
   voiceflowV2: ReturnType<typeof Voiceflow>;
 }
 
-export interface FullServiceMap extends ClientMap, ServiceMap {
-  secretsProvider: SecretsProvider;
-}
+export interface FullServiceMap extends ClientMap, ServiceMap {}
 
 /**
  * Build all services
@@ -30,7 +26,6 @@ const buildServices = (config: Config, clients: ClientMap): FullServiceMap => {
     ...clients,
   } as FullServiceMap;
 
-  services.secretsProvider = secretsProvider;
   services.adapter = new Adapter(services, config);
   services.state = new State(services, config);
   services.voiceflow = Voiceflow(services, config);

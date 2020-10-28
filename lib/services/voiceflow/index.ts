@@ -18,11 +18,11 @@ const utilsObj = {
 
 type Version = keyof typeof HandlersMap;
 
-const VoiceflowManager = (services: Services, config: Config, v: Version = 'v1', utils = utilsObj) => {
+const VoiceflowManager = (_: Services, config: Config, v: Version = 'v1', utils = utilsObj) => {
   const handlers = utils.HandlersMap[v](config);
 
   const client = new utils.Client({
-    secret: services.secretsProvider.get('VF_DATA_SECRET'),
+    secret: config.VF_DATA_SECRET,
     endpoint: config.VF_DATA_ENDPOINT,
     handlers,
   });
