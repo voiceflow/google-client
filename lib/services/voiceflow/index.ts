@@ -1,4 +1,5 @@
-import Client, { EventType } from '@voiceflow/client';
+import Client, { DataAPI, EventType } from '@voiceflow/client';
+import { GoogleProgram, GoogleVersion } from '@voiceflow/google-types';
 
 import { F, S } from '@/lib/constants';
 import { Config } from '@/types';
@@ -21,7 +22,7 @@ type Version = keyof typeof HandlersMap;
 const VoiceflowManager = (services: Services, config: Config, v: Version = 'v1', utils = utilsObj) => {
   const handlers = utils.HandlersMap[v](config);
 
-  const client = new utils.Client({
+  const client = new utils.Client<DataAPI<GoogleProgram, GoogleVersion>>({
     api: services.dataAPI,
     services,
     handlers,

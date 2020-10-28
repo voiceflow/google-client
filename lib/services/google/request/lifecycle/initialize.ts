@@ -1,5 +1,6 @@
 import { Context, DataAPI, Frame, Store } from '@voiceflow/client';
-import { GoogleProgram, GoogleVersion, SessionType } from '@voiceflow/google-types';
+import { SessionType } from '@voiceflow/general-types';
+import { GoogleProgram, GoogleVersion } from '@voiceflow/google-types';
 import { DialogflowConversation } from 'actions-on-google';
 
 import { F, S, V } from '@/lib/constants';

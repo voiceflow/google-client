@@ -1,4 +1,4 @@
-import { SessionType } from '@voiceflow/google-types';
+import { SessionType } from '@voiceflow/general-types';
 import { expect } from 'chai';
 import _ from 'lodash';
 import sinon from 'sinon';

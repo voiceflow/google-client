@@ -1,6 +1,7 @@
 import { ConversationV3 } from '@assistant/conversation';
 import { Context, DataAPI, Frame, Store } from '@voiceflow/client';
-import { GoogleProgram, GoogleVersion, SessionType } from '@voiceflow/google-types';
+import { SessionType } from '@voiceflow/general-types';
+import { GoogleProgram, GoogleVersion } from '@voiceflow/google-types';
 
 import { F, S, V } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/programs/resume';
