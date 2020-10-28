@@ -25,8 +25,7 @@ ENV BUILD_NUM=${build_BUILD_NUM}
 ENV GIT_SHA=${build_GIT_SHA}}
 ENV BUILD_URL=${build_BUILD_URL}
 
-RUN yarn global add pm2
-RUN apk --no-cache add git 
+RUN apk --no-cache add git dumb-init
 
 WORKDIR /usr/src/app
 COPY --from=build /target/build ./
@@ -36,4 +35,5 @@ RUN echo $NPM_TOKEN > .npmrc && \
   rm -f .npmrc && \
   yarn cache clean
 
-CMD ["pm2-runtime", "start", "app.config.js"]
+ENTRYPOINT [ "dumb-init" ]
+CMD ["node", "start.js"]

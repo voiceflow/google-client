@@ -10,17 +10,14 @@ export interface Config {
   AWS_REGION: string | null;
   AWS_ENDPOINT: string | null;
 
-  DYNAMO_ENDPOINT: string | null;
-
   // Secrets configuration
-  SECRETS_PROVIDER: string;
-  API_KEYS_SECRET: string | null;
-  MAIN_DB_SECRET: string | null;
-  LOGGING_DB_SECRET: string | null;
+  DATADOG_API_KEY: string;
+  VF_DATA_SECRET: string;
 
   CODE_HANDLER_ENDPOINT: string;
   INTEGRATIONS_HANDLER_ENDPOINT: string;
   API_HANDLER_ENDPOINT: string;
+  DYNAMO_ENDPOINT: string | null;
 
   // Release information
   GIT_SHA: string | null;
