@@ -25,7 +25,6 @@ ENV BUILD_NUM=${build_BUILD_NUM}
 ENV GIT_SHA=${build_GIT_SHA}}
 ENV BUILD_URL=${build_BUILD_URL}
 
-RUN yarn global add pm2
 RUN apk --no-cache add git dumb-init
 
 WORKDIR /usr/src/app
