@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import _ from 'lodash';
 import sinon from 'sinon';
 
+import config from '@/config';
 import MetricsClient, { Metrics } from '@/lib/clients/metrics';
-import testConfig from '@/tests/testConfig';
 
 describe('metrics client unit tests', () => {
   beforeEach(() => {
@@ -18,7 +18,7 @@ describe('metrics client unit tests', () => {
       },
     });
 
-    const metrics = new Metrics({ NODE_ENV, ...testConfig } as any, loggerStub as any);
+    const metrics = new Metrics({ ...config, NODE_ENV } as any, loggerStub as any);
 
     expect(typeof _.get(metrics, 'client.increment')).to.eql('function');
 
@@ -26,7 +26,7 @@ describe('metrics client unit tests', () => {
     expect(loggerStub.args).to.eql([
       [
         {
-          apiKey: testConfig.DATADOG_API_KEY,
+          apiKey: config.DATADOG_API_KEY,
           prefix: `vf_server.${NODE_ENV}.`,
           flushIntervalSeconds: 5,
         },

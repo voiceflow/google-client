@@ -25,17 +25,19 @@ class ServiceManager {
     this.controllers = buildControllers(this.services, config);
   }
 
-  // /**
-  //  * Start services
-  //  */
-  // async start() {
-  //   // needed for eslint
-  // }
+  /**
+   * Start services
+   */
+  async start() {
+    // needed for eslint
+  }
 
-  // /**
-  //  * Stop services
-  //  */
-  // async stop() {}
+  /**
+   * Stop services
+   */
+  async stop() {
+    // needed for eslint
+  }
 }
 
 export default ServiceManager;
