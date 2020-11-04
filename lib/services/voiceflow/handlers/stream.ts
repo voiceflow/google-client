@@ -128,8 +128,8 @@ export const StreamHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => (
     const variablesMap = variables.getState();
     const audioUrl = utils.replaceVariables(block.play, variablesMap);
 
-    if (!audioUrl && block.nextId) {
-      return block.nextId;
+    if (!audioUrl && block.gNextId) {
+      return block.gNextId;
     }
 
     const streamTitle = utils.replaceVariables(block.title, variablesMap);
@@ -148,9 +148,9 @@ export const StreamHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => (
       }
     });
 
-    if (block.nextId) {
+    if (block.gNextId) {
       context.stack.top().storage.delete(F.SPEAK);
-      context.stack.top().setNodeID(block.nextId);
+      context.stack.top().setNodeID(block.gNextId);
     } else {
       context.turn.set(T.END, true);
     }

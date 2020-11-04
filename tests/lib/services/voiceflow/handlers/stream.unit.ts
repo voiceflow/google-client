@@ -32,7 +32,7 @@ describe('stream handler unit tests', async () => {
   });
 
   describe('handle', () => {
-    it('no url but nextId', async () => {
+    it('no url but gNextId', async () => {
       const utils = {
         replaceVariables: sinon.stub().returns(null),
       };
@@ -42,15 +42,15 @@ describe('stream handler unit tests', async () => {
       const varState = { foo: 'bar' };
       const variables = { getState: sinon.stub().returns(varState) };
 
-      const block = { play: 'random-url', nextId: 'next-id' };
+      const block = { play: 'random-url', gNextId: 'next-id' };
 
-      expect(streamHandler.handle(block as any, null as any, variables as any, null as any)).to.eql(block.nextId);
+      expect(streamHandler.handle(block as any, null as any, variables as any, null as any)).to.eql(block.gNextId);
       expect(variables.getState.callCount).to.eql(1);
       expect(utils.replaceVariables.args).to.eql([[block.play, varState]]);
     });
 
     describe('has url', () => {
-      it('with nextId', async () => {
+      it('with gNextId', async () => {
         const replaceVariables = sinon.stub();
         const audioUrl = 'audio-url';
         replaceVariables.onFirstCall().returns(audioUrl);
@@ -97,7 +97,7 @@ describe('stream handler unit tests', async () => {
           description: 'description',
           icon_img: 'iconImg',
           background_img: 'backgroundImg',
-          nextId: 'next-id',
+          gNextId: 'next-id',
         };
 
         expect(streamHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(null);
@@ -122,11 +122,11 @@ describe('stream handler unit tests', async () => {
           ],
         ]);
         expect(topFrame.storage.delete.args).to.eql([[F.SPEAK]]);
-        expect(topFrame.setNodeID.args).to.eql([[block.nextId]]);
+        expect(topFrame.setNodeID.args).to.eql([[block.gNextId]]);
         expect(context.end.callCount).to.eql(1);
       });
 
-      it('without nextId', async () => {
+      it('without gNextId', async () => {
         const utils = {
           replaceVariables: sinon.stub().returns('random-string'),
           addChipsIfExists: sinon.stub(),
