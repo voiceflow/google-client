@@ -79,7 +79,7 @@ export const StreamResponseBuilderGeneratorV2 = (
 
   const { title, description, icon_img, background_img, url } = streamPlay;
 
-  if (conv.device.capabilities!.includes(Capability.RichResponse) && conv.device.capabilities!.includes(Capability.LongFormAudio)) {
+  if (conv.device.capabilities!.includes(Capability.LongFormAudio)) {
     const media = {
       name: title,
       description,
@@ -103,9 +103,6 @@ export const StreamResponseBuilderGeneratorV2 = (
     }
 
     conv.add(
-      // todo: remove ts-ignore when this is solved: https://github.com/actions-on-google/assistant-conversation-nodejs/issues/7
-      // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
-      // @ts-ignore
       new MediaObjectBuilder({
         mediaObjects: [media],
         mediaType: MediaType.Audio,
