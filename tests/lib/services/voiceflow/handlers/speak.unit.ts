@@ -17,7 +17,6 @@ describe('speak handler unit tests', async () => {
 
     it('true', async () => {
       expect(speakHandler.canHandle({ random_speak: ['a', 'b', 'c'] } as any, null as any, null as any, null as any)).to.eql(true);
-      expect(speakHandler.canHandle({ audio: 'url' } as any, null as any, null as any, null as any)).to.eql(true);
       expect(speakHandler.canHandle({ prompt: 'false' } as any, null as any, null as any, null as any)).to.eql(true);
       expect(speakHandler.canHandle({ speak: 'hi' } as any, null as any, null as any, null as any)).to.eql(true);
     });

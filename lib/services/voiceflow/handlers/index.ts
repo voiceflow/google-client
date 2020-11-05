@@ -6,6 +6,7 @@ import {
   IntegrationsHandler,
   NextHandler,
   RandomHandler,
+  ResetHandler,
   SetHandler,
   StartHandler,
 } from '@voiceflow/client';
@@ -16,7 +17,6 @@ import CaptureHandler from './capture';
 import CardHandler, { CardResponseBuilder, CardResponseBuilderV2 } from './card';
 import ChoiceHandler, { ChipsResponseBuilder, ChipsResponseBuilderV2 } from './choice';
 import InteractionHandler from './interaction';
-import ResetHandler from './reset';
 import SpeakHandler from './speak';
 import StreamHandler, { StreamResponseBuilder, StreamResponseBuilderV2 } from './stream';
 

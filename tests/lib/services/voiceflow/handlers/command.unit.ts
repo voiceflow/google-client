@@ -5,7 +5,7 @@ import { F, T } from '@/lib/constants';
 import DefaultCommandHandler, { CommandHandler, getCommand } from '@/lib/services/voiceflow/handlers/command';
 import { IntentName, RequestType } from '@/lib/services/voiceflow/types';
 
-describe('capture handler unit tests', async () => {
+describe('command handler unit tests', async () => {
   afterEach(() => sinon.restore());
 
   describe('getCommand', () => {
@@ -136,7 +136,7 @@ describe('capture handler unit tests', async () => {
 
         expect(commandHandler.handle(context as any, null as any)).to.eql(null);
         expect(topFrame.storage.set.args).to.eql([[F.CALLED_COMMAND, true]]);
-        expect(utils.Frame.args).to.eql([[{ diagramID: res.command.diagram_id }]]);
+        expect(utils.Frame.args).to.eql([[{ programID: res.command.diagram_id }]]);
         expect(context.stack.push.args).to.eql([[{}]]);
       });
 
@@ -159,7 +159,7 @@ describe('capture handler unit tests', async () => {
           const utils = { getCommand: sinon.stub().returns(res) };
           const commandHandler = CommandHandler(utils as any);
 
-          const topFrame = { setBlockID: sinon.stub() };
+          const topFrame = { setNodeID: sinon.stub() };
           const context = {
             turn: { delete: sinon.stub() },
             stack: { getSize: sinon.stub().returns(3), top: sinon.stub().returns(topFrame), popTo: sinon.stub() },
@@ -167,7 +167,7 @@ describe('capture handler unit tests', async () => {
 
           expect(commandHandler.handle(context as any, null as any)).to.eql(null);
           expect(context.stack.popTo.args).to.eql([[index + 1]]);
-          expect(topFrame.setBlockID.args).to.eql([[res.command.next]]);
+          expect(topFrame.setNodeID.args).to.eql([[res.command.next]]);
         });
 
         it('index bigger than stack size', () => {

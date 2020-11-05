@@ -1,9 +1,10 @@
 import { ConversationV3 } from '@assistant/conversation';
-import { AlexaVersion, SessionType } from '@voiceflow/alexa-types';
-import { Context, Frame, Store } from '@voiceflow/client';
+import { Context, DataAPI, Frame, Store } from '@voiceflow/client';
+import { SessionType } from '@voiceflow/general-types';
+import { GoogleProgram, GoogleVersion } from '@voiceflow/google-types';
 
 import { F, S, V } from '@/lib/constants';
-import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/diagrams/resume';
+import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/programs/resume';
 
 import { AbstractManager, injectServices } from '../../../types';
 
@@ -22,7 +23,7 @@ const utils = {
 class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
   static VAR_VF = 'voiceflow';
 
-  async build(context: Context, conv: ConversationV3): Promise<void> {
+  async build(context: Context<DataAPI<GoogleProgram, GoogleVersion>>, conv: ConversationV3): Promise<void> {
     const { resume, client } = this.services.utils;
 
     // fetch the metadata for this version (project)
@@ -30,7 +31,7 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
       platformData: { settings, slots },
       variables: versionVariables,
       rootDiagramID,
-    } = await context.fetchVersion<AlexaVersion>();
+    } = await context.api.getVersion(context.getVersionID());
 
     const { stack, storage, variables } = context;
 
@@ -74,17 +75,18 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
 
     const { session = { type: SessionType.RESTART } } = settings;
     // restart logic
-    const shouldRestart = stack.isEmpty() || session.type === SessionType.RESTART || variables.get(InitializeManager.VAR_VF)?.resume === false;
+    const shouldRestart =
+      stack.isEmpty() || session.type === SessionType.RESTART || variables.get<{ resume?: boolean }>(InitializeManager.VAR_VF)?.resume === false;
     if (shouldRestart) {
       // start the stack with just the root flow
       stack.flush();
-      stack.push(new client.Frame({ diagramID: rootDiagramID }));
+      stack.push(new client.Frame({ programID: rootDiagramID }));
     } else if (session.type === SessionType.RESUME && session.resume) {
       // resume prompt flow - use command flow logic
       stack.top().storage.set(F.CALLED_COMMAND, true);
 
       // if there is an existing resume flow, remove itself and anything above it
-      const resumeStackIndex = stack.getFrames().findIndex((frame) => frame.getDiagramID() === resume.RESUME_DIAGRAM_ID);
+      const resumeStackIndex = stack.getFrames().findIndex((frame) => frame.getProgramID() === resume.RESUME_DIAGRAM_ID);
       if (resumeStackIndex >= 0) {
         stack.popTo(resumeStackIndex);
       }

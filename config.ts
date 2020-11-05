@@ -40,6 +40,8 @@ const CONFIG: Config = {
   // Logging
   LOG_LEVEL: optionalProcessEnv('LOG_LEVEL'),
   MIDDLEWARE_VERBOSITY: optionalProcessEnv('MIDDLEWARE_VERBOSITY'),
+
+  PROJECT_SOURCE: optionalProcessEnv('PROJECT_SOURCE'),
 };
 
 export default CONFIG;

@@ -46,7 +46,7 @@ describe('voiceflowManager unit tests', async () => {
       expect(client).to.eql(clientObj);
       expect(clientObj.setEvent.callCount).to.eql(2);
       expect(clientObj.setEvent.args[0][0]).to.eql(EventType.frameDidFinish);
-      expect(clientObj.setEvent.args[1][0]).to.eql(EventType.diagramWillFetch);
+      expect(clientObj.setEvent.args[1][0]).to.eql(EventType.programWillFetch);
       expect(utils.HandlersMap.v1.callCount).to.eql(1);
       expect(utils.HandlersMap.v1.args[0][0]).to.eql(config);
     });
@@ -163,8 +163,8 @@ describe('voiceflowManager unit tests', async () => {
       });
     });
 
-    describe('diagramWillFetch', () => {
-      it('diagramID is eql to RESUME_DIAGRAM_ID', async () => {
+    describe('programWillFetch', () => {
+      it('programID is eql to RESUME_DIAGRAM_ID', async () => {
         const { clientObj, services, config, utils } = generateFakes();
 
         utils.resume.RESUME_DIAGRAM_ID = 'different-id';
@@ -173,15 +173,15 @@ describe('voiceflowManager unit tests', async () => {
 
         const fn = clientObj.setEvent.args[1][1];
 
-        const diagramID = 'diagram-id';
+        const programID = 'diagram-id';
         const override = sinon.stub();
 
-        fn({ diagramID, override });
+        fn({ programID, override });
 
         expect(override.callCount).to.eql(0);
       });
 
-      it('diagramID is not eql to RESUME_DIAGRAM_ID', async () => {
+      it('programID is not eql to RESUME_DIAGRAM_ID', async () => {
         const { clientObj, services, config, utils } = generateFakes();
 
         utils.resume.RESUME_DIAGRAM_ID = 'diagram-id';
@@ -190,10 +190,10 @@ describe('voiceflowManager unit tests', async () => {
 
         const fn = clientObj.setEvent.args[1][1];
 
-        const diagramID = 'diagram-id';
+        const programID = 'diagram-id';
         const override = sinon.stub();
 
-        fn({ diagramID, override });
+        fn({ programID, override });
 
         expect(override.args[0]).to.eql([utils.resume.ResumeDiagram]);
       });

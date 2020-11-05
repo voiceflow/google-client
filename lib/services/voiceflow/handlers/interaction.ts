@@ -1,33 +1,19 @@
-import { HandlerFactory } from '@voiceflow/client';
+import { formatIntentName, HandlerFactory } from '@voiceflow/client';
+import { SlotMapping } from '@voiceflow/general-types';
+import { Node } from '@voiceflow/general-types/build/nodes/interaction';
 
 import { S, T } from '@/lib/constants';
 
-import { IntentRequest, Mapping, RequestType } from '../types';
-import { addChipsIfExists, addRepromptIfExists, formatName, mapSlots } from '../utils';
+import { IntentRequest, RequestType } from '../types';
+import { addChipsIfExists, addRepromptIfExists, mapSlots } from '../utils';
 import CommandHandler from './command';
 import NoInputHandler from './noInput';
 import NoMatchHandler from './noMatch';
 
-type Choice = {
-  intent: string;
-  mappings?: Mapping[];
-  nextIdIndex?: number;
-};
-
-type Interaction = {
-  elseId?: string;
-  noMatches?: string[];
-  nextIds: string[];
-  reprompt?: string;
-  interactions: Choice[];
-  chips?: string[];
-  randomize?: boolean;
-};
-
 const utilsObj = {
   addRepromptIfExists,
   addChipsIfExists,
-  formatName,
+  formatIntentName,
   mapSlots,
   commandHandler: CommandHandler(),
   noMatchHandler: NoMatchHandler(),
@@ -35,37 +21,34 @@ const utilsObj = {
   v: '',
 };
 
-export const InteractionHandler: HandlerFactory<Interaction, typeof utilsObj> = (utils: typeof utilsObj) => ({
-  canHandle: (block) => {
-    return !!block.interactions;
-  },
-  handle: (block, context, variables) => {
+export const InteractionHandler: HandlerFactory<Node, typeof utilsObj> = (utils: typeof utilsObj) => ({
+  canHandle: (node) => !!node.interactions,
+  handle: (node, context, variables) => {
     const request = context.turn.get(T.REQUEST) as IntentRequest;
 
     if (request?.type !== RequestType.INTENT) {
       // clean up reprompt on new interaction
       context.storage.delete(S.REPROMPT);
 
-      utils.addRepromptIfExists(block, context, variables);
-      utils.addChipsIfExists(block, context, variables);
+      utils.addRepromptIfExists(node, context, variables);
 
       // clean up no matches counter on new interaction
       context.storage.delete(S.NO_MATCHES_COUNTER);
 
       // quit cycleStack without ending session by stopping on itself
-      return block.blockID;
+      return node.id;
     }
 
     let nextId: string | null = null;
-    let variableMap: Mapping[] | null = null;
+    let variableMap: SlotMapping[] | null = null;
 
     const { intent, slots } = request.payload;
 
-    // check if there is a choice in the block that fulfills intent
-    block.interactions.forEach((choice, i: number) => {
-      if (choice.intent && utils.formatName(choice.intent) === intent) {
+    // check if there is a choice in the node that fulfills intent
+    node.interactions.forEach((choice, i: number) => {
+      if (choice.intent && utils.formatIntentName(choice.intent) === intent) {
         variableMap = choice.mappings ?? null;
-        nextId = block.nextIds[choice.nextIdIndex || choice.nextIdIndex === 0 ? choice.nextIdIndex : i];
+        nextId = node.nextIds[choice.nextIdIndex || choice.nextIdIndex === 0 ? choice.nextIdIndex : i];
       }
     });
 
@@ -81,21 +64,21 @@ export const InteractionHandler: HandlerFactory<Interaction, typeof utilsObj> = 
 
     // check for no input in v2
     if (utils.v === 'v2' && utils.noInputHandler.canHandle(context)) {
-      return utils.noInputHandler.handle(block, context);
+      return utils.noInputHandler.handle(node, context);
     }
 
     // request for this turn has been processed, delete request
     context.turn.delete(T.REQUEST);
 
     // check for noMatches to handle
-    if (!nextId && utils.noMatchHandler.canHandle(block, context)) {
-      return utils.noMatchHandler.handle(block, context, variables);
+    if (!nextId && utils.noMatchHandler.canHandle(node, context)) {
+      return utils.noMatchHandler.handle(node, context, variables);
     }
 
     // clean up no matches counter
     context.storage.delete(S.NO_MATCHES_COUNTER);
 
-    return (nextId || block.elseId) ?? null;
+    return (nextId || node.elseId) ?? null;
   },
 });
 

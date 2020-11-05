@@ -1,10 +1,12 @@
-import { SessionType } from '@voiceflow/alexa-types';
+import { SessionType } from '@voiceflow/general-types';
 import { expect } from 'chai';
 import _ from 'lodash';
 import sinon from 'sinon';
 
 import { F, S } from '@/lib/constants';
 import InitializeManager from '@/lib/services/google/request/lifecycle/initialize';
+
+const VERSION_ID = 'version-id';
 
 describe('initializeManager unit tests', async () => {
   describe('build', () => {
@@ -49,7 +51,9 @@ describe('initializeManager unit tests', async () => {
       };
 
       const context = {
-        fetchVersion: sinon.stub().resolves(metaObj),
+        api: {
+          getVersion: sinon.stub().resolves(metaObj),
+        },
         stack: {
           isEmpty: sinon.stub().returns(false),
           flush: sinon.stub(),
@@ -69,6 +73,7 @@ describe('initializeManager unit tests', async () => {
           get: sinon.stub(),
           merge: sinon.stub(),
         },
+        getVersionID: sinon.stub().returns(VERSION_ID),
       };
 
       const conv = {
@@ -175,7 +180,7 @@ describe('initializeManager unit tests', async () => {
           await contextManager.build(context as any, conv as any);
 
           expect(context.stack.flush.callCount).to.eql(1);
-          expect(services.utils.client.Frame.args[0]).to.eql([{ diagramID: metaObj.rootDiagramID }]);
+          expect(services.utils.client.Frame.args[0]).to.eql([{ programID: metaObj.rootDiagramID }]);
           expect(context.stack.push.callCount).to.eql(1);
         });
 
@@ -184,14 +189,14 @@ describe('initializeManager unit tests', async () => {
 
           context.stack.isEmpty = sinon.stub().returns(false);
           metaObj.platformData.settings.session = { type: SessionType.RESTART };
-          context.fetchVersion = sinon.stub().resolves(metaObj);
+          context.api.getVersion = sinon.stub().resolves(metaObj);
 
           const contextManager = new InitializeManager(services as any, null as any);
 
           await contextManager.build(context as any, conv as any);
 
           expect(context.stack.flush.callCount).to.eql(1);
-          expect(services.utils.client.Frame.args[0]).to.eql([{ diagramID: metaObj.rootDiagramID }]);
+          expect(services.utils.client.Frame.args[0]).to.eql([{ programID: metaObj.rootDiagramID }]);
           expect(context.stack.push.callCount).to.eql(1);
         });
 
@@ -202,14 +207,14 @@ describe('initializeManager unit tests', async () => {
           metaObj.platformData.settings.session = { type: SessionType.RESUME };
           context.variables.get = sinon.stub().returns({ resume: false });
 
-          context.fetchVersion = sinon.stub().resolves(metaObj);
+          context.api.getVersion = sinon.stub().resolves(metaObj);
 
           const contextManager = new InitializeManager(services as any, null as any);
 
           await contextManager.build(context as any, conv as any);
 
           expect(context.stack.flush.callCount).to.eql(1);
-          expect(services.utils.client.Frame.args[0]).to.eql([{ diagramID: metaObj.rootDiagramID }]);
+          expect(services.utils.client.Frame.args[0]).to.eql([{ programID: metaObj.rootDiagramID }]);
           expect(context.stack.push.callCount).to.eql(1);
         });
       });
@@ -224,7 +229,7 @@ describe('initializeManager unit tests', async () => {
           metaObj.platformData.settings.session = session;
           context.variables.get = sinon.stub().returns({ resume: true });
 
-          context.fetchVersion = sinon.stub().resolves(metaObj);
+          context.api.getVersion = sinon.stub().resolves(metaObj);
 
           const contextManager = new InitializeManager(services as any, null as any);
 
@@ -242,16 +247,16 @@ describe('initializeManager unit tests', async () => {
           context.stack.getFrames = sinon
             .stub()
             .returns([
-              { getDiagramID: () => false },
-              { getDiagramID: () => false },
-              { getDiagramID: () => services.utils.resume.RESUME_DIAGRAM_ID },
-              { getDiagramID: () => false },
+              { getProgramID: () => false },
+              { getProgramID: () => false },
+              { getProgramID: () => services.utils.resume.RESUME_DIAGRAM_ID },
+              { getProgramID: () => false },
             ]);
           const session = { type: SessionType.RESUME, resume: { foo: 'bar' }, follow: null };
           metaObj.platformData.settings.session = session;
           context.variables.get = sinon.stub().returns({ resume: true });
 
-          context.fetchVersion = sinon.stub().resolves(metaObj);
+          context.api.getVersion = sinon.stub().resolves(metaObj);
 
           const contextManager = new InitializeManager(services as any, null as any);
 
@@ -269,7 +274,7 @@ describe('initializeManager unit tests', async () => {
           const { services, context, conv, metaObj, topStorage } = generateFakes();
 
           metaObj.platformData.settings.session = { type: SessionType.RESUME };
-          context.fetchVersion = sinon.stub().resolves(metaObj);
+          context.api.getVersion = sinon.stub().resolves(metaObj);
           topStorage.get = sinon.stub().returns(null);
 
           const contextManager = new InitializeManager(services as any, null as any);
@@ -285,7 +290,7 @@ describe('initializeManager unit tests', async () => {
           const { services, context, conv, metaObj, topStorage } = generateFakes();
 
           metaObj.platformData.settings.session = { type: SessionType.RESUME };
-          context.fetchVersion = sinon.stub().resolves(metaObj);
+          context.api.getVersion = sinon.stub().resolves(metaObj);
           const lastSpeak = 'random text';
           topStorage.get = sinon.stub().returns(lastSpeak);
 

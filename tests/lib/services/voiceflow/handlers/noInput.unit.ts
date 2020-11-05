@@ -25,7 +25,7 @@ describe('noInput handler unit tests', () => {
     it('with reprompt', () => {
       const reprompt = 'this is the reprompt msg';
       const block = {
-        blockID: 'block-id',
+        id: 'block-id',
       };
       const context = {
         storage: {
@@ -35,7 +35,7 @@ describe('noInput handler unit tests', () => {
       };
 
       const noInputHandler = NoInputHandler();
-      expect(noInputHandler.handle(block as any, context as any)).to.eql(block.blockID);
+      expect(noInputHandler.handle(block as any, context as any)).to.eql(block.id);
 
       // assert produce
       const cb1 = context.storage.produce.args[0][0];
@@ -50,7 +50,7 @@ describe('noInput handler unit tests', () => {
     it('without reprompt', () => {
       const output = 'this is the reprompt msg';
       const block = {
-        blockID: 'block-id',
+        id: 'block-id',
       };
       const context = {
         storage: {
@@ -65,7 +65,7 @@ describe('noInput handler unit tests', () => {
       };
 
       const noInputHandler = NoInputHandler();
-      expect(noInputHandler.handle(block as any, context as any)).to.eql(block.blockID);
+      expect(noInputHandler.handle(block as any, context as any)).to.eql(block.id);
 
       // assert produce
       const cb1 = context.storage.produce.args[0][0];

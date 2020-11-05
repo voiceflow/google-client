@@ -1,36 +1,38 @@
-import { Context, Store } from '@voiceflow/client';
+import { Node } from '@voiceflow/api-sdk';
+import { Context, replaceVariables, sanitizeVariables, Store } from '@voiceflow/client';
 import _ from 'lodash';
 
 import { S } from '@/lib/constants';
 
-import { regexVariables, sanitizeVariables } from '../utils';
+type NoMatchNode = Node<any, { noMatches?: string[]; randomize?: boolean }>;
 
-type Block = {
-  blockID: string;
-  noMatches?: string[];
-  randomize?: boolean;
-};
+export const EMPTY_AUDIO_STRING = '<audio src=""/>';
+
+const removeEmptyNoMatches = (noMatchArray?: string[]) => noMatchArray?.filter((noMatch) => noMatch != null && noMatch !== EMPTY_AUDIO_STRING);
 
 export const NoMatchHandler = () => ({
-  canHandle: (block: Block, context: Context) => {
-    return Array.isArray(block.noMatches) && block.noMatches.length > (context.storage.get(S.NO_MATCHES_COUNTER) ?? 0);
+  canHandle: (node: NoMatchNode, context: Context) => {
+    const nonEmptyNoMatches = removeEmptyNoMatches(node.noMatches);
+
+    return Array.isArray(nonEmptyNoMatches) && nonEmptyNoMatches.length > (context.storage.get<number>(S.NO_MATCHES_COUNTER) ?? 0);
   },
-  handle: (block: Block, context: Context, variables: Store) => {
-    context.storage.produce((draft) => {
+  handle: (node: NoMatchNode, context: Context, variables: Store) => {
+    context.storage.produce<{ [S.NO_MATCHES_COUNTER]: number }>((draft) => {
       draft[S.NO_MATCHES_COUNTER] = draft[S.NO_MATCHES_COUNTER] ? draft[S.NO_MATCHES_COUNTER] + 1 : 1;
     });
 
-    const speak = (block.randomize ? _.sample(block.noMatches) : block.noMatches?.[context.storage.get(S.NO_MATCHES_COUNTER) - 1]) || '';
+    const nonEmptyNoMatches = removeEmptyNoMatches(node.noMatches);
+    const speak = (node.randomize ? _.sample(nonEmptyNoMatches) : nonEmptyNoMatches?.[context.storage.get<number>(S.NO_MATCHES_COUNTER)! - 1]) || '';
 
     const sanitizedVars = sanitizeVariables(variables.getState());
     // replaces var values
-    const output = regexVariables(speak, sanitizedVars);
+    const output = replaceVariables(speak, sanitizedVars);
 
     context.storage.produce((draft) => {
       draft[S.OUTPUT] += output;
     });
 
-    return block.blockID;
+    return node.id;
   },
 });
 

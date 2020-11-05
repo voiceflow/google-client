@@ -21,7 +21,8 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       turn.set(T.END, true);
     }
 
-    const output = storage.get(S.OUTPUT);
+    const output = storage.get<string>(S.OUTPUT) ?? '';
+
     const response = new utils.Simple({
       speech: `<speak>${output}</speak>`,
       text: generateResponseText(output),
@@ -39,7 +40,7 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       await handler(context, conv);
     }
 
-    await state.saveToDb(storage.get(S.USER), context.getFinalState());
+    await state.saveToDb(storage.get<string>(S.USER)!, context.getFinalState());
 
     conv.user.params.forceUpdateToken = randomstring.generate();
   }

@@ -1,27 +1,26 @@
+import { Node } from '@voiceflow/api-sdk';
 import { Context } from '@voiceflow/client';
 
 import { S, T } from '@/lib/constants';
 
-type Block = {
-  blockID: string;
-};
+import { IntentRequest } from '../types';
 
 const NO_INPUT_PREFIX = 'actions.intent.NO_INPUT';
 
 export const NoInputHandler = () => ({
   canHandle: (context: Context) => {
-    return !!context.turn.get(T.REQUEST)?.payload?.intent.startsWith(NO_INPUT_PREFIX);
+    return !!context.turn.get<IntentRequest>(T.REQUEST)?.payload?.intent.startsWith(NO_INPUT_PREFIX);
   },
-  handle: (block: Block, context: Context) => {
+  handle: (node: Node, context: Context) => {
     const { storage } = context;
 
-    const output = storage.get(S.REPROMPT) ?? storage.get(S.OUTPUT);
+    const output = storage.get<string>(S.REPROMPT) ?? storage.get<string>(S.OUTPUT);
 
-    storage.produce((draft) => {
+    storage.produce<{ [S.OUTPUT]: string }>((draft) => {
       draft[S.OUTPUT] += output;
     });
 
-    return block.blockID;
+    return node.id;
   },
 });
 

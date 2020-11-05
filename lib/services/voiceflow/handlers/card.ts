@@ -1,55 +1,27 @@
 import { Card as GoogleCard, Image as GoogleImage } from '@assistant/conversation';
-import { HandlerFactory, Store } from '@voiceflow/client';
+import { HandlerFactory, replaceVariables, Store } from '@voiceflow/client';
+import { Card, CardType, Node } from '@voiceflow/google-types/build/nodes/card';
 import { BasicCard, Image } from 'actions-on-google';
 
 import { T } from '@/lib/constants';
 
 import { ResponseBuilder, ResponseBuilderV2 } from '../types';
-import { regexVariables } from '../utils';
-
-export enum CardType {
-  STANDARD = 'Standard',
-  SIMPLE = 'Simple',
-}
-
-type Card = {
-  type?: CardType;
-  title?: string;
-  text?: string;
-  content?: string;
-  image?: {
-    largeImageUrl: string;
-  };
-};
-
-export type CardBlock = {
-  card: Card;
-  nextId: string;
-};
 
 export const CardResponseBuilderGenerator = (CardBuilder: typeof BasicCard, ImageBuilder: typeof Image): ResponseBuilder => (context, conv) => {
-  const card: Required<Card> | undefined = context.turn.get(T.CARD);
+  const card = context.turn.get<Card>(T.CARD);
 
   if (!card) {
     return;
   }
 
   if (card.type === CardType.SIMPLE) {
-    conv.add(
-      new CardBuilder({
-        text: card.content,
-        title: card.title,
-      })
-    );
+    conv.add(new CardBuilder({ text: card.text, title: card.title }));
   } else if (card.type === CardType.STANDARD) {
     conv.add(
       new CardBuilder({
         text: card.text,
         title: card.title,
-        image: new ImageBuilder({
-          url: card.image.largeImageUrl,
-          alt: 'Image',
-        }),
+        image: new ImageBuilder({ url: card.image?.largeImageUrl ?? '', alt: 'Image' }),
       })
     );
   }
@@ -61,28 +33,20 @@ export const CardResponseBuilderGeneratorV2 = (CardBuilder: typeof GoogleCard, I
   context,
   conv
 ) => {
-  const card: Required<Card> | undefined = context.turn.get(T.CARD);
+  const card = context.turn.get<Card>(T.CARD);
 
   if (!card) {
     return;
   }
 
   if (card.type === CardType.SIMPLE) {
-    conv.add(
-      new CardBuilder({
-        text: card.text,
-        title: card.title,
-      })
-    );
+    conv.add(new CardBuilder({ text: card.text, title: card.title }));
   } else if (card.type === CardType.STANDARD) {
     conv.add(
       new CardBuilder({
         text: card.text,
         title: card.title,
-        image: new ImageBuilder({
-          url: card.image.largeImageUrl,
-          alt: 'Image',
-        }),
+        image: new ImageBuilder({ url: card.image?.largeImageUrl, alt: 'Image' }),
       })
     );
   }
@@ -90,28 +54,31 @@ export const CardResponseBuilderGeneratorV2 = (CardBuilder: typeof GoogleCard, I
 
 export const CardResponseBuilderV2 = CardResponseBuilderGeneratorV2(GoogleCard, GoogleImage);
 
-export const addVariables = (regex: typeof regexVariables) => (value: string | undefined, variables: Store, defaultValue = '') =>
+export const addVariables = (regex: typeof replaceVariables) => (value: string | undefined, variables: Store, defaultValue = '') =>
   value ? regex(value, variables.getState()) : defaultValue;
 
 const utilsObj = {
-  addVariables: addVariables(regexVariables),
+  addVariables: addVariables(replaceVariables),
 };
 
-export const CardHandler: HandlerFactory<CardBlock, typeof utilsObj> = (utils) => ({
-  canHandle: (block) => {
-    return !!block.card;
-  },
-  handle: (block, context, variables) => {
-    const { card } = block;
+export const CardHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => ({
+  canHandle: (node) => !!node.card,
+  handle: (node, context, variables) => {
+    const { card } = node;
+    const type = card.type ?? CardType.SIMPLE;
+
+    // FIXME: remove after data refactoring
+    // eslint-disable-next-line @typescript-eslint/ban-ts-ignore
+    // @ts-ignore
+    const { content } = card;
+
+    const text = (type === CardType.SIMPLE ? content : card.text) ?? card.text;
 
     const newCard: Required<Card> = {
       type: card.type ?? CardType.SIMPLE,
+      text: utils.addVariables(text, variables),
       title: utils.addVariables(card.title, variables),
-      text: utils.addVariables(card.text, variables),
-      content: utils.addVariables(card.content, variables),
-      image: {
-        largeImageUrl: '',
-      },
+      image: { largeImageUrl: '' },
     };
 
     if (card.type === CardType.STANDARD && card.image?.largeImageUrl) {
@@ -120,7 +87,7 @@ export const CardHandler: HandlerFactory<CardBlock, typeof utilsObj> = (utils) =
 
     context.turn.set(T.CARD, newCard);
 
-    return block.nextId;
+    return node.nextId ?? null;
   },
 });
 
