@@ -12,7 +12,7 @@
     }
   },
   "dependencies": {
-    "@assistant/conversation": "^3.1.0",
+    "@assistant/conversation": "3.2.0",
     "@voiceflow/api-sdk": "^1.10.1",
     "@voiceflow/backend-utils": "^2.1.1",
     "@voiceflow/client": "1.10.1",
