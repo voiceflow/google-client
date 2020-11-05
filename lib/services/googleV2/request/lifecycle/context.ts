@@ -1,5 +1,5 @@
-import { Context, DataAPI, State } from '@voiceflow/client';
 import { GoogleProgram, GoogleVersion } from '@voiceflow/google-types';
+import { Context, DataAPI, State } from '@voiceflow/runtime';
 
 import { S, T } from '@/lib/constants';
 

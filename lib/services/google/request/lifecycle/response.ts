@@ -1,4 +1,4 @@
-import { Context } from '@voiceflow/client';
+import { Context } from '@voiceflow/runtime';
 import { DialogflowConversation, SimpleResponse } from 'actions-on-google';
 import { WebhookClient } from 'dialogflow-fulfillment';
 

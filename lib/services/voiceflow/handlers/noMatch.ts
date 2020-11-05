@@ -1,5 +1,5 @@
 import { Node } from '@voiceflow/api-sdk';
-import { Context, replaceVariables, sanitizeVariables, Store } from '@voiceflow/client';
+import { Context, replaceVariables, sanitizeVariables, Store } from '@voiceflow/runtime';
 import _ from 'lodash';
 
 import { S } from '@/lib/constants';

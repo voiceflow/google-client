@@ -1,5 +1,5 @@
 import { Node } from '@voiceflow/api-sdk';
-import { Context } from '@voiceflow/client';
+import { Context } from '@voiceflow/runtime';
 
 import { S, T } from '@/lib/constants';
 

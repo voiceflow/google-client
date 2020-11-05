@@ -1,5 +1,5 @@
 import { ConversationV3 } from '@assistant/conversation';
-import { Context, Request } from '@voiceflow/client';
+import { Context, Request } from '@voiceflow/runtime';
 import { DialogflowConversation } from 'actions-on-google';
 
 export enum RequestType {

@@ -1,5 +1,5 @@
-import { Context, formatIntentName, replaceVariables, Store, transformStringVariableToNumber } from '@voiceflow/client';
 import { SlotMapping } from '@voiceflow/general-types';
+import { Context, formatIntentName, replaceVariables, Store, transformStringVariableToNumber } from '@voiceflow/runtime';
 
 import { S, T } from '@/lib/constants';
 

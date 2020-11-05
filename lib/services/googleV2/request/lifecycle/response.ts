@@ -1,5 +1,5 @@
 import { ConversationV3, Simple } from '@assistant/conversation';
-import { Context } from '@voiceflow/client';
+import { Context } from '@voiceflow/runtime';
 
 import { S, T } from '@/lib/constants';
 import { generateResponseText } from '@/lib/services/utils';

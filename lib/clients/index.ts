@@ -1,6 +1,6 @@
 import { conversation as GoogleConversation } from '@assistant/conversation';
-import { DataAPI, LocalDataApi, ServerDataApi } from '@voiceflow/client';
 import { GoogleProgram, GoogleVersion } from '@voiceflow/google-types';
+import { DataAPI, LocalDataApi, ServerDataApi } from '@voiceflow/runtime';
 import AWS from 'aws-sdk';
 import { AxiosStatic } from 'axios';
 import { WebhookClientConstructor } from 'dialogflow-fulfillment';

@@ -1,6 +1,6 @@
 import { Suggestion as GoogleSuggestion } from '@assistant/conversation';
 import { Node } from '@voiceflow/api-sdk';
-import { HandlerFactory } from '@voiceflow/client';
+import { HandlerFactory } from '@voiceflow/runtime';
 import { Suggestions } from 'actions-on-google';
 
 import { T } from '@/lib/constants';

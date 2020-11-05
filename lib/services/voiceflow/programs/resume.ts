@@ -1,6 +1,6 @@
-import { Frame, Program } from '@voiceflow/client';
 import { NodeType, Prompt } from '@voiceflow/general-types';
 import { Voice } from '@voiceflow/google-types';
+import { Frame, Program } from '@voiceflow/runtime';
 
 export const RESUME_DIAGRAM_ID = '__RESUME_FLOW__';
 

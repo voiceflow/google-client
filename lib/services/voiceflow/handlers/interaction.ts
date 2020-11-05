@@ -1,6 +1,6 @@
-import { formatIntentName, HandlerFactory } from '@voiceflow/client';
 import { SlotMapping } from '@voiceflow/general-types';
 import { Node } from '@voiceflow/general-types/build/nodes/interaction';
+import { formatIntentName, HandlerFactory } from '@voiceflow/runtime';
 
 import { S, T } from '@/lib/constants';
 
