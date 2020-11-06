@@ -1,7 +1,31 @@
 import { SlotMapping } from '@voiceflow/general-types';
 import { Context, formatIntentName, replaceVariables, Store, transformStringVariableToNumber } from '@voiceflow/runtime';
+import _ from 'lodash';
 
 import { S, T } from '@/lib/constants';
+
+type GoogleDateTimeSlot = {
+  seconds: number;
+  day: number;
+  hours: number;
+  nanos: number;
+  year: number;
+  minutes: number;
+  month: number;
+};
+
+export const transformDateTimeVariableToString = (date: GoogleDateTimeSlot) => {
+  if (!date.year && !date.hours) return ''; // not GoogleDateTime type
+
+  // time type
+  if (!date.year) return `${date.hours}:${date.minutes}`;
+
+  // date type
+  if (!date.hours) return `${date.day}/${date.month}/${date.year}`;
+
+  // datetime type
+  return `${date.day}/${date.month}/${date.year} ${date.hours}:${date.minutes}`;
+};
 
 export const mapSlots = (mappings: SlotMapping[], slots: { [key: string]: string }, overwrite = false): object => {
   const variables: Record<string, any> = {};
@@ -17,7 +41,9 @@ export const mapSlots = (mappings: SlotMapping[], slots: { [key: string]: string
       const fromSlotValue = slots[fromSlot] || null;
 
       if (toVariable && (fromSlotValue || overwrite)) {
-        variables[toVariable] = transformStringVariableToNumber(fromSlotValue);
+        variables[toVariable] = _.isObject(fromSlotValue)
+          ? transformDateTimeVariableToString(fromSlotValue)
+          : transformStringVariableToNumber(fromSlotValue);
       }
     });
   }
