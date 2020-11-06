@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { S, T } from '@/lib/constants';
-import { addChipsIfExists, addRepromptIfExists, mapSlots } from '@/lib/services/voiceflow/utils';
+import { addChipsIfExists, addRepromptIfExists, mapSlots, transformDateTimeVariableToString } from '@/lib/services/voiceflow/utils';
 
 describe('voiceflow manager utils unit tests', async () => {
   afterEach(() => sinon.restore());
@@ -47,6 +47,19 @@ describe('voiceflow manager utils unit tests', async () => {
     });
   });
 
+  describe('transformDateTimeVariableToString', () => {
+    // not datetime
+    expect(transformDateTimeVariableToString({ foo: 'bar' } as any)).to.eql('');
+    // datetime
+    expect(transformDateTimeVariableToString({ day: 1, month: 2, year: 2020, hours: 13, minutes: 15, seconds: 0, nanos: 0 })).to.eql(
+      '1/2/2020 13:15'
+    );
+    // time
+    expect(transformDateTimeVariableToString({ hours: 13, minutes: 15, seconds: 0 } as any)).to.eql('13:15');
+    // date
+    expect(transformDateTimeVariableToString({ day: 1, month: 2, year: 2020, hours: 13 } as any)).to.eql('1/2/2020');
+  });
+
   describe('mapSlots', () => {
     it('no mappings', () => {
       expect(mapSlots(null as any, { foo: 'bar' } as any)).to.eql({});
@@ -61,10 +74,16 @@ describe('voiceflow manager utils unit tests', async () => {
     });
 
     it('works', () => {
-      const mappings = [{ slot: 'slotA', variable: 'var1' }, {}, { slot: 'slotB', variable: 'var2' }, { slot: 'randomSlot', variable: 'var3' }];
-      const slots = { slotA: '1', slotB: 'value' };
+      const mappings = [
+        { slot: 'slotA', variable: 'var1' },
+        {},
+        { slot: 'slotB', variable: 'var2' },
+        { slot: 'randomSlot', variable: 'var3' },
+        { slot: 'slotC', variable: 'var3' },
+      ];
+      const slots = { slotA: '1', slotB: 'value', slotC: { day: 1, month: 2, year: 2020, hours: 13, minutes: 15, seconds: 0, nanos: 0 } };
 
-      expect(mapSlots(mappings as any, slots as any)).to.eql({ var1: 1, var2: 'value' });
+      expect(mapSlots(mappings as any, slots as any)).to.eql({ var1: 1, var2: 'value', var3: '1/2/2020 13:15' });
     });
   });
 });
