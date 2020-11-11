@@ -12,7 +12,7 @@ export interface Config {
 
   // Secrets configuration
   DATADOG_API_KEY: string;
-  VF_DATA_SECRET: string;
+  ADMIN_SERVER_DATA_API_TOKEN: string;
 
   CODE_HANDLER_ENDPOINT: string;
   INTEGRATIONS_HANDLER_ENDPOINT: string;

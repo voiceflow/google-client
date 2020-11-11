@@ -32,12 +32,16 @@ const buildClients = (config: Config) => {
 
   clients.dataAPI = config.PROJECT_SOURCE
     ? new LocalDataApi({ projectSource: config.PROJECT_SOURCE }, { fs: Static.fs, path: Static.path })
-    : new ServerDataApi({ dataSecret: config.VF_DATA_SECRET, dataEndpoint: config.VF_DATA_ENDPOINT }, { axios: Static.axios });
+    : new ServerDataApi({ adminToken: config.ADMIN_SERVER_DATA_API_TOKEN, dataEndpoint: config.VF_DATA_ENDPOINT }, { axios: Static.axios });
 
   clients.docClient = Dynamo(config);
   clients.metrics = Metrics(config);
 
   return clients;
+};
+
+export const initClients = async (clients: ClientMap) => {
+  await clients.dataAPI.init();
 };
 
 export default buildClients;
