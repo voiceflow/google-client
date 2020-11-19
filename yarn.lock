@@ -1039,10 +1039,10 @@
   dependencies:
     current-git-branch "^1.1.0"
 
-"@voiceflow/google-types@1.7.0":
-  version "1.7.0"
-  resolved "https://registry.yarnpkg.com/@voiceflow/google-types/-/google-types-1.7.0.tgz#cff1bbb5101054b2210fef4146b286d277455a37"
-  integrity sha512-ZPFrhbcolwnUpn4tOhiORDpbq0F5TAyRMnkvG9IDQWD8GgoqlndNyQnVu8GeYGrIo8bFXhAicAyHoQYSqO1GVg==
+"@voiceflow/google-types@1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@voiceflow/google-types/-/google-types-1.7.1.tgz#234aacffd6527b9efe536648386ff3205d8ba230"
+  integrity sha512-ynkkqrFiBpji66c/rDu5/BA1rkPGzygVjGpmnFlmRjoaB2olC3cVaP+fkLUU3fKfqilyyr2ELwmlEtRwsKR/6A==
   dependencies:
     "@voiceflow/api-sdk" "1.13.0"
     "@voiceflow/general-types" "1.6.1"
