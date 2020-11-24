@@ -5,7 +5,7 @@ import AWS from 'aws-sdk';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import StateManager from '@/lib/services/state';
+import StateManager from '@/lib/services/state/dynamo';
 
 const { getProcessEnv } = Common.utils.general;
 

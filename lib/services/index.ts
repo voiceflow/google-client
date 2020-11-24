@@ -4,7 +4,7 @@ import { ClientMap } from '../clients';
 import Adapter from './adapter';
 import Google from './google';
 import GoogleV2 from './googleV2';
-import State from './state';
+import { DynamoState, MongoState, State } from './state';
 import Voiceflow from './voiceflow';
 
 export interface ServiceMap {
@@ -27,7 +27,7 @@ const buildServices = (config: Config, clients: ClientMap): FullServiceMap => {
   } as FullServiceMap;
 
   services.adapter = new Adapter(services, config);
-  services.state = new State(services, config);
+  services.state = MongoState.enabled(config) ? new MongoState(services, config) : new DynamoState(services, config);
   services.voiceflow = Voiceflow(services, config);
   services.voiceflowV2 = Voiceflow(services, config, 'v2');
   services.google = new Google(services, config);
