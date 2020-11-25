@@ -37,7 +37,7 @@ class StateManager extends AbstractManager {
 
     const id = `${StateManager.GACTION_SESSIONS_DYNAMO_PREFIX}.${userId}`;
 
-    const session = await mongo!.db.collection(this.collectionName).findOne<{ attributes: object }>({ id }, { projection: { attributes: true } });
+    const session = await mongo!.db.collection(this.collectionName).findOne<{ attributes: object }>({ id });
     return session?.attributes || {};
   }
 }
