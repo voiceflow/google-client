@@ -27,11 +27,16 @@ const buildServices = (config: Config, clients: ClientMap): FullServiceMap => {
   } as FullServiceMap;
 
   services.adapter = new Adapter(services, config);
-  services.state = MongoState.enabled(config) ? new MongoState(services, config) : new DynamoState(services, config);
   services.voiceflow = Voiceflow(services, config);
   services.voiceflowV2 = Voiceflow(services, config, 'v2');
   services.google = new Google(services, config);
   services.googleV2 = new GoogleV2(services, config);
+
+  if (MongoState.enabled(config)) {
+    services.state = new MongoState(services, config);
+  } else {
+    services.state = new DynamoState(services, config);
+  }
 
   return services;
 };

@@ -44,13 +44,13 @@ const buildClients = (config: Config) => {
   return clients;
 };
 
-export const initClients = async (config: Config, clients: ClientMap) => {
+export const initClients = async (_config: Config, clients: ClientMap) => {
   await clients.dataAPI.init();
-  if (MongoState.enabled(config)) await clients.mongo!.start();
+  await clients.mongo?.start();
 };
 
-export const stopClients = async (config: Config, clients: ClientMap) => {
-  if (MongoState.enabled(config)) await clients.mongo!.stop();
+export const stopClients = async (_config: Config, clients: ClientMap) => {
+  await clients.mongo?.stop();
 };
 
 export default buildClients;
