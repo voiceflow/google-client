@@ -33,6 +33,10 @@ export interface Config {
   LOG_LEVEL: string | null;
   MIDDLEWARE_VERBOSITY: string | null;
   PROJECT_SOURCE: string | null;
+
+  SESSIONS_SOURCE: string | null;
+  MONGO_URI: string | null;
+  MONGO_DB: string | null;
 }
 
 export interface Request<P extends {} = {}> extends Express.Request<P> {

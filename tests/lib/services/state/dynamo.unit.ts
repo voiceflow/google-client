@@ -1,9 +1,9 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import StateManager from '@/lib/services/state';
+import StateManager from '@/lib/services/state/dynamo';
 
-describe('stateManager unit tests', async () => {
+describe('dynamo stateManager unit tests', async () => {
   afterEach(() => sinon.restore());
 
   describe('saveToDb', () => {

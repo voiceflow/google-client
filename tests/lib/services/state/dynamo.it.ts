@@ -5,7 +5,7 @@ import AWS from 'aws-sdk';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import StateManager from '@/lib/services/state';
+import StateManager from '@/lib/services/state/dynamo';
 
 const { getProcessEnv } = Common.utils.general;
 
@@ -28,7 +28,7 @@ const setUpBasicStateManager = (docClient: AWS.DynamoDB.DocumentClient) => {
   return new StateManager(services as any, config as any);
 };
 
-describe('stateManager integration tests', () => {
+describe('dynamo stateManager integration tests', () => {
   let client: AWS.DynamoDB;
   let docClient: AWS.DynamoDB.DocumentClient;
 

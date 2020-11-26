@@ -42,6 +42,10 @@ const CONFIG: Config = {
   MIDDLEWARE_VERBOSITY: optionalProcessEnv('MIDDLEWARE_VERBOSITY'),
 
   PROJECT_SOURCE: optionalProcessEnv('PROJECT_SOURCE'),
+
+  SESSIONS_SOURCE: optionalProcessEnv('SESSIONS_SOURCE'),
+  MONGO_URI: optionalProcessEnv('MONGO_URI'),
+  MONGO_DB: optionalProcessEnv('MONGO_DB'),
 };
 
 export default CONFIG;
