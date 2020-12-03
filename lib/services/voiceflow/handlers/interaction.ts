@@ -1,4 +1,4 @@
-import { SlotMapping } from '@voiceflow/general-types';
+import { SlotMapping } from '@voiceflow/api-sdk';
 import { Node } from '@voiceflow/general-types/build/nodes/interaction';
 import { formatIntentName, HandlerFactory } from '@voiceflow/runtime';
 
