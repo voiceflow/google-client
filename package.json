@@ -23,7 +23,7 @@
     "@voiceflow/verror": "^1.1.0",
     "actions-on-google": "^2.12.0",
     "aws-sdk": "^2.586.0",
-    "axios": "^0.19.0",
+    "axios": "^0.21.1",
     "bluebird": "^3.7.2",
     "body-parser": "^1.19.0",
     "bunyan": "^1.8.12",
