@@ -14,7 +14,7 @@
   "dependencies": {
     "@assistant/conversation": "3.2.0",
     "@voiceflow/api-sdk": "1.17.1",
-    "@voiceflow/backend-utils": "^2.1.1",
+    "@voiceflow/backend-utils": "^2.2.0",
     "@voiceflow/common": "^6.2.0",
     "@voiceflow/general-types": "1.10.2",
     "@voiceflow/google-types": "1.8.2",
