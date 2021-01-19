@@ -7,6 +7,7 @@ import { Config } from '@/types';
 import { FullServiceMap as Services } from '../index';
 import HandlersMap from './handlers';
 import { RESUME_DIAGRAM_ID, ResumeDiagram } from './programs/resume';
+import { GoogleRuntimeClient } from './types';
 
 const utilsObj = {
   Client,
@@ -19,22 +20,23 @@ const utilsObj = {
 
 type Version = keyof typeof HandlersMap;
 
-const VoiceflowManager = (services: Services, config: Config, v: Version = 'v1', utils = utilsObj) => {
+const RuntimeClientManager = (services: Services, config: Config, v: Version = 'v1', utils = utilsObj): GoogleRuntimeClient => {
   const handlers = utils.HandlersMap[v](config);
 
-  const client = new utils.Client<DataAPI<GoogleProgram, GoogleVersion>>({
+  const client = new utils.Client<unknown, DataAPI<GoogleProgram, GoogleVersion>>({
     api: services.dataAPI,
     services,
     handlers,
   });
 
-  client.setEvent(EventType.frameDidFinish, ({ context }) => {
-    if (context.stack.top()?.storage.get(F.CALLED_COMMAND)) {
-      context.stack.top().storage.delete(F.CALLED_COMMAND);
+  client.setEvent(EventType.frameDidFinish, ({ runtime }) => {
+    if (runtime.stack.top()?.storage.get(F.CALLED_COMMAND)) {
+      runtime.stack.top().storage.delete(F.CALLED_COMMAND);
 
-      const output = context.stack.top().storage.get(F.SPEAK);
+      const output = runtime.stack.top().storage.get(F.SPEAK);
+
       if (output) {
-        context.storage.produce((draft) => {
+        runtime.storage.produce((draft) => {
           draft[S.OUTPUT] += output;
         });
       }
@@ -47,7 +49,7 @@ const VoiceflowManager = (services: Services, config: Config, v: Version = 'v1',
     }
   });
 
-  return { client };
+  return client;
 };
 
-export default VoiceflowManager;
+export default RuntimeClientManager;

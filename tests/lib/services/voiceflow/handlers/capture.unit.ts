@@ -2,8 +2,8 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { T } from '@/lib/constants';
-import DefaultCaptureHandler, { CaptureHandler } from '@/lib/services/voiceflow/handlers/capture';
-import { RequestType } from '@/lib/services/voiceflow/types';
+import DefaultCaptureHandler, { CaptureHandler } from '@/lib/services/runtime/handlers/capture';
+import { RequestType } from '@/lib/services/runtime/types';
 
 describe('capture handler unit tests', async () => {
   afterEach(() => sinon.restore());
@@ -27,11 +27,11 @@ describe('capture handler unit tests', async () => {
       const captureHandler = CaptureHandler(utils as any);
 
       const block = { id: 'block-id' };
-      const context = { turn: { get: sinon.stub().returns(null) } };
+      const runtime = { turn: { get: sinon.stub().returns(null) } };
       const variables = { foo: 'bar' };
 
-      expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.id);
-      expect(utils.addRepromptIfExists.args).to.eql([[block, context, variables]]);
+      expect(captureHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.id);
+      expect(utils.addRepromptIfExists.args).to.eql([[block, runtime, variables]]);
     });
 
     it('request type not intent', () => {
@@ -42,11 +42,11 @@ describe('capture handler unit tests', async () => {
       const captureHandler = CaptureHandler(utils as any);
 
       const block = { id: 'block-id' };
-      const context = { turn: { get: sinon.stub().returns({ type: 'random' }) } };
+      const runtime = { turn: { get: sinon.stub().returns({ type: 'random' }) } };
       const variables = { foo: 'bar' };
 
-      expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.id);
-      expect(utils.addRepromptIfExists.args).to.eql([[block, context, variables]]);
+      expect(captureHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.id);
+      expect(utils.addRepromptIfExists.args).to.eql([[block, runtime, variables]]);
     });
 
     describe('request type is intent', () => {
@@ -63,12 +63,12 @@ describe('capture handler unit tests', async () => {
         const captureHandler = CaptureHandler(utils as any);
 
         const block = { id: 'block-id' };
-        const context = { turn: { get: sinon.stub().returns({ type: RequestType.INTENT }) } };
+        const runtime = { turn: { get: sinon.stub().returns({ type: RequestType.INTENT }) } };
         const variables = { foo: 'bar' };
 
-        expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(output);
-        expect(utils.commandHandler.canHandle.args).to.eql([[context]]);
-        expect(utils.commandHandler.handle.args).to.eql([[context, variables]]);
+        expect(captureHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(output);
+        expect(utils.commandHandler.canHandle.args).to.eql([[runtime]]);
+        expect(utils.commandHandler.handle.args).to.eql([[runtime, variables]]);
       });
 
       describe('command cant handle', () => {
@@ -83,11 +83,11 @@ describe('capture handler unit tests', async () => {
 
           const block = { nextId: 'next-id' };
           const request = { type: RequestType.INTENT, payload: { intent: null } };
-          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
+          const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
           const variables = { foo: 'bar' };
 
-          expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.nextId);
-          expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
+          expect(captureHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.nextId);
+          expect(runtime.turn.delete.args).to.eql([[T.REQUEST]]);
         });
 
         it('input not number', () => {
@@ -104,13 +104,13 @@ describe('capture handler unit tests', async () => {
 
           const block = { nextId: 'next-id', variable: 'var' };
           const request = { type: RequestType.INTENT, payload: { input: 'input' } };
-          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
+          const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
           const variables = { set: sinon.stub() };
 
-          expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.nextId);
+          expect(captureHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.nextId);
           expect(utils.wordsToNumbers.args).to.eql([[request.payload.input]]);
           expect(variables.set.args).to.eql([[block.variable, request.payload.input]]);
-          expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
+          expect(runtime.turn.delete.args).to.eql([[T.REQUEST]]);
         });
 
         it('input is number', () => {
@@ -127,13 +127,13 @@ describe('capture handler unit tests', async () => {
 
           const block = { variable: 'var' };
           const request = { type: RequestType.INTENT, payload: { input: 'input' } };
-          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
+          const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
           const variables = { set: sinon.stub() };
 
-          expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(null);
+          expect(captureHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(null);
           expect(utils.wordsToNumbers.args).to.eql([[request.payload.input]]);
           expect(variables.set.args).to.eql([[block.variable, word]]);
-          expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
+          expect(runtime.turn.delete.args).to.eql([[T.REQUEST]]);
         });
       });
     });

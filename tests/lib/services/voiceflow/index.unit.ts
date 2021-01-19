@@ -3,9 +3,9 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { F, S } from '@/lib/constants';
-import VoiceflowManager from '@/lib/services/voiceflow';
+import RuntimeManager from '@/lib/services/runtime';
 
-describe('voiceflowManager unit tests', async () => {
+describe('runtimeManager unit tests', async () => {
   afterEach(() => sinon.restore());
 
   describe('client', () => {
@@ -40,8 +40,7 @@ describe('voiceflowManager unit tests', async () => {
       const { clientObj, services, config, utils } = generateFakes();
 
       utils.HandlersMap = { ...utils.HandlersMap, v0: {} } as any;
-      const voiceflowManager = VoiceflowManager(services as any, config as any, 'v1', utils as any);
-      const { client } = voiceflowManager;
+      const client = RuntimeManager(services as any, config as any, 'v1', utils as any);
 
       expect(client).to.eql(clientObj);
       expect(clientObj.setEvent.callCount).to.eql(2);
@@ -55,38 +54,38 @@ describe('voiceflowManager unit tests', async () => {
       it('no top frame', async () => {
         const { clientObj, services, config, utils } = generateFakes();
 
-        VoiceflowManager(services as any, config as any, 'v1', utils as any);
+        RuntimeManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[0][1];
 
-        const context = {
+        const runtime = {
           stack: {
             top: sinon.stub().returns(null),
           },
         };
 
-        fn({ context });
+        fn({ runtime });
 
-        expect(context.stack.top.callCount).to.eql(1);
+        expect(runtime.stack.top.callCount).to.eql(1);
       });
 
       it('called command false', async () => {
         const { clientObj, services, config, utils } = generateFakes();
 
-        VoiceflowManager(services as any, config as any, 'v1', utils as any);
+        RuntimeManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[0][1];
 
         const storageTop = {
           get: sinon.stub().returns(false),
         };
-        const context = {
+        const runtime = {
           stack: {
             top: sinon.stub().returns({ storage: storageTop }),
           },
         };
 
-        fn({ context });
+        fn({ runtime });
 
         expect(storageTop.get.args[0]).to.eql([F.CALLED_COMMAND]);
       });
@@ -94,7 +93,7 @@ describe('voiceflowManager unit tests', async () => {
       it('called command true but no output', async () => {
         const { clientObj, services, config, utils } = generateFakes();
 
-        VoiceflowManager(services as any, config as any, 'v1', utils as any);
+        RuntimeManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[0][1];
 
@@ -106,13 +105,13 @@ describe('voiceflowManager unit tests', async () => {
           get: topStorageGet,
           delete: sinon.stub(),
         };
-        const context = {
+        const runtime = {
           stack: {
             top: sinon.stub().returns({ storage: storageTop }),
           },
         };
 
-        fn({ context });
+        fn({ runtime });
 
         expect(topStorageGet.args[0]).to.eql([F.CALLED_COMMAND]);
         expect(storageTop.delete.args[0]).to.eql([F.CALLED_COMMAND]);
@@ -122,7 +121,7 @@ describe('voiceflowManager unit tests', async () => {
       it('called command true with output', async () => {
         const { clientObj, services, config, utils } = generateFakes();
 
-        VoiceflowManager(services as any, config as any, 'v1', utils as any);
+        RuntimeManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[0][1];
 
@@ -135,7 +134,7 @@ describe('voiceflowManager unit tests', async () => {
           get: topStorageGet,
           delete: sinon.stub(),
         };
-        const context = {
+        const runtime = {
           stack: {
             top: sinon.stub().returns({ storage: storageTop }),
           },
@@ -144,13 +143,13 @@ describe('voiceflowManager unit tests', async () => {
           },
         };
 
-        fn({ context });
+        fn({ runtime });
 
         expect(topStorageGet.args[0]).to.eql([F.CALLED_COMMAND]);
         expect(storageTop.delete.args[0]).to.eql([F.CALLED_COMMAND]);
         expect(topStorageGet.args[1]).to.eql([F.SPEAK]);
 
-        const fn2 = context.storage.produce.args[0][0];
+        const fn2 = runtime.storage.produce.args[0][0];
 
         const initialDraft = 'initial';
         const draft = {
@@ -169,7 +168,7 @@ describe('voiceflowManager unit tests', async () => {
 
         utils.resume.RESUME_DIAGRAM_ID = 'different-id';
 
-        VoiceflowManager(services as any, config as any, 'v1', utils as any);
+        RuntimeManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[1][1];
 
@@ -186,7 +185,7 @@ describe('voiceflowManager unit tests', async () => {
 
         utils.resume.RESUME_DIAGRAM_ID = 'diagram-id';
 
-        VoiceflowManager(services as any, config as any, 'v1', utils as any);
+        RuntimeManager(services as any, config as any, 'v1', utils as any);
 
         const fn = clientObj.setEvent.args[1][1];
 

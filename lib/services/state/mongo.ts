@@ -28,17 +28,18 @@ class StateManager extends AbstractManager {
     }
   }
 
-  async getFromDb(userId: string) {
+  async getFromDb<T extends Record<string, any> = Record<string, any>>(userId: string) {
     const { mongo } = this.services;
 
     if (!userId) {
-      return {};
+      return {} as T;
     }
 
     const id = `${StateManager.GACTION_SESSIONS_DYNAMO_PREFIX}.${userId}`;
 
     const session = await mongo!.db.collection(this.collectionName).findOne<{ attributes: object }>({ id });
-    return session?.attributes || {};
+
+    return (session?.attributes || {}) as T;
   }
 }
 

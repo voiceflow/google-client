@@ -3,8 +3,8 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { S, T } from '@/lib/constants';
-import DefaultInteractionHandler, { InteractionHandler } from '@/lib/services/voiceflow/handlers/interaction';
-import { RequestType } from '@/lib/services/voiceflow/types';
+import DefaultInteractionHandler, { InteractionHandler } from '@/lib/services/runtime/handlers/interaction';
+import { RequestType } from '@/lib/services/runtime/types';
 
 describe('interaction handler unit tests', async () => {
   afterEach(() => sinon.restore());
@@ -28,12 +28,12 @@ describe('interaction handler unit tests', async () => {
       const interactionHandler = InteractionHandler(utils as any);
 
       const block = { id: 'block-id' };
-      const context = { turn: { get: sinon.stub().returns(null) }, storage: { delete: sinon.stub() } };
+      const runtime = { turn: { get: sinon.stub().returns(null) }, storage: { delete: sinon.stub() } };
       const variables = { foo: 'bar' };
 
-      expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.id);
-      expect(utils.addRepromptIfExists.args).to.eql([[block, context, variables]]);
-      expect(context.storage.delete.args).to.eql([[S.REPROMPT], [S.NO_MATCHES_COUNTER]]);
+      expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.id);
+      expect(utils.addRepromptIfExists.args).to.eql([[block, runtime, variables]]);
+      expect(runtime.storage.delete.args).to.eql([[S.REPROMPT], [S.NO_MATCHES_COUNTER]]);
     });
 
     it('request type not intent', () => {
@@ -44,12 +44,12 @@ describe('interaction handler unit tests', async () => {
       const captureHandler = InteractionHandler(utils as any);
 
       const block = { id: 'block-id' };
-      const context = { turn: { get: sinon.stub().returns({ type: 'random' }) }, storage: { delete: sinon.stub() } };
+      const runtime = { turn: { get: sinon.stub().returns({ type: 'random' }) }, storage: { delete: sinon.stub() } };
       const variables = { foo: 'bar' };
 
-      expect(captureHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.id);
-      expect(utils.addRepromptIfExists.args).to.eql([[block, context, variables]]);
-      expect(context.storage.delete.args).to.eql([[S.REPROMPT], [S.NO_MATCHES_COUNTER]]);
+      expect(captureHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.id);
+      expect(utils.addRepromptIfExists.args).to.eql([[block, runtime, variables]]);
+      expect(runtime.storage.delete.args).to.eql([[S.REPROMPT], [S.NO_MATCHES_COUNTER]]);
     });
 
     describe('request type is intent', () => {
@@ -66,12 +66,12 @@ describe('interaction handler unit tests', async () => {
         const interactionHandler = InteractionHandler(utils as any);
 
         const block = { id: 'block-id', interactions: [] };
-        const context = { turn: { get: sinon.stub().returns({ type: RequestType.INTENT, payload: {} }) } };
+        const runtime = { turn: { get: sinon.stub().returns({ type: RequestType.INTENT, payload: {} }) } };
         const variables = { foo: 'bar' };
 
-        expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(output);
-        expect(utils.commandHandler.canHandle.args).to.eql([[context]]);
-        expect(utils.commandHandler.handle.args).to.eql([[context, variables]]);
+        expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(output);
+        expect(utils.commandHandler.canHandle.args).to.eql([[runtime]]);
+        expect(utils.commandHandler.handle.args).to.eql([[runtime, variables]]);
       });
 
       describe('command cant handle', () => {
@@ -90,12 +90,12 @@ describe('interaction handler unit tests', async () => {
 
           const block = { id: 'block-id', interactions: [{ intent: 'intent1' }, { intent: 'intent2' }] };
           const request = { type: RequestType.INTENT, payload: { intent: 'random-intent' } };
-          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
+          const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
           const variables = { foo: 'bar' };
 
-          expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(null);
+          expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(null);
           expect(utils.formatIntentName.args).to.eql([[block.interactions[0].intent], [block.interactions[1].intent]]);
-          expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
+          expect(runtime.turn.delete.args).to.eql([[T.REQUEST]]);
         });
 
         it('no choice with elseId', () => {
@@ -113,10 +113,10 @@ describe('interaction handler unit tests', async () => {
 
           const block = { id: 'block-id', elseId: 'else-id', interactions: [{ intent: 'intent1' }, { intent: 'intent2' }] };
           const request = { type: RequestType.INTENT, payload: { intent: 'random-intent' } };
-          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
+          const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
           const variables = { foo: 'bar' };
 
-          expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.elseId);
+          expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.elseId);
         });
 
         it('no choice with noMatches', () => {
@@ -142,14 +142,14 @@ describe('interaction handler unit tests', async () => {
             noMatches,
           };
           const request = { type: RequestType.INTENT, payload: { intent: { name: 'random-intent' } } };
-          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
+          const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() } };
           const variables = { foo: 'bar' };
 
-          expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(nextId);
+          expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(nextId);
           expect(utils.formatIntentName.args).to.eql([[block.interactions[0].intent], [block.interactions[1].intent]]);
-          expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
-          expect(utils.noMatchHandler.canHandle.args).to.eql([[block, context]]);
-          expect(utils.noMatchHandler.handle.args).to.eql([[block, context, variables]]);
+          expect(runtime.turn.delete.args).to.eql([[T.REQUEST]]);
+          expect(utils.noMatchHandler.canHandle.args).to.eql([[block, runtime]]);
+          expect(utils.noMatchHandler.handle.args).to.eql([[block, runtime, variables]]);
         });
 
         it('choice without mappings', () => {
@@ -169,10 +169,10 @@ describe('interaction handler unit tests', async () => {
 
           const block = { id: 'block-id', elseId: 'else-id', interactions: [{ intent: 'random-intent  ' }], nextIds: ['id-one'] };
           const request = { type: RequestType.INTENT, payload: { intent: intentName } };
-          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
+          const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
           const variables = { foo: 'bar' };
 
-          expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.nextIds[0]);
+          expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.nextIds[0]);
         });
 
         it('choice without mappings but nextIdIndex', () => {
@@ -197,10 +197,10 @@ describe('interaction handler unit tests', async () => {
             nextIds: ['id-one', 'id-two'],
           };
           const request = { type: RequestType.INTENT, payload: { intent: intentName } };
-          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
+          const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
           const variables = { foo: 'bar' };
 
-          expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.nextIds[1]);
+          expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.nextIds[1]);
         });
 
         it('choice with mappings', () => {
@@ -227,10 +227,10 @@ describe('interaction handler unit tests', async () => {
             nextIds: ['id-one'],
           };
           const request = { type: RequestType.INTENT, payload: { intent: intentName, slots: { foo2: 'bar2' } } };
-          const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
+          const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
           const variables = { merge: sinon.stub() };
 
-          expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.nextIds[0]);
+          expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.nextIds[0]);
           expect(utils.mapSlots.args).to.eql([[block.interactions[0].mappings, request.payload.slots]]);
           expect(variables.merge.args).to.eql([[mappedSlots]]);
         });
@@ -255,10 +255,10 @@ describe('interaction handler unit tests', async () => {
 
             const block = { id: 'block-id', elseId: 'else-id', interactions: [{ intent: 'intent1' }, { intent: 'intent2' }] };
             const request = { type: RequestType.INTENT, payload: { intent: 'random-intent' } };
-            const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
+            const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
             const variables = { foo: 'bar' };
 
-            expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(block.elseId);
+            expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.elseId);
           });
 
           it('with noInput', async () => {
@@ -282,10 +282,10 @@ describe('interaction handler unit tests', async () => {
 
             const block = { id: 'block-id', elseId: 'else-id', interactions: [{ intent: 'intent1' }, { intent: 'intent2' }] };
             const request = { type: RequestType.INTENT, payload: { intent: 'random-intent' } };
-            const context = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
+            const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
             const variables = { foo: 'bar' };
 
-            expect(interactionHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(nextId);
+            expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(nextId);
           });
         });
       });

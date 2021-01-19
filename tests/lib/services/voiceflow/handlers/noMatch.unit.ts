@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { S } from '@/lib/constants';
-import { NoMatchHandler } from '@/lib/services/voiceflow/handlers/noMatch';
+import { NoMatchHandler } from '@/lib/services/runtime/handlers/noMatch';
 
 describe('noMatch handler unit tests', () => {
   describe('canHandle', () => {
@@ -25,7 +25,7 @@ describe('noMatch handler unit tests', () => {
         id: 'block-id',
         noMatches: ['the counter is {counter}'],
       };
-      const context = {
+      const runtime = {
         storage: {
           produce: sinon.stub(),
           get: sinon.stub().returns(1),
@@ -36,10 +36,10 @@ describe('noMatch handler unit tests', () => {
       };
 
       const noMatchHandler = NoMatchHandler();
-      expect(noMatchHandler.handle(block as any, context as any, variables as any)).to.eql(block.id);
+      expect(noMatchHandler.handle(block as any, runtime as any, variables as any)).to.eql(block.id);
 
       // assert produce
-      const cb1 = context.storage.produce.args[0][0];
+      const cb1 = runtime.storage.produce.args[0][0];
       // sets counter
       const draft1 = {};
       cb1(draft1);
@@ -49,7 +49,7 @@ describe('noMatch handler unit tests', () => {
       cb1(draft2);
       expect(draft2).to.eql({ [S.NO_MATCHES_COUNTER]: 3 });
       // adds output
-      const cb2 = context.storage.produce.args[1][0];
+      const cb2 = runtime.storage.produce.args[1][0];
       const draft3 = { [S.OUTPUT]: 'msg: ' };
       cb2(draft3);
       expect(draft3).to.eql({ [S.OUTPUT]: 'msg: the counter is 5.23' });
@@ -59,7 +59,7 @@ describe('noMatch handler unit tests', () => {
       const block = {
         id: 'block-id',
       };
-      const context = {
+      const runtime = {
         storage: {
           produce: sinon.stub(),
           get: sinon.stub().returns(1),
@@ -70,9 +70,9 @@ describe('noMatch handler unit tests', () => {
       };
 
       const noMatchHandler = NoMatchHandler();
-      expect(noMatchHandler.handle(block as any, context as any, variables as any)).to.eql(block.id);
+      expect(noMatchHandler.handle(block as any, runtime as any, variables as any)).to.eql(block.id);
       // assert output
-      const cb1 = context.storage.produce.args[1][0];
+      const cb1 = runtime.storage.produce.args[1][0];
       const draft = { [S.OUTPUT]: '' };
       cb1(draft);
       expect(draft).to.eql({ [S.OUTPUT]: '' });
@@ -84,7 +84,7 @@ describe('noMatch handler unit tests', () => {
         noMatches: ['A', 'B', 'C'],
         randomize: true,
       };
-      const context = {
+      const runtime = {
         storage: {
           produce: sinon.stub(),
           get: sinon.stub().returns(1),
@@ -95,9 +95,9 @@ describe('noMatch handler unit tests', () => {
       };
 
       const noMatchHandler = NoMatchHandler();
-      expect(noMatchHandler.handle(block as any, context as any, variables as any)).to.eql(block.id);
+      expect(noMatchHandler.handle(block as any, runtime as any, variables as any)).to.eql(block.id);
 
-      const cb2 = context.storage.produce.args[1][0];
+      const cb2 = runtime.storage.produce.args[1][0];
       const draft3 = { [S.OUTPUT]: '' };
       cb2(draft3);
       expect(block.noMatches.includes(draft3[S.OUTPUT])).to.eql(true);

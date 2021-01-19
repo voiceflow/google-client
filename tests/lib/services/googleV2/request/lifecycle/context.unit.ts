@@ -2,14 +2,14 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { S, T } from '@/lib/constants';
-import ContextManager from '@/lib/services/googleV2/request/lifecycle/context';
+import RuntimeClientManager from '@/lib/services/googleV2/request/lifecycle/runtime';
 
-describe('contextManager unit tests', async () => {
+describe('runtimeClientManagerV2 unit tests', async () => {
   describe('build', () => {
     it('works', async () => {
       const outputString = 'output';
 
-      const contextObj = {
+      const stateObj = {
         turn: {
           set: sinon.stub(),
         },
@@ -22,30 +22,28 @@ describe('contextManager unit tests', async () => {
       const rawState = { foo: 'bar' };
 
       const client = {
-        createContext: sinon.stub().returns(contextObj),
+        createRuntime: sinon.stub().returns(stateObj),
       };
 
       const services = {
         state: {
           getFromDb: sinon.stub().resolves(rawState),
         },
-        voiceflowV2: {
-          client,
-        },
+        runtimeClientV2: client,
       };
-      const contextManager = new ContextManager(services as any, null as any);
+      const runtimeClientManager = new RuntimeClientManager(services as any, null as any);
 
       const versionID = 'version-id';
       const userID = 'user-id';
 
-      const result = await contextManager.build(versionID, userID);
+      const result = await runtimeClientManager.build(versionID, userID);
 
-      expect(result).to.eql(contextObj);
+      expect(result).to.eql(stateObj);
       expect(services.state.getFromDb.args[0]).to.eql([userID]);
-      expect(client.createContext.args[0]).to.eql([versionID, rawState]);
-      expect(contextObj.turn.set.args[0]).to.eql([T.PREVIOUS_OUTPUT, outputString]);
-      expect(contextObj.storage.get.args[0]).to.eql([S.OUTPUT]);
-      expect(contextObj.storage.set.args[0]).to.eql([S.OUTPUT, '']);
+      expect(client.createRuntime.args[0]).to.eql([versionID, rawState]);
+      expect(stateObj.turn.set.args[0]).to.eql([T.PREVIOUS_OUTPUT, outputString]);
+      expect(stateObj.storage.get.args[0]).to.eql([S.OUTPUT]);
+      expect(stateObj.storage.set.args[0]).to.eql([S.OUTPUT, '']);
     });
   });
 });

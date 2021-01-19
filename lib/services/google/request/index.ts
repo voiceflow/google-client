@@ -2,17 +2,17 @@ import { WebhookClient } from 'dialogflow-fulfillment';
 import _ from 'lodash';
 
 import { T, V } from '@/lib/constants';
-import { RequestType } from '@/lib/services/voiceflow/types';
+import { RequestType } from '@/lib/services/runtime/types';
 
 import { AbstractManager, injectServices } from '../../types';
-import Context from './lifecycle/context';
 import Initialize from './lifecycle/initialize';
 import Response from './lifecycle/response';
+import Runtime from './lifecycle/runtime';
 
-@injectServices({ initialize: Initialize, context: Context, response: Response })
-class HandlerManager extends AbstractManager<{ initialize: Initialize; context: Context; response: Response }> {
+@injectServices({ initialize: Initialize, runtimeClient: Runtime, response: Response })
+class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeClient: Runtime; response: Response }> {
   async dialogflow(agent: WebhookClient) {
-    const { initialize, context, response } = this.services;
+    const { initialize, runtimeClient, response } = this.services;
     const conv = agent.conv();
 
     if (!conv) {
@@ -28,12 +28,12 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; context: 
 
     const { userId } = conv.user.storage;
 
-    const newContext = await context.build(_.get(conv.body, 'versionID'), userId);
+    const runtime = await runtimeClient.build(_.get(conv.body, 'versionID'), userId);
 
-    if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || newContext.stack.isEmpty()) {
-      await initialize.build(newContext, conv);
+    if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || runtime.stack.isEmpty()) {
+      await initialize.build(runtime, conv);
     } else {
-      newContext.turn.set(T.REQUEST, {
+      runtime.turn.set(T.REQUEST, {
         type: RequestType.INTENT,
         payload: {
           intent,
@@ -43,10 +43,11 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; context: 
       });
     }
 
-    newContext.variables.set(V.TIMESTAMP, Math.floor(Date.now() / 1000));
-    await newContext.update();
+    runtime.variables.set(V.TIMESTAMP, Math.floor(Date.now() / 1000));
 
-    await response.build(newContext, agent, conv);
+    await runtime.update();
+
+    await response.build(runtime, agent, conv);
   }
 }
 

@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { S } from '@/lib/constants';
-import { NoInputHandler } from '@/lib/services/voiceflow/handlers/noInput';
+import { NoInputHandler } from '@/lib/services/runtime/handlers/noInput';
 
 describe('noInput handler unit tests', () => {
   describe('canHandle', () => {
@@ -27,7 +27,7 @@ describe('noInput handler unit tests', () => {
       const block = {
         id: 'block-id',
       };
-      const context = {
+      const runtime = {
         storage: {
           produce: sinon.stub(),
           get: sinon.stub().returns(reprompt),
@@ -35,10 +35,10 @@ describe('noInput handler unit tests', () => {
       };
 
       const noInputHandler = NoInputHandler();
-      expect(noInputHandler.handle(block as any, context as any)).to.eql(block.id);
+      expect(noInputHandler.handle(block as any, runtime as any)).to.eql(block.id);
 
       // assert produce
-      const cb1 = context.storage.produce.args[0][0];
+      const cb1 = runtime.storage.produce.args[0][0];
       // sets counter
       const draft = {
         [S.OUTPUT]: '',
@@ -52,7 +52,7 @@ describe('noInput handler unit tests', () => {
       const block = {
         id: 'block-id',
       };
-      const context = {
+      const runtime = {
         storage: {
           produce: sinon.stub(),
           get: sinon
@@ -65,10 +65,10 @@ describe('noInput handler unit tests', () => {
       };
 
       const noInputHandler = NoInputHandler();
-      expect(noInputHandler.handle(block as any, context as any)).to.eql(block.id);
+      expect(noInputHandler.handle(block as any, runtime as any)).to.eql(block.id);
 
       // assert produce
-      const cb1 = context.storage.produce.args[0][0];
+      const cb1 = runtime.storage.produce.args[0][0];
       // sets counter
       const draft = {
         [S.OUTPUT]: '',

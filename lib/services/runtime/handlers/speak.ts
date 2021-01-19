@@ -8,7 +8,7 @@ const SpeakHandler: HandlerFactory<Node> = () => ({
   canHandle: (node) => {
     return ('random_speak' in node ? !!node.random_speak : !!node.speak) || (_.isString(node.prompt) && node.prompt !== 'true');
   },
-  handle: (node, context, variables) => {
+  handle: (node, runtime, variables) => {
     let speak = '';
 
     // Pick a random part to speak
@@ -23,11 +23,11 @@ const SpeakHandler: HandlerFactory<Node> = () => ({
     if (_.isString(speak)) {
       const output = replaceVariables(speak, sanitizedVars);
 
-      context.storage.produce<{ [S.OUTPUT]: string }>((draft) => {
+      runtime.storage.produce<{ [S.OUTPUT]: string }>((draft) => {
         draft[S.OUTPUT] += output;
       });
 
-      context.stack.top().storage.set(F.SPEAK, output);
+      runtime.stack.top().storage.set(F.SPEAK, output);
     }
 
     return node.nextId ?? null;

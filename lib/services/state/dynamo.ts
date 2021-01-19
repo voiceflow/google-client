@@ -20,12 +20,12 @@ class StateManager extends AbstractManager {
     await docClient.put(params).promise();
   }
 
-  async getFromDb(userId: string) {
+  async getFromDb<T extends Record<string, any> = Record<string, any>>(userId: string) {
     const { docClient, adapter } = this.services;
     const { SESSIONS_DYNAMO_TABLE } = this.config;
 
     if (!userId) {
-      return {};
+      return {} as T;
     }
 
     const params = {
@@ -37,7 +37,7 @@ class StateManager extends AbstractManager {
 
     const data = await docClient.get(params).promise();
 
-    return data.Item?.state ?? (data.Item?.attributes ? adapter.context(data.Item.attributes) : {});
+    return (data.Item?.state ?? (data.Item?.attributes ? adapter.state(data.Item.attributes) : {})) as T;
   }
 }
 

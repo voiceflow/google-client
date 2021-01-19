@@ -26,7 +26,7 @@ describe('responseManager unit tests', async () => {
 
       const responseManager = new ResponseManager(services as any, null as any);
 
-      const contextFinalState = { random: 'context' };
+      const runtimeFinalState = { random: 'runtime' };
       const output = '';
       const userId = 'user-id';
       const storageGet = sinon.stub();
@@ -34,8 +34,8 @@ describe('responseManager unit tests', async () => {
       storageGet.withArgs(S.REPROMPT).returns(null);
       storageGet.withArgs(S.USER).returns(userId);
 
-      const context = {
-        getFinalState: sinon.stub().returns(contextFinalState),
+      const runtime = {
+        getFinalState: sinon.stub().returns(runtimeFinalState),
         stack: {
           isEmpty: sinon.stub().returns(false),
         },
@@ -63,10 +63,10 @@ describe('responseManager unit tests', async () => {
         ask: sinon.stub(),
       };
 
-      await responseManager.build(context as any, agent as any, conv as any);
+      await responseManager.build(runtime as any, agent as any, conv as any);
 
-      expect(context.stack.isEmpty.callCount).to.eql(1);
-      expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.REPROMPT], [S.USER]]);
+      expect(runtime.stack.isEmpty.callCount).to.eql(1);
+      expect(runtime.storage.get.args).to.eql([[S.OUTPUT], [S.REPROMPT], [S.USER]]);
       expect(services.utils.SimpleResponse.args[0]).to.eql([
         {
           speech: `<speak>${output}</speak>`,
@@ -75,9 +75,9 @@ describe('responseManager unit tests', async () => {
       ]);
       expect(conv.ask.args[0]).to.eql([response]);
       expect(_.get(conv, 'noInputs')).to.eql([{ ssml: `<speak>${output}</speak>` }]);
-      expect(responseHandler1.args).to.eql([[context, conv]]);
-      expect(responseHandler2.args).to.eql([[context, conv]]);
-      expect(services.state.saveToDb.args[0]).to.eql([userId, contextFinalState]);
+      expect(responseHandler1.args).to.eql([[runtime, conv]]);
+      expect(responseHandler2.args).to.eql([[runtime, conv]]);
+      expect(services.state.saveToDb.args[0]).to.eql([userId, runtimeFinalState]);
       expect(agent.add.args[0]).to.eql([conv]);
       expect(agent.add.args[0][0].user.storage.forceUpdateToken).to.deep.eq(updateToken);
     });
@@ -100,7 +100,7 @@ describe('responseManager unit tests', async () => {
 
       const responseManager = new ResponseManager(services as any, null as any);
 
-      const contextFinalState = { random: 'context' };
+      const runtimeFinalState = { random: 'runtime' };
       const output = '';
       const userId = 'user-id';
       const storageGet = sinon.stub();
@@ -108,8 +108,8 @@ describe('responseManager unit tests', async () => {
       storageGet.withArgs(S.REPROMPT).returns(reprompt);
       storageGet.withArgs(S.USER).returns(userId);
 
-      const context = {
-        getFinalState: sinon.stub().returns(contextFinalState),
+      const runtime = {
+        getFinalState: sinon.stub().returns(runtimeFinalState),
         stack: {
           isEmpty: sinon.stub().returns(false),
         },
@@ -136,7 +136,7 @@ describe('responseManager unit tests', async () => {
         ask: sinon.stub(),
       };
 
-      await responseManager.build(context as any, agent as any, conv as any);
+      await responseManager.build(runtime as any, agent as any, conv as any);
 
       expect(_.get(conv, 'noInputs')).to.eql([{ ssml: `<speak>${reprompt}</speak>` }]);
     });
@@ -158,15 +158,15 @@ describe('responseManager unit tests', async () => {
 
       const responseManager = new ResponseManager(services as any, null as any);
 
-      const contextFinalState = { random: 'context' };
+      const runtimeFinalState = { random: 'runtime' };
       const output = 'random output';
       const userId = 'user-id';
       const storageGet = sinon.stub();
       storageGet.withArgs(S.OUTPUT).returns(output);
       storageGet.withArgs(S.USER).returns(userId);
 
-      const context = {
-        getFinalState: sinon.stub().returns(contextFinalState),
+      const runtime = {
+        getFinalState: sinon.stub().returns(runtimeFinalState),
         stack: {
           isEmpty: sinon.stub().returns(true),
         },
@@ -191,11 +191,11 @@ describe('responseManager unit tests', async () => {
         ask: sinon.stub(),
       };
 
-      await responseManager.build(context as any, agent as any, conv as any);
+      await responseManager.build(runtime as any, agent as any, conv as any);
 
-      expect(context.stack.isEmpty.callCount).to.eql(1);
-      expect(context.turn.set.args[0]).to.eql([T.END, true]);
-      expect(context.storage.get.args).to.eql([[S.OUTPUT], [S.USER]]);
+      expect(runtime.stack.isEmpty.callCount).to.eql(1);
+      expect(runtime.turn.set.args[0]).to.eql([T.END, true]);
+      expect(runtime.storage.get.args).to.eql([[S.OUTPUT], [S.USER]]);
       expect(services.utils.SimpleResponse.args[0]).to.eql([
         {
           speech: `<speak>${output}</speak>`,
@@ -203,9 +203,9 @@ describe('responseManager unit tests', async () => {
         },
       ]);
       expect(conv.close.args[0]).to.eql([response]);
-      expect(responseHandler1.args).to.eql([[context, conv]]);
-      expect(responseHandler2.args).to.eql([[context, conv]]);
-      expect(services.state.saveToDb.args[0]).to.eql([userId, contextFinalState]);
+      expect(responseHandler1.args).to.eql([[runtime, conv]]);
+      expect(responseHandler2.args).to.eql([[runtime, conv]]);
+      expect(services.state.saveToDb.args[0]).to.eql([userId, runtimeFinalState]);
       expect(agent.add.args[0]).to.eql([conv]);
       expect(agent.add.args[0][0].user.storage.forceUpdateToken).to.deep.eq(updateToken);
     });

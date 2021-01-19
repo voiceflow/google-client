@@ -56,7 +56,7 @@ describe('dynamo stateManager unit tests', async () => {
 
     it('attributes in item', async () => {
       const attributes = { foo: 'bar' };
-      const newContext = { foo1: 'bar1' };
+      const newState = { foo1: 'bar1' };
       const config = {
         SESSIONS_DYNAMO_TABLE: 'session-table',
       };
@@ -64,15 +64,15 @@ describe('dynamo stateManager unit tests', async () => {
         docClient: {
           get: sinon.stub().returns({ promise: sinon.stub().returns({ Item: { attributes } }) }),
         },
-        adapter: { context: sinon.stub().returns(newContext) },
+        adapter: { state: sinon.stub().returns(newState) },
       };
       const stateManager = new StateManager(services as any, config as any);
 
       const userId = '1';
 
-      expect(await stateManager.getFromDb(userId as any)).to.eql(newContext);
+      expect(await stateManager.getFromDb(userId as any)).to.eql(newState);
       expect(services.docClient.get.callCount).to.eql(1);
-      expect(services.adapter.context.args).to.eql([[attributes]]);
+      expect(services.adapter.state.args).to.eql([[attributes]]);
     });
 
     it('no item', async () => {

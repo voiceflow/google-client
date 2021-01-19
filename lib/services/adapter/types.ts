@@ -7,7 +7,7 @@ export type OldCommands = {
   };
 };
 
-export type OldContextRaw = {
+export type OldStateRaw = {
   line_id: string;
   output: string;
   last_speak?: string;
@@ -54,9 +54,9 @@ export type Frame = {
   commands: Commands;
 };
 
-export type NewContextStack = Array<Frame>;
+export type NewStateStack = Array<Frame>;
 
-export type NewContextStorage = {
+export type NewStateStorage = {
   output: string;
   sessions: number;
   repeat: number;
@@ -71,13 +71,13 @@ export type NewVoiceflowVars = {
   capabilities?: string;
 };
 
-export type NewContextVariables = {
+export type NewStateVariables = {
   [key: string]: any;
   voiceflow: NewVoiceflowVars;
 };
 
-export type NewContextRaw = {
-  stack: NewContextStack;
-  storage: NewContextStorage;
-  variables: NewContextVariables;
+export type NewStateRaw = {
+  stack: NewStateStack;
+  storage: NewStateStorage;
+  variables: NewStateVariables;
 };

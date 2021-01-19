@@ -23,7 +23,7 @@ import {
 describe('adapterManager unit tests', async () => {
   afterEach(() => sinon.restore());
 
-  describe('context', () => {
+  describe('state', () => {
     const tests = [
       { text: 'malformed', old: oldMalformed, new: newMalformed },
       { text: 'randoms', old: oldRandoms, new: newRandoms },
@@ -38,7 +38,7 @@ describe('adapterManager unit tests', async () => {
       it(test.text, async () => {
         const adapter = new AdapterManager(null as any, null as any);
 
-        expect(await adapter.context(test.old as any)).to.eql(test.new);
+        expect(await adapter.state(test.old as any)).to.eql(test.new);
       });
     });
   });
