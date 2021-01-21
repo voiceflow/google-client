@@ -49,5 +49,5 @@ build
 
 yarn-error.log
 
-/tests/smokeTest/recordedSessions/*
-!/tests/smokeTest/recordedSessions/readme.md
+/tests/smoke/recordedSessions/*
+!/tests/smoke/recordedSessions/readme.md
