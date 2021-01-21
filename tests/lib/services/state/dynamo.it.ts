@@ -1,5 +1,7 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 
+import '@/envSetup';
+
 import Common from '@voiceflow/common';
 import AWS from 'aws-sdk';
 import { expect } from 'chai';
