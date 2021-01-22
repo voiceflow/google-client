@@ -21,16 +21,17 @@ jobs:
       - checkout
       - vfcommon/install_node_modules
       - vfcommon/setup_dynamodb
-      - run:
-          name: "Build package"
-          command: |
-            yarn build
-      - run:
-          name: "Run tests"
-          command: |
-            yarn test
+      - vfcommon/lint_source
+      - vfcommon/lint_dockerfile
+      - vfcommon/build
+      - vfcommon/unit_tests
       - codecov/upload:
           file: nyc_coverage/lcov.info
+          flags: unit
+      - vfcommon/integration_tests
+      - codecov/upload:
+          file: nyc_coverage/lcov.info
+          flags: integration
       # temp steps
       - vfcommon/install_aws_cli
       - vfcommon/clone_s3_assets:
