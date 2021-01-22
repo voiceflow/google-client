@@ -11,15 +11,8 @@ defaults:
 
 orbs:
   codecov: codecov/codecov@1.0.2
-  vfcommon: voiceflow/common@0.0.16
-
-commands:
-  clone_s3_assets:
-    steps:
-      - run:
-          name: Clone s3 assets
-          command: |
-            aws s3 sync s3://com.voiceflow.ci.assets/google ~/project/tests/smokeTest/recordedSessions
+  vfcommon: voiceflow/common@0.0.54
+  sonarcloud: sonarsource/sonarcloud@1.0.2
 
 jobs:
   test:
@@ -40,10 +33,11 @@ jobs:
           file: nyc_coverage/lcov.info
       # temp steps
       - vfcommon/install_aws_cli
-      - clone_s3_assets
-      - run:
-          name: Run smoke tests
-          command: yarn test:smoke
+      - vfcommon/clone_s3_assets:
+          from: s3://com.voiceflow.ci.assets/google
+          to: ~/project/tests/smoke/recordedSessions
+      - vfcommon/smoke_tests
+      - sonarcloud/scan
 
   build-push-image:
     executor: vfcommon/build-executor
