@@ -14,7 +14,6 @@ orbs:
   vfcommon: voiceflow/common@0.0.54
   sonarcloud: sonarsource/sonarcloud@1.0.2
 
-
 jobs:
   test:
     executor: vfcommon/code-test-executor
@@ -23,6 +22,7 @@ jobs:
       - vfcommon/install_node_modules
       - vfcommon/setup_dynamodb
       - vfcommon/lint_source
+      - vfcommon/lint_report
       - vfcommon/lint_dockerfile
       - vfcommon/build
       - vfcommon/unit_tests
@@ -40,7 +40,6 @@ jobs:
           to: ~/project/tests/smoke/recordedSessions
       - vfcommon/smoke_tests
       - sonarcloud/scan
-
 
   build-push-image:
     executor: vfcommon/build-executor
