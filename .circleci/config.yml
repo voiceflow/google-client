@@ -14,6 +14,7 @@ orbs:
   vfcommon: voiceflow/common@0.0.54
   sonarcloud: sonarsource/sonarcloud@1.0.2
 
+
 jobs:
   test:
     executor: vfcommon/code-test-executor
@@ -39,6 +40,7 @@ jobs:
           to: ~/project/tests/smoke/recordedSessions
       - vfcommon/smoke_tests
       - sonarcloud/scan
+
 
   build-push-image:
     executor: vfcommon/build-executor
