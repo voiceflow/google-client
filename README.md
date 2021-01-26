@@ -28,6 +28,8 @@ Also add the following file to the local repository:
 > SESSIONS_SOURCE='local'
 > PROJECT_SOURCE='[YOUR EXPORTED PROJECT FILE HERE (i.e. VF-Project-nPDdD6qZJ9.json)]'
 >
+> AWS_REGION='localhost'
+>
 > PORT=4000
 > SESSIONS_DYNAMO_TABLE="none"
 > VF_DATA_ENDPOINT="none"
