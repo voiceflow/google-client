@@ -4,4 +4,5 @@ export { default as Flags, Turn as T, Storage as S, Frame as F, Variables as V }
 export enum Source {
   MONGO = 'mongo',
   DYNAMO = 'dynamo',
+  LOCAL = 'local',
 }
