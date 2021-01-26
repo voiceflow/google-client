@@ -56,3 +56,5 @@ yarn-error.log
 #Sonar report
 sonar/
 
+/projects/*
+!/projects/README.md
