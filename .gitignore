@@ -49,8 +49,12 @@ build
 
 yarn-error.log
 
+
 /tests/smoke/recordedSessions/*
 !/tests/smoke/recordedSessions/readme.md
+
+#Sonar report
+sonar/
 
 /projects/*
 !/projects/README.md

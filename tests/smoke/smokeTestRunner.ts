@@ -1,7 +1,5 @@
 /* eslint-disable no-process-exit */
 /* eslint-disable no-console */
-import '../../envSetup';
-
 import AWS from 'aws-sdk';
 import axios from 'axios';
 import Promise from 'bluebird';
@@ -11,9 +9,11 @@ import _ from 'lodash';
 import nock from 'nock';
 import path from 'path';
 
-import { ServiceManager } from '../../backend';
-import config from '../../config';
-import Server from '../../server';
+import { ServiceManager } from '@/backend';
+import config from '@/config';
+import '@/envSetup';
+import Server from '@/server';
+
 import { SessionRecording } from './types';
 
 const LOG = {

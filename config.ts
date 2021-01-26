@@ -1,8 +1,7 @@
-import './envSetup';
-
 import * as Common from '@voiceflow/common';
 
-import { Config } from './types';
+import '@/envSetup';
+import { Config } from '@/types';
 
 const { getProcessEnv, hasProcessEnv } = Common.utils.general;
 

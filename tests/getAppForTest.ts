@@ -1,7 +1,6 @@
-import '@/envSetup';
-
 import { ServiceManager } from '@/backend';
 import config from '@/config';
+import '@/envSetup';
 import Server from '@/server';
 
 export default async (serviceManager: ServiceManager) => {
