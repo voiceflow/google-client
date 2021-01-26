@@ -51,3 +51,6 @@ yarn-error.log
 
 /tests/smoke/recordedSessions/*
 !/tests/smoke/recordedSessions/readme.md
+
+/projects/*
+!/projects/README.md
