@@ -39,6 +39,7 @@ const buildServices = (config: Config, clients: ClientMap): FullServiceMap => {
 
   services.runtimeClient = Runtime(services, config);
   services.runtimeClientV2 = Runtime(services, config, 'v2');
+
   services.google = new Google(services, config);
   services.googleV2 = new GoogleV2(services, config);
 
