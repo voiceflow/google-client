@@ -1,7 +1,5 @@
 /* eslint-disable no-process-exit */
 /* eslint-disable no-console */
-import '../../envSetup';
-
 import AWS from 'aws-sdk';
 import axios from 'axios';
 import Promise from 'bluebird';
@@ -13,6 +11,7 @@ import path from 'path';
 
 import { ServiceManager } from '../../backend';
 import config from '../../config';
+import '../../envSetup';
 import Server from '../../server';
 import { SessionRecording } from './types';
 
