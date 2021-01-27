@@ -8,7 +8,7 @@ import DefaultStreamHandler, {
   StreamResponseBuilderGenerator,
   StreamResponseBuilderGeneratorV2,
   StreamResponseBuilderV2,
-} from '@/lib/services/voiceflow/handlers/stream';
+} from '@/lib/services/runtime/handlers/stream';
 
 describe('stream handler unit tests', async () => {
   afterEach(() => sinon.restore());
@@ -78,7 +78,7 @@ describe('stream handler unit tests', async () => {
             delete: sinon.stub(),
           },
         };
-        const context = {
+        const runtime = {
           turn: {
             set: sinon.stub(),
           },
@@ -100,7 +100,7 @@ describe('stream handler unit tests', async () => {
           gNextId: 'next-id',
         };
 
-        expect(streamHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(null);
+        expect(streamHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(null);
         expect(variables.getState.callCount).to.eql(1);
         expect(utils.replaceVariables.args).to.eql([
           [block.play, varState],
@@ -109,7 +109,7 @@ describe('stream handler unit tests', async () => {
           [block.icon_img, varState],
           [block.background_img, varState],
         ]);
-        expect(context.turn.set.args).to.eql([
+        expect(runtime.turn.set.args).to.eql([
           [
             T.STREAM_PLAY,
             {
@@ -123,7 +123,7 @@ describe('stream handler unit tests', async () => {
         ]);
         expect(topFrame.storage.delete.args).to.eql([[F.SPEAK]]);
         expect(topFrame.setNodeID.args).to.eql([[block.gNextId]]);
-        expect(context.end.callCount).to.eql(1);
+        expect(runtime.end.callCount).to.eql(1);
       });
 
       it('without gNextId', async () => {
@@ -135,7 +135,7 @@ describe('stream handler unit tests', async () => {
         const streamHandler = StreamHandler(utils as any);
 
         const variables = { getState: sinon.stub().returns({ foo: 'bar' }) };
-        const context = {
+        const runtime = {
           turn: {
             set: sinon.stub(),
           },
@@ -149,8 +149,8 @@ describe('stream handler unit tests', async () => {
           play: 'random-url',
         };
 
-        expect(streamHandler.handle(block as any, context as any, variables as any, null as any)).to.eql(null);
-        expect(context.turn.set.args[1]).to.eql([T.END, true]);
+        expect(streamHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(null);
+        expect(runtime.turn.set.args[1]).to.eql([T.END, true]);
       });
 
       describe('produce', () => {
@@ -166,7 +166,7 @@ describe('stream handler unit tests', async () => {
           const streamHandler = StreamHandler(utils as any);
 
           const variables = { getState: sinon.stub().returns({ foo: 'bar' }) };
-          const context = {
+          const runtime = {
             turn: {
               set: sinon.stub(),
             },
@@ -180,9 +180,9 @@ describe('stream handler unit tests', async () => {
             play: 'random-url',
           };
 
-          streamHandler.handle(block as any, context as any, variables as any, null as any);
+          streamHandler.handle(block as any, runtime as any, variables as any, null as any);
 
-          const fn = context.storage.produce.args[0][0];
+          const fn = runtime.storage.produce.args[0][0];
           const draft = {
             [S.OUTPUT]: '   ',
           };
@@ -203,7 +203,7 @@ describe('stream handler unit tests', async () => {
           const streamHandler = StreamHandler(utils as any);
 
           const variables = { getState: sinon.stub().returns({ foo: 'bar' }) };
-          const context = {
+          const runtime = {
             turn: {
               set: sinon.stub(),
             },
@@ -217,9 +217,9 @@ describe('stream handler unit tests', async () => {
             play: 'random-url',
           };
 
-          streamHandler.handle(block as any, context as any, variables as any, null as any);
+          streamHandler.handle(block as any, runtime as any, variables as any, null as any);
 
-          const fn = context.storage.produce.args[0][0];
+          const fn = runtime.storage.produce.args[0][0];
           const draft = {
             [S.OUTPUT]: '   ',
           };
@@ -240,7 +240,7 @@ describe('stream handler unit tests', async () => {
           const streamHandler = StreamHandler(utils as any);
 
           const variables = { getState: sinon.stub().returns({ foo: 'bar' }) };
-          const context = {
+          const runtime = {
             turn: {
               set: sinon.stub(),
             },
@@ -254,9 +254,9 @@ describe('stream handler unit tests', async () => {
             play: 'random-url',
           };
 
-          streamHandler.handle(block as any, context as any, variables as any, null as any);
+          streamHandler.handle(block as any, runtime as any, variables as any, null as any);
 
-          const fn = context.storage.produce.args[0][0];
+          const fn = runtime.storage.produce.args[0][0];
           const draft = {
             [S.OUTPUT]: 'here',
           };
@@ -271,25 +271,25 @@ describe('stream handler unit tests', async () => {
 
   describe('responseBuilder', () => {
     it('no card', async () => {
-      const context = {
+      const runtime = {
         turn: { get: sinon.stub().returns(null) },
       };
 
-      StreamResponseBuilder(context as any, null as any);
+      StreamResponseBuilder(runtime as any, null as any);
 
-      expect(context.turn.get.args[0]).to.eql([T.STREAM_PLAY]);
+      expect(runtime.turn.get.args[0]).to.eql([T.STREAM_PLAY]);
     });
 
     it('no capabilities', () => {
-      const context = {
+      const runtime = {
         turn: { get: sinon.stub().returns({}) },
       };
 
       const conv = { surface: { capabilities: { has: sinon.stub().returns(false) } }, add: sinon.stub() };
 
-      StreamResponseBuilder(context as any, conv as any);
+      StreamResponseBuilder(runtime as any, conv as any);
 
-      expect(context.turn.get.args[0]).to.eql([T.STREAM_PLAY]);
+      expect(runtime.turn.get.args[0]).to.eql([T.STREAM_PLAY]);
       expect(conv.surface.capabilities.has.callCount).to.eql(1);
       expect(conv.add.args).to.eql([['Sorry, this device does not support audio playback.']]);
     });
@@ -305,13 +305,13 @@ describe('stream handler unit tests', async () => {
         const turnGet = sinon.stub().returns(true);
         turnGet.onCall(0).returns(play);
 
-        const context = {
+        const runtime = {
           turn: { get: turnGet },
         };
 
         const conv = { surface: { capabilities: { has: sinon.stub().returns(true) } }, add: sinon.stub() };
 
-        streamResponseBuilder(context as any, conv as any);
+        streamResponseBuilder(runtime as any, conv as any);
 
         expect(MediaObjectBuilder.args).to.eql([[{ name: play.title, url: play.url, description: play.description }]]);
         expect(conv.add.args).to.eql([[{}]]);
@@ -328,13 +328,13 @@ describe('stream handler unit tests', async () => {
         const turnGet = sinon.stub().returns(true);
         turnGet.onCall(0).returns(play);
 
-        const context = {
+        const runtime = {
           turn: { get: turnGet },
         };
 
         const conv = { surface: { capabilities: { has: sinon.stub().returns(true) } }, add: sinon.stub() };
 
-        streamResponseBuilder(context as any, conv as any);
+        streamResponseBuilder(runtime as any, conv as any);
 
         expect(ImageBuilder.args).to.eql([[{ url: play.background_img, alt: 'Media Background Image' }]]);
         expect(MediaObjectBuilder.args).to.eql([[{ name: play.title, url: play.url, description: play.description, image: {} }]]);
@@ -352,13 +352,13 @@ describe('stream handler unit tests', async () => {
         turnGet.onCall(0).returns(play);
         turnGet.onCall(2).returns(true);
 
-        const context = {
+        const runtime = {
           turn: { get: turnGet },
         };
 
         const conv = { surface: { capabilities: { has: sinon.stub().returns(true) } }, add: sinon.stub() };
 
-        streamResponseBuilder(context as any, conv as any);
+        streamResponseBuilder(runtime as any, conv as any);
 
         expect(ImageBuilder.args).to.eql([[{ url: play.icon_img, alt: 'Media Icon Image' }]]);
         expect(MediaObjectBuilder.args).to.eql([[{ name: play.title, url: play.url, description: play.description, icon: {} }]]);
@@ -375,13 +375,13 @@ describe('stream handler unit tests', async () => {
         const turnGet = sinon.stub().returns(false);
         turnGet.onCall(0).returns(play);
 
-        const context = {
+        const runtime = {
           turn: { get: turnGet },
         };
 
         const conv = { surface: { capabilities: { has: sinon.stub().returns(true) } }, add: sinon.stub() };
 
-        streamResponseBuilder(context as any, conv as any);
+        streamResponseBuilder(runtime as any, conv as any);
 
         expect(SuggestionsBuilder.args).to.eql([[['continue', 'exit']]]);
         expect(conv.add.callCount).to.eql(2);
@@ -391,25 +391,25 @@ describe('stream handler unit tests', async () => {
 
   describe('responseBuilderV2', () => {
     it('no card', async () => {
-      const context = {
+      const runtime = {
         turn: { get: sinon.stub().returns(null) },
       };
 
-      StreamResponseBuilderV2(context as any, null as any);
+      StreamResponseBuilderV2(runtime as any, null as any);
 
-      expect(context.turn.get.args[0]).to.eql([T.STREAM_PLAY]);
+      expect(runtime.turn.get.args[0]).to.eql([T.STREAM_PLAY]);
     });
 
     it('no capabilities', () => {
-      const context = {
+      const runtime = {
         turn: { get: sinon.stub().returns({}) },
       };
 
       const conv = { device: { capabilities: { includes: sinon.stub().returns(false) } }, add: sinon.stub() };
 
-      StreamResponseBuilderV2(context as any, conv as any);
+      StreamResponseBuilderV2(runtime as any, conv as any);
 
-      expect(context.turn.get.args[0]).to.eql([T.STREAM_PLAY]);
+      expect(runtime.turn.get.args[0]).to.eql([T.STREAM_PLAY]);
       expect(conv.device.capabilities.includes.callCount).to.eql(1);
       expect(conv.add.args).to.eql([['Sorry, this device does not support audio playback.']]);
     });
@@ -425,13 +425,13 @@ describe('stream handler unit tests', async () => {
         const turnGet = sinon.stub().returns(true);
         turnGet.onCall(0).returns(play);
 
-        const context = {
+        const runtime = {
           turn: { get: turnGet },
         };
 
         const conv = { device: { capabilities: { includes: sinon.stub().returns(true) } }, add: sinon.stub() };
 
-        streamResponseBuilder(context as any, conv as any);
+        streamResponseBuilder(runtime as any, conv as any);
 
         const mediaObject = { name: play.title, description: play.description, url: play.url, image: { icon: undefined, large: undefined } };
         expect(MediaObjectBuilder.args).to.eql([[{ mediaObjects: [mediaObject], mediaType: 'AUDIO', optionalMediaControls: ['PAUSED', 'STOPPED'] }]]);
@@ -449,13 +449,13 @@ describe('stream handler unit tests', async () => {
         const turnGet = sinon.stub().returns(true);
         turnGet.onCall(0).returns(play);
 
-        const context = {
+        const runtime = {
           turn: { get: turnGet },
         };
 
         const conv = { device: { capabilities: { includes: sinon.stub().returns(true) } }, add: sinon.stub() };
 
-        streamResponseBuilder(context as any, conv as any);
+        streamResponseBuilder(runtime as any, conv as any);
 
         expect(ImageBuilder.args).to.eql([[{ url: play.background_img, alt: 'Media Background Image' }]]);
         const mediaObject = { name: play.title, description: play.description, url: play.url, image: { icon: undefined, large: {} } };
@@ -474,13 +474,13 @@ describe('stream handler unit tests', async () => {
         turnGet.onCall(0).returns(play);
         turnGet.onCall(2).returns(true);
 
-        const context = {
+        const runtime = {
           turn: { get: turnGet },
         };
 
         const conv = { device: { capabilities: { includes: sinon.stub().returns(true) } }, add: sinon.stub() };
 
-        streamResponseBuilder(context as any, conv as any);
+        streamResponseBuilder(runtime as any, conv as any);
 
         expect(ImageBuilder.args).to.eql([[{ url: play.icon_img, alt: 'Media Icon Image' }]]);
         const mediaObject = { name: play.title, description: play.description, url: play.url, image: { icon: {}, large: undefined } };
@@ -498,13 +498,13 @@ describe('stream handler unit tests', async () => {
         const turnGet = sinon.stub().returns(false);
         turnGet.onCall(0).returns(play);
 
-        const context = {
+        const runtime = {
           turn: { get: turnGet },
         };
 
         const conv = { device: { capabilities: { includes: sinon.stub().returns(true) } }, add: sinon.stub() };
 
-        streamResponseBuilder(context as any, conv as any);
+        streamResponseBuilder(runtime as any, conv as any);
 
         expect(SuggestionsBuilder.args).to.eql([[{ title: 'continue' }], [{ title: 'exit' }]]);
         expect(conv.add.callCount).to.eql(3);

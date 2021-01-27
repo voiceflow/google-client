@@ -9,8 +9,8 @@ class StateManager extends AbstractManager {
     this.table[userId] = state;
   }
 
-  async getFromDb(userId: string) {
-    return this.table[userId] || {};
+  async getFromDb<T extends Record<string, any> = Record<string, any>>(userId: string) {
+    return (this.table[userId] || {}) as T;
   }
 }
 

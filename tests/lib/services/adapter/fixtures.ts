@@ -191,7 +191,7 @@ export const newMissing = {
   },
 };
 
-// context containing outputMap
+// state containing outputMap
 export const oldOutputMap = {
   last_speak: 'in second flow. say smth to continue',
   sessions: 1,
@@ -355,7 +355,7 @@ export const newOutputMap = {
   },
 };
 
-// context containing local variables
+// state containing local variables
 export const oldDiagramsVariables = {
   last_speak: 'say smth',
   sessions: 1,
@@ -522,7 +522,7 @@ export const newFramesVariables = {
   },
 };
 
-// context containing commands
+// state containing commands
 export const oldCommands = {
   sessions: 1,
   reprompt: 0,

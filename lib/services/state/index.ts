@@ -6,5 +6,6 @@ export { default as LocalState } from './local';
 
 export interface State {
   saveToDb(userId: string, state: StateObj): Promise<void>;
-  getFromDb(userId: string): Promise<Record<string, any>>;
+
+  getFromDb<T extends Record<string, any> = Record<string, any>>(userId: string): Promise<T>;
 }

@@ -5,16 +5,16 @@ import { Source } from '../constants';
 import Adapter from './adapter';
 import Google from './google';
 import GoogleV2 from './googleV2';
+import Runtime from './runtime';
 import { DynamoState, LocalState, MongoState, State } from './state';
-import Voiceflow from './voiceflow';
 
 export interface ServiceMap {
   adapter: Adapter;
   state: State;
   google: Google;
   googleV2: GoogleV2;
-  voiceflow: ReturnType<typeof Voiceflow>;
-  voiceflowV2: ReturnType<typeof Voiceflow>;
+  runtimeClient: ReturnType<typeof Runtime>;
+  runtimeClientV2: ReturnType<typeof Runtime>;
 }
 
 export interface FullServiceMap extends ClientMap, ServiceMap {}
@@ -37,8 +37,9 @@ const buildServices = (config: Config, clients: ClientMap): FullServiceMap => {
     services.state = new DynamoState(services, config);
   }
 
-  services.voiceflow = Voiceflow(services, config);
-  services.voiceflowV2 = Voiceflow(services, config, 'v2');
+  services.runtimeClient = Runtime(services, config);
+  services.runtimeClientV2 = Runtime(services, config, 'v2');
+
   services.google = new Google(services, config);
   services.googleV2 = new GoogleV2(services, config);
 

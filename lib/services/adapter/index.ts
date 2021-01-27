@@ -1,6 +1,6 @@
 import log from '../../../logger';
 import { AbstractManager } from '../types';
-import { NewContextRaw, OldContextRaw } from './types';
+import { NewStateRaw, OldStateRaw } from './types';
 import { stackAdapter, storageAdapter, variablesAdapter } from './utils';
 
 /**
@@ -8,7 +8,7 @@ import { stackAdapter, storageAdapter, variablesAdapter } from './utils';
  * The intention is to remove this adapter once we switch all users over
  */
 class AdapterManager extends AbstractManager {
-  async context(state: OldContextRaw): Promise<NewContextRaw | {}> {
+  async state(state: OldStateRaw): Promise<NewStateRaw | {}> {
     try {
       return {
         stack: stackAdapter(state),
@@ -17,7 +17,7 @@ class AdapterManager extends AbstractManager {
       };
     } catch (err) {
       // eslint-disable-next-line no-console
-      log.error('context adapter err: ', err.message);
+      log.error('state adapter err: ', err.message);
       return {};
     }
   }

@@ -1,23 +1,24 @@
-import { Context } from '@voiceflow/runtime';
 import { DialogflowConversation, SimpleResponse } from 'actions-on-google';
 import { WebhookClient } from 'dialogflow-fulfillment';
 
 import { S, T } from '@/lib/constants';
+import { responseHandlers } from '@/lib/services/runtime/handlers';
+import { GoogleRuntime } from '@/lib/services/runtime/types';
 import { AbstractManager, injectServices } from '@/lib/services/types';
 import { generateResponseText } from '@/lib/services/utils';
-import { responseHandlers } from '@/lib/services/voiceflow/handlers';
 
 const utilsObj = {
   responseHandlers,
   SimpleResponse,
 };
+
 @injectServices({ utils: utilsObj })
 class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
-  async build(context: Context, agent: WebhookClient, conv: DialogflowConversation<any>) {
+  async build(runtime: GoogleRuntime, agent: WebhookClient, conv: DialogflowConversation<any>) {
     const { state, randomstring, utils } = this.services;
-    const { storage, turn } = context;
+    const { storage, turn } = runtime;
 
-    if (context.stack.isEmpty()) {
+    if (runtime.stack.isEmpty()) {
       turn.set(T.END, true);
     }
 
@@ -31,20 +32,16 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       conv.close(response);
     } else {
       conv.ask(response);
-      conv.noInputs = [
-        {
-          ssml: `<speak>${storage.get(S.REPROMPT) ?? output}</speak>`,
-        },
-      ];
+      conv.noInputs = [{ ssml: `<speak>${storage.get(S.REPROMPT) ?? output}</speak>` }];
     }
 
     // eslint-disable-next-line no-restricted-syntax
     for (const handler of utils.responseHandlers) {
       // eslint-disable-next-line no-await-in-loop
-      await handler(context, conv);
+      await handler(runtime, conv);
     }
 
-    await state.saveToDb(storage.get<string>(S.USER)!, context.getFinalState());
+    await state.saveToDb(storage.get<string>(S.USER)!, runtime.getFinalState());
 
     conv.user.storage.forceUpdateToken = randomstring.generate();
     agent.add(conv);

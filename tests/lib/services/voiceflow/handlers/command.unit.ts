@@ -2,38 +2,38 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { F, T } from '@/lib/constants';
-import DefaultCommandHandler, { CommandHandler, getCommand } from '@/lib/services/voiceflow/handlers/command';
-import { IntentName, RequestType } from '@/lib/services/voiceflow/types';
+import DefaultCommandHandler, { CommandHandler, getCommand } from '@/lib/services/runtime/handlers/command';
+import { IntentName, RequestType } from '@/lib/services/runtime/types';
 
 describe('command handler unit tests', async () => {
   afterEach(() => sinon.restore());
 
   describe('getCommand', () => {
     it('no request', () => {
-      const context = { turn: { get: sinon.stub().returns(null) } };
-      expect(getCommand(context as any, null as any)).to.eql(null);
+      const runtime = { turn: { get: sinon.stub().returns(null) } };
+      expect(getCommand(runtime as any, null as any)).to.eql(null);
     });
 
     it('request type not intent', () => {
-      const context = { turn: { get: sinon.stub().returns({ type: 'random type' }) } };
-      expect(getCommand(context as any, null as any)).to.eql(null);
+      const runtime = { turn: { get: sinon.stub().returns({ type: 'random type' }) } };
+      expect(getCommand(runtime as any, null as any)).to.eql(null);
     });
 
     describe('request type intent', () => {
       it('VoiceFlowIntent', () => {
-        const context = { turn: { get: sinon.stub().returns({ type: RequestType.INTENT, payload: { intent: IntentName.VOICEFLOW } }) } };
-        expect(getCommand(context as any, null as any)).to.eql(null);
+        const runtime = { turn: { get: sinon.stub().returns({ type: RequestType.INTENT, payload: { intent: IntentName.VOICEFLOW } }) } };
+        expect(getCommand(runtime as any, null as any)).to.eql(null);
       });
 
       it('no extracted frame', () => {
-        const context = {
+        const runtime = {
           stack: { foo: 'bar' },
           turn: { get: sinon.stub().returns({ type: RequestType.INTENT, payload: { intent: 'random_intent' } }) },
         };
         const extraFrameCommand = sinon.stub().returns(null);
 
-        expect(getCommand(context as any, extraFrameCommand as any)).to.eql(null);
-        expect(extraFrameCommand.args[0][0]).to.eql(context.stack);
+        expect(getCommand(runtime as any, extraFrameCommand as any)).to.eql(null);
+        expect(extraFrameCommand.args[0][0]).to.eql(runtime.stack);
 
         // assert matcher
         const matcher = extraFrameCommand.args[0][1];
@@ -45,14 +45,14 @@ describe('command handler unit tests', async () => {
 
       it('with extracted frame', () => {
         const payload = { intent: 'random_intent', slots: ['slot1', 'slot2'] };
-        const context = {
+        const runtime = {
           stack: { foo: 'bar' },
           turn: { get: sinon.stub().returns({ type: RequestType.INTENT, payload }) },
         };
         const frame = { random: '123' };
         const extraFrameCommand = sinon.stub().returns(frame);
 
-        expect(getCommand(context as any, extraFrameCommand as any)).to.eql({ ...frame, intent: payload.intent, slots: payload.slots });
+        expect(getCommand(runtime as any, extraFrameCommand as any)).to.eql({ ...frame, intent: payload.intent, slots: payload.slots });
       });
     });
   });
@@ -76,35 +76,35 @@ describe('command handler unit tests', async () => {
     it('no command', () => {
       const commandHandler = CommandHandler({ getCommand: sinon.stub().returns({}) } as any);
 
-      const context = { turn: { delete: sinon.stub() } };
+      const runtime = { turn: { delete: sinon.stub() } };
 
-      expect(commandHandler.handle(context as any, null as any)).to.eql(null);
-      expect(context.turn.delete.args).to.eql([[T.REQUEST]]);
+      expect(commandHandler.handle(runtime as any, null as any)).to.eql(null);
+      expect(runtime.turn.delete.args).to.eql([[T.REQUEST]]);
     });
 
     describe('has command', () => {
       it('no diagram_id or next', () => {
         const commandHandler = CommandHandler({ getCommand: sinon.stub().returns({ command: {} }) } as any);
 
-        const context = { turn: { delete: sinon.stub() } };
+        const runtime = { turn: { delete: sinon.stub() } };
 
-        expect(commandHandler.handle(context as any, null as any)).to.eql(null);
+        expect(commandHandler.handle(runtime as any, null as any)).to.eql(null);
       });
 
       it('mappings but no slots', () => {
         const commandHandler = CommandHandler({ getCommand: sinon.stub().returns({ command: { mappings: {} } }) } as any);
 
-        const context = { turn: { delete: sinon.stub() } };
+        const runtime = { turn: { delete: sinon.stub() } };
 
-        expect(commandHandler.handle(context as any, null as any)).to.eql(null);
+        expect(commandHandler.handle(runtime as any, null as any)).to.eql(null);
       });
 
       it('slots but no mappings', () => {
         const commandHandler = CommandHandler({ getCommand: sinon.stub().returns({ command: { slots: {} } }) } as any);
 
-        const context = { turn: { delete: sinon.stub() } };
+        const runtime = { turn: { delete: sinon.stub() } };
 
-        expect(commandHandler.handle(context as any, null as any)).to.eql(null);
+        expect(commandHandler.handle(runtime as any, null as any)).to.eql(null);
       });
 
       it('mappings and slots', () => {
@@ -117,10 +117,10 @@ describe('command handler unit tests', async () => {
 
         const commandHandler = CommandHandler(utils as any);
 
-        const context = { turn: { delete: sinon.stub() } };
+        const runtime = { turn: { delete: sinon.stub() } };
         const variables = { merge: sinon.stub() };
 
-        expect(commandHandler.handle(context as any, variables as any)).to.eql(null);
+        expect(commandHandler.handle(runtime as any, variables as any)).to.eql(null);
         expect(utils.mapSlots.args).to.eql([[res.command.mappings, res.slots]]);
         expect(variables.merge.args).to.eql([[mappedSlots]]);
       });
@@ -132,12 +132,12 @@ describe('command handler unit tests', async () => {
         const commandHandler = CommandHandler(utils as any);
 
         const topFrame = { storage: { set: sinon.stub() } };
-        const context = { stack: { push: sinon.stub(), top: sinon.stub().returns(topFrame) }, turn: { delete: sinon.stub() } };
+        const runtime = { stack: { push: sinon.stub(), top: sinon.stub().returns(topFrame) }, turn: { delete: sinon.stub() } };
 
-        expect(commandHandler.handle(context as any, null as any)).to.eql(null);
+        expect(commandHandler.handle(runtime as any, null as any)).to.eql(null);
         expect(topFrame.storage.set.args).to.eql([[F.CALLED_COMMAND, true]]);
         expect(utils.Frame.args).to.eql([[{ programID: res.command.diagram_id }]]);
-        expect(context.stack.push.args).to.eql([[{}]]);
+        expect(runtime.stack.push.args).to.eql([[{}]]);
       });
 
       describe('next', () => {
@@ -148,9 +148,9 @@ describe('command handler unit tests', async () => {
           const utils = { getCommand: sinon.stub().returns(res) };
           const commandHandler = CommandHandler(utils as any);
 
-          const context = { turn: { delete: sinon.stub() }, stack: { getSize: sinon.stub().returns(stackSize) } };
+          const runtime = { turn: { delete: sinon.stub() }, stack: { getSize: sinon.stub().returns(stackSize) } };
 
-          expect(commandHandler.handle(context as any, null as any)).to.eql(res.command.next);
+          expect(commandHandler.handle(runtime as any, null as any)).to.eql(res.command.next);
         });
 
         it('not last frame', () => {
@@ -160,13 +160,13 @@ describe('command handler unit tests', async () => {
           const commandHandler = CommandHandler(utils as any);
 
           const topFrame = { setNodeID: sinon.stub() };
-          const context = {
+          const runtime = {
             turn: { delete: sinon.stub() },
             stack: { getSize: sinon.stub().returns(3), top: sinon.stub().returns(topFrame), popTo: sinon.stub() },
           };
 
-          expect(commandHandler.handle(context as any, null as any)).to.eql(null);
-          expect(context.stack.popTo.args).to.eql([[index + 1]]);
+          expect(commandHandler.handle(runtime as any, null as any)).to.eql(null);
+          expect(runtime.stack.popTo.args).to.eql([[index + 1]]);
           expect(topFrame.setNodeID.args).to.eql([[res.command.next]]);
         });
 
@@ -175,12 +175,12 @@ describe('command handler unit tests', async () => {
           const utils = { getCommand: sinon.stub().returns(res) };
           const commandHandler = CommandHandler(utils as any);
 
-          const context = {
+          const runtime = {
             turn: { delete: sinon.stub() },
             stack: { getSize: sinon.stub().returns(3) },
           };
 
-          expect(commandHandler.handle(context as any, null as any)).to.eql(null);
+          expect(commandHandler.handle(runtime as any, null as any)).to.eql(null);
         });
       });
     });
@@ -188,8 +188,8 @@ describe('command handler unit tests', async () => {
 
   describe('generation', () => {
     it('works correctly', () => {
-      const context = { turn: { get: sinon.stub().returns(null) } };
-      expect(DefaultCommandHandler().canHandle(context as any)).to.eql(false);
+      const runtime = { turn: { get: sinon.stub().returns(null) } };
+      expect(DefaultCommandHandler().canHandle(runtime as any)).to.eql(false);
     });
   });
 });

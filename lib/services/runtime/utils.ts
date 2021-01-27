@@ -1,5 +1,5 @@
 import { SlotMapping } from '@voiceflow/api-sdk';
-import { Context, formatIntentName, replaceVariables, Store, transformStringVariableToNumber } from '@voiceflow/runtime';
+import { formatIntentName, replaceVariables, Runtime, Store, transformStringVariableToNumber } from '@voiceflow/runtime';
 import _ from 'lodash';
 
 import { S, T } from '@/lib/constants';
@@ -24,7 +24,7 @@ export const transformDateTimeVariableToString = (date: GoogleDateTimeSlot) => {
   if (!date.hours) return `${date.day}/${date.month}/${date.year}`;
 
   // datetime type
-  return `${date.day}/${date.month}/${date.year} ${date.hours}:${date.minutes}`;
+  return `${date.day}/${date.month}/${date.year} ${date.hours}:${date.minutes ?? '00'}`;
 };
 
 export const mapSlots = (mappings: SlotMapping[], slots: { [key: string]: string }, overwrite = false): object => {
@@ -51,15 +51,15 @@ export const mapSlots = (mappings: SlotMapping[], slots: { [key: string]: string
   return variables;
 };
 
-export const addRepromptIfExists = <B extends { reprompt?: string }>(block: B, context: Context, variables: Store): void => {
+export const addRepromptIfExists = <B extends { reprompt?: string }>(block: B, runtime: Runtime, variables: Store): void => {
   if (block.reprompt) {
-    context.storage.set(S.REPROMPT, replaceVariables(block.reprompt, variables.getState()));
+    runtime.storage.set(S.REPROMPT, replaceVariables(block.reprompt, variables.getState()));
   }
 };
 
-export const addChipsIfExists = <B extends { chips?: string[] }>(block: B, context: Context, variables: Store): void => {
+export const addChipsIfExists = <B extends { chips?: string[] }>(block: B, runtime: Runtime, variables: Store): void => {
   if (block.chips) {
-    context.turn.set(
+    runtime.turn.set(
       T.CHIPS,
       block.chips.map((chip) => replaceVariables(chip, variables.getState()))
     );

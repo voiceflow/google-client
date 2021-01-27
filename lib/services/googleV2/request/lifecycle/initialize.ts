@@ -1,10 +1,10 @@
 import { ConversationV3 } from '@assistant/conversation';
 import { SessionType } from '@voiceflow/general-types';
-import { GoogleProgram, GoogleVersion } from '@voiceflow/google-types';
-import { Context, DataAPI, Frame, Store } from '@voiceflow/runtime';
+import { Frame, Store } from '@voiceflow/runtime';
 
 import { F, S, V } from '@/lib/constants';
-import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/voiceflow/programs/resume';
+import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/runtime/programs/resume';
+import { GoogleRuntime } from '@/lib/services/runtime/types';
 
 import { AbstractManager, injectServices } from '../../../types';
 
@@ -23,7 +23,7 @@ const utils = {
 class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
   static VAR_VF = 'voiceflow';
 
-  async build(context: Context<DataAPI<GoogleProgram, GoogleVersion>>, conv: ConversationV3): Promise<void> {
+  async build(runtime: GoogleRuntime, conv: ConversationV3): Promise<void> {
     const { resume, client } = this.services.utils;
 
     // fetch the metadata for this version (project)
@@ -31,9 +31,9 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
       platformData: { settings, slots },
       variables: versionVariables,
       rootDiagramID,
-    } = await context.api.getVersion(context.getVersionID());
+    } = await runtime.api.getVersion(runtime.getVersionID());
 
-    const { stack, storage, variables } = context;
+    const { stack, storage, variables } = runtime;
 
     // increment user sessions by 1 or initialize
     if (!storage.get(S.SESSIONS)) {
@@ -93,7 +93,7 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
 
       stack.push(resume.createResumeFrame(session.resume, session.follow));
     } else {
-      // give context to where the user left off with last speak block
+      // give runtime to where the user left off with last speak block
       stack.top().storage.delete(F.CALLED_COMMAND);
       const lastSpeak = stack.top().storage.get(F.SPEAK) ?? '';
 

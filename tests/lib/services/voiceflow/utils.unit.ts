@@ -2,48 +2,48 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { S, T } from '@/lib/constants';
-import { addChipsIfExists, addRepromptIfExists, mapSlots, transformDateTimeVariableToString } from '@/lib/services/voiceflow/utils';
+import { addChipsIfExists, addRepromptIfExists, mapSlots, transformDateTimeVariableToString } from '@/lib/services/runtime/utils';
 
-describe('voiceflow manager utils unit tests', async () => {
+describe('runtime manager utils unit tests', async () => {
   afterEach(() => sinon.restore());
 
   describe('addRepromptIfExists', () => {
     it('does not have repropmt', () => {
-      const context = { turn: { set: sinon.stub() } };
-      addRepromptIfExists({ foo: 'bar' } as any, context as any, null as any);
+      const runtime = { turn: { set: sinon.stub() } };
+      addRepromptIfExists({ foo: 'bar' } as any, runtime as any, null as any);
 
-      expect(context.turn.set.callCount).to.eql(0);
+      expect(runtime.turn.set.callCount).to.eql(0);
     });
 
     it('has reprompt', () => {
-      const context = { storage: { set: sinon.stub() } };
+      const runtime = { storage: { set: sinon.stub() } };
       const block = { reprompt: 'hello {var}' };
       const varState = { var: 'there' };
       const variables = { getState: sinon.stub().returns(varState) };
 
-      addRepromptIfExists(block as any, context as any, variables as any);
+      addRepromptIfExists(block as any, runtime as any, variables as any);
 
-      expect(context.storage.set.args[0]).to.eql([S.REPROMPT, 'hello there']);
+      expect(runtime.storage.set.args[0]).to.eql([S.REPROMPT, 'hello there']);
     });
   });
 
   describe('addChipsIfExists', () => {
     it('does not have chips', () => {
-      const context = { turn: { set: sinon.stub() } };
-      addChipsIfExists({ foo: 'bar' } as any, context as any, null as any);
+      const runtime = { turn: { set: sinon.stub() } };
+      addChipsIfExists({ foo: 'bar' } as any, runtime as any, null as any);
 
-      expect(context.turn.set.callCount).to.eql(0);
+      expect(runtime.turn.set.callCount).to.eql(0);
     });
 
     it('has reprompt', () => {
-      const context = { turn: { set: sinon.stub() } };
+      const runtime = { turn: { set: sinon.stub() } };
       const block = { chips: ['hello {var}', 'hi {var2}'] };
       const varState = { var: 'world', var2: 'there' };
       const variables = { getState: sinon.stub().returns(varState) };
 
-      addChipsIfExists(block as any, context as any, variables as any);
+      addChipsIfExists(block as any, runtime as any, variables as any);
 
-      expect(context.turn.set.args[0]).to.eql([T.CHIPS, ['hello world', 'hi there']]);
+      expect(runtime.turn.set.args[0]).to.eql([T.CHIPS, ['hello world', 'hi there']]);
     });
   });
 
@@ -57,7 +57,7 @@ describe('voiceflow manager utils unit tests', async () => {
     // time
     expect(transformDateTimeVariableToString({ hours: 13, minutes: 15, seconds: 0 } as any)).to.eql('13:15');
     // date
-    expect(transformDateTimeVariableToString({ day: 1, month: 2, year: 2020, hours: 13 } as any)).to.eql('1/2/2020');
+    expect(transformDateTimeVariableToString({ day: 1, month: 2, year: 2020, hours: 13 } as any)).to.eql('1/2/2020 13:00');
   });
 
   describe('mapSlots', () => {

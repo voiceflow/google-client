@@ -20,8 +20,8 @@ export const StreamResponseBuilderGenerator = (
   ImageBuilder: typeof Image,
   MediaObjectBuilder: typeof MediaObject,
   SuggestionsBuilder: typeof Suggestions
-): ResponseBuilder => (context, conv) => {
-  const streamPlay = context.turn.get<StreamPlay>(T.STREAM_PLAY);
+): ResponseBuilder => (runtime, conv) => {
+  const streamPlay = runtime.turn.get<StreamPlay>(T.STREAM_PLAY);
 
   if (!streamPlay) {
     return;
@@ -50,7 +50,7 @@ export const StreamResponseBuilderGenerator = (
 
     conv.add(new MediaObjectBuilder(media));
 
-    if (!context.turn.get(T.END) && !context.turn.get(T.CHIPS)) {
+    if (!runtime.turn.get(T.END) && !runtime.turn.get(T.CHIPS)) {
       conv.add(new SuggestionsBuilder(['continue', 'exit']));
     }
   } else {
@@ -64,8 +64,8 @@ export const StreamResponseBuilderGeneratorV2 = (
   ImageBuilder: typeof GoogleImage,
   MediaObjectBuilder: typeof GoogleMedia,
   SuggestionsBuilder: typeof GoogleSuggestion
-): ResponseBuilderV2 => (context, conv) => {
-  const streamPlay = context.turn.get<StreamPlay>(T.STREAM_PLAY);
+): ResponseBuilderV2 => (runtime, conv) => {
+  const streamPlay = runtime.turn.get<StreamPlay>(T.STREAM_PLAY);
 
   if (!streamPlay) {
     return;
@@ -104,7 +104,7 @@ export const StreamResponseBuilderGeneratorV2 = (
       })
     );
 
-    if (!context.turn.get(T.END) && !context.turn.get(T.CHIPS)) {
+    if (!runtime.turn.get(T.END) && !runtime.turn.get(T.CHIPS)) {
       conv.add(new SuggestionsBuilder({ title: 'continue' }));
       conv.add(new SuggestionsBuilder({ title: 'exit' }));
     }
@@ -121,7 +121,7 @@ const utilsObj = {
 
 export const StreamHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => ({
   canHandle: (block) => !!block.play,
-  handle: (block, context, variables) => {
+  handle: (block, runtime, variables) => {
     const variablesMap = variables.getState();
     const audioUrl = utils.replaceVariables(block.play, variablesMap);
 
@@ -131,7 +131,7 @@ export const StreamHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => (
 
     const streamTitle = utils.replaceVariables(block.title, variablesMap);
 
-    context.turn.set<StreamPlay>(T.STREAM_PLAY, {
+    runtime.turn.set<StreamPlay>(T.STREAM_PLAY, {
       url: audioUrl,
       title: streamTitle,
       description: utils.replaceVariables(block.description, variablesMap),
@@ -139,20 +139,20 @@ export const StreamHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => (
       background_img: utils.replaceVariables(block.background_img, variablesMap),
     });
 
-    context.storage.produce((draft) => {
+    runtime.storage.produce((draft) => {
       if (!draft[S.OUTPUT].trim()) {
         draft[S.OUTPUT] = `Now Playing ${streamTitle || 'Media'}`;
       }
     });
 
     if (block.gNextId) {
-      context.stack.top().storage.delete(F.SPEAK);
-      context.stack.top().setNodeID(block.gNextId);
+      runtime.stack.top().storage.delete(F.SPEAK);
+      runtime.stack.top().setNodeID(block.gNextId);
     } else {
-      context.turn.set(T.END, true);
+      runtime.turn.set(T.END, true);
     }
 
-    context.end();
+    runtime.end();
 
     return null;
   },

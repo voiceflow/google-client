@@ -22,8 +22,8 @@ type Choice = Node<
   }
 >;
 
-export const ChipsResponseBuilderGenerator = (SuggestionsBuilder: typeof Suggestions): ResponseBuilder => (context, conv) => {
-  const chips = context.turn.get<string[]>(T.CHIPS);
+export const ChipsResponseBuilderGenerator = (SuggestionsBuilder: typeof Suggestions): ResponseBuilder => (runtime, conv) => {
+  const chips = runtime.turn.get<string[]>(T.CHIPS);
 
   if (chips) {
     conv.add(new SuggestionsBuilder(chips));
@@ -32,8 +32,8 @@ export const ChipsResponseBuilderGenerator = (SuggestionsBuilder: typeof Suggest
 
 export const ChipsResponseBuilder = ChipsResponseBuilderGenerator(Suggestions);
 
-export const ChipsResponseBuilderGeneratorV2 = (SuggestionsBuilder: typeof GoogleSuggestion): ResponseBuilderV2 => (context, conv) => {
-  const chips = context.turn.get<string[]>(T.CHIPS);
+export const ChipsResponseBuilderGeneratorV2 = (SuggestionsBuilder: typeof GoogleSuggestion): ResponseBuilderV2 => (runtime, conv) => {
+  const chips = runtime.turn.get<string[]>(T.CHIPS);
 
   if (chips) {
     chips.forEach((chip) => conv.add(new SuggestionsBuilder({ title: chip })));
@@ -51,12 +51,12 @@ const utilsObj = {
 
 export const ChoiceHandler: HandlerFactory<Choice, typeof utilsObj> = (utils) => ({
   canHandle: (node) => !!node.choices,
-  handle: (node, context, variables) => {
-    const request = context.turn.get(T.REQUEST) as IntentRequest;
+  handle: (node, runtime, variables) => {
+    const request = runtime.turn.get(T.REQUEST) as IntentRequest;
 
     if (request?.type !== RequestType.INTENT) {
-      utils.addRepromptIfExists(node, context, variables);
-      utils.addChipsIfExists(node, context, variables);
+      utils.addRepromptIfExists(node, runtime, variables);
+      utils.addChipsIfExists(node, runtime, variables);
       // quit cycleStack without ending session by stopping on itself
       return node.id;
     }
@@ -83,12 +83,12 @@ export const ChoiceHandler: HandlerFactory<Choice, typeof utilsObj> = (utils) =>
     }
 
     // check if there is a command in the stack that fulfills intent
-    if (!nextId && utils.commandHandler.canHandle(context)) {
-      return utils.commandHandler.handle(context, variables);
+    if (!nextId && utils.commandHandler.canHandle(runtime)) {
+      return utils.commandHandler.handle(runtime, variables);
     }
 
     // request for this turn has been processed, delete request
-    context.turn.delete(T.REQUEST);
+    runtime.turn.delete(T.REQUEST);
 
     return (nextId || node.elseId) ?? null;
   },

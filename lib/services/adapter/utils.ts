@@ -1,4 +1,4 @@
-import { Commands, NewContextStack, NewContextStorage, NewContextVariables, OldCommands, OldContextRaw } from './types';
+import { Commands, NewStateStack, NewStateStorage, NewStateVariables, OldCommands, OldStateRaw } from './types';
 
 export const commandAdapter = (oldCommands: OldCommands): Commands =>
   Object.keys(oldCommands).reduce((commandsAcc, key) => {
@@ -14,8 +14,8 @@ export const commandAdapter = (oldCommands: OldCommands): Commands =>
     return commandsAcc;
   }, [] as Commands);
 
-export const stackAdapter = (oldContext: OldContextRaw): NewContextStack =>
-  oldContext.diagrams?.reduce((acc, d, index) => {
+export const stackAdapter = (oldState: OldStateRaw): NewStateStack =>
+  oldState.diagrams?.reduce((acc, d, index) => {
     const frame = {
       nodeID: d.line === false ? null : d.line,
       programID: d.id,
@@ -24,30 +24,30 @@ export const stackAdapter = (oldContext: OldContextRaw): NewContextStack =>
         // speak is only added in the old server during commands
         ...(d.speak && { speak: d.speak, calledCommand: true }),
         // output map is stored in previous frame in old server
-        ...(oldContext.diagrams[index - 1]?.output_map && { outputMap: oldContext.diagrams[index - 1].output_map }),
+        ...(oldState.diagrams[index - 1]?.output_map && { outputMap: oldState.diagrams[index - 1].output_map }),
       } as any,
       commands: commandAdapter(d.commands),
     };
 
-    if (index === oldContext.diagrams.length - 1) {
-      // nodeID for top of the stack frame is kept in line_id in old context
-      frame.nodeID = oldContext.line_id;
+    if (index === oldState.diagrams.length - 1) {
+      // nodeID for top of the stack frame is kept in line_id in old state
+      frame.nodeID = oldState.line_id;
       // old server only keeps what the last diagram spoke
-      if (oldContext.last_speak) frame.storage.speak = oldContext.last_speak;
+      if (oldState.last_speak) frame.storage.speak = oldState.last_speak;
     }
 
     acc.push(frame);
 
     return acc;
-  }, [] as NewContextStack) || [];
+  }, [] as NewStateStack) || [];
 
-export const storageAdapter = (oldContext: OldContextRaw): NewContextStorage => ({
-  output: oldContext.output,
-  sessions: oldContext.sessions,
-  repeat: oldContext.repeat,
-  locale: oldContext.locale,
-  user: oldContext.user,
-  ...(oldContext.randoms && { randoms: oldContext.randoms }), // conditionally add randoms
+export const storageAdapter = (oldState: OldStateRaw): NewStateStorage => ({
+  output: oldState.output,
+  sessions: oldState.sessions,
+  repeat: oldState.repeat,
+  locale: oldState.locale,
+  user: oldState.user,
+  ...(oldState.randoms && { randoms: oldState.randoms }), // conditionally add randoms
 });
 
-export const variablesAdapter = (oldContext: OldContextRaw): NewContextVariables => oldContext.globals[0] || { voiceflow: { events: [] } };
+export const variablesAdapter = (oldState: OldStateRaw): NewStateVariables => oldState.globals[0] || { voiceflow: { events: [] } };

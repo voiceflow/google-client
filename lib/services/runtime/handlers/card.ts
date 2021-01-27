@@ -7,8 +7,8 @@ import { T } from '@/lib/constants';
 
 import { ResponseBuilder, ResponseBuilderV2 } from '../types';
 
-export const CardResponseBuilderGenerator = (CardBuilder: typeof BasicCard, ImageBuilder: typeof Image): ResponseBuilder => (context, conv) => {
-  const card = context.turn.get<Card>(T.CARD);
+export const CardResponseBuilderGenerator = (CardBuilder: typeof BasicCard, ImageBuilder: typeof Image): ResponseBuilder => (runtime, conv) => {
+  const card = runtime.turn.get<Card>(T.CARD);
 
   if (!card) {
     return;
@@ -30,10 +30,10 @@ export const CardResponseBuilderGenerator = (CardBuilder: typeof BasicCard, Imag
 export const CardResponseBuilder = CardResponseBuilderGenerator(BasicCard, Image);
 
 export const CardResponseBuilderGeneratorV2 = (CardBuilder: typeof GoogleCard, ImageBuilder: typeof GoogleImage): ResponseBuilderV2 => (
-  context,
+  runtime,
   conv
 ) => {
-  const card = context.turn.get<Card>(T.CARD);
+  const card = runtime.turn.get<Card>(T.CARD);
 
   if (!card) {
     return;
@@ -63,7 +63,7 @@ const utilsObj = {
 
 export const CardHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => ({
   canHandle: (node) => !!node.card,
-  handle: (node, context, variables) => {
+  handle: (node, runtime, variables) => {
     const { card } = node;
     const type = card.type ?? CardType.SIMPLE;
 
@@ -85,7 +85,7 @@ export const CardHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => ({
       newCard.image.largeImageUrl = utils.addVariables(card.image.largeImageUrl, variables);
     }
 
-    context.turn.set(T.CARD, newCard);
+    runtime.turn.set(T.CARD, newCard);
 
     return node.nextId ?? null;
   },

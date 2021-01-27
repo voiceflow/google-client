@@ -3,7 +3,7 @@ import sinon from 'sinon';
 
 import { T, V } from '@/lib/constants';
 import HandlerManager from '@/lib/services/googleV2/request';
-import { RequestType } from '@/lib/services/voiceflow/types';
+import { RequestType } from '@/lib/services/runtime/types';
 
 describe('handlerManager unit tests', async () => {
   let clock: sinon.SinonFakeTimers;
@@ -82,7 +82,7 @@ describe('handlerManager unit tests', async () => {
 
   describe('handle', () => {
     it('main intent', async () => {
-      const contextObj = {
+      const stateObj = {
         stack: {
           isEmpty: sinon.stub().returns(false),
         },
@@ -96,8 +96,8 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        context: {
-          build: sinon.stub().returns(contextObj),
+        runtimeBuild: {
+          build: sinon.stub().returns(stateObj),
         },
         response: {
           build: sinon.stub(),
@@ -122,15 +122,15 @@ describe('handlerManager unit tests', async () => {
 
       await handlerManager.handle(conv as any);
 
-      expect(services.context.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
-      expect(services.initialize.build.args[0]).to.eql([contextObj, conv]);
-      expect(contextObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
-      expect(contextObj.update.callCount).to.eql(1);
-      expect(services.response.build.args[0]).to.eql([contextObj, conv]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
+      expect(services.initialize.build.args[0]).to.eql([stateObj, conv]);
+      expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
+      expect(stateObj.update.callCount).to.eql(1);
+      expect(services.response.build.args[0]).to.eql([stateObj, conv]);
     });
 
     it('default welcome intent', async () => {
-      const contextObj = {
+      const stateObj = {
         stack: {
           isEmpty: sinon.stub().returns(false),
         },
@@ -144,8 +144,8 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        context: {
-          build: sinon.stub().returns(contextObj),
+        runtimeBuild: {
+          build: sinon.stub().returns(stateObj),
         },
         response: {
           build: sinon.stub(),
@@ -170,15 +170,15 @@ describe('handlerManager unit tests', async () => {
 
       await handlerManager.handle(conv as any);
 
-      expect(services.context.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
-      expect(services.initialize.build.args[0]).to.eql([contextObj, conv]);
-      expect(contextObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
-      expect(contextObj.update.callCount).to.eql(1);
-      expect(services.response.build.args[0]).to.eql([contextObj, conv]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
+      expect(services.initialize.build.args[0]).to.eql([stateObj, conv]);
+      expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
+      expect(stateObj.update.callCount).to.eql(1);
+      expect(services.response.build.args[0]).to.eql([stateObj, conv]);
     });
 
     it('stack empty', async () => {
-      const contextObj = {
+      const stateObj = {
         stack: {
           isEmpty: sinon.stub().returns(true),
         },
@@ -192,8 +192,8 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        context: {
-          build: sinon.stub().returns(contextObj),
+        runtimeBuild: {
+          build: sinon.stub().returns(stateObj),
         },
         response: {
           build: sinon.stub(),
@@ -218,15 +218,15 @@ describe('handlerManager unit tests', async () => {
 
       await handlerManager.handle(conv as any);
 
-      expect(services.context.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
-      expect(services.initialize.build.args[0]).to.eql([contextObj, conv]);
-      expect(contextObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
-      expect(contextObj.update.callCount).to.eql(1);
-      expect(services.response.build.args[0]).to.eql([contextObj, conv]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
+      expect(services.initialize.build.args[0]).to.eql([stateObj, conv]);
+      expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
+      expect(stateObj.update.callCount).to.eql(1);
+      expect(services.response.build.args[0]).to.eql([stateObj, conv]);
     });
 
     it('existing session', async () => {
-      const contextObj = {
+      const stateObj = {
         stack: {
           isEmpty: sinon.stub().returns(false),
         },
@@ -243,8 +243,8 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        context: {
-          build: sinon.stub().returns(contextObj),
+        runtimeBuild: {
+          build: sinon.stub().returns(stateObj),
         },
         response: {
           build: sinon.stub(),
@@ -271,8 +271,8 @@ describe('handlerManager unit tests', async () => {
 
       await handlerManager.handle(conv as any);
 
-      expect(services.context.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
-      expect(contextObj.turn.set.args[0]).to.eql([
+      expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
+      expect(stateObj.turn.set.args[0]).to.eql([
         T.REQUEST,
         {
           type: RequestType.INTENT,
@@ -283,9 +283,9 @@ describe('handlerManager unit tests', async () => {
           },
         },
       ]);
-      expect(contextObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
-      expect(contextObj.update.callCount).to.eql(1);
-      expect(services.response.build.args[0]).to.eql([contextObj, conv]);
+      expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
+      expect(stateObj.update.callCount).to.eql(1);
+      expect(services.response.build.args[0]).to.eql([stateObj, conv]);
     });
   });
 });
