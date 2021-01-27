@@ -1,6 +1,8 @@
-# google service
+# google-runtime
 
-[![codecov](https://codecov.io/gh/voiceflow/google/branch/master/graph/badge.svg?token=GYJ3L80ZMM)](https://codecov.io/gh/voiceflow/google)
+[![circle ci](https://circleci.com/gh/voiceflow/general-runtime/tree/master.svg?style=shield&circle-token=a041e74a416dfed4c1777c27c9867306c2f50824)](https://circleci.com/gh/voiceflow/general-runtime/tree/master)
+[![codecov](https://codecov.io/gh/voiceflow/google-runtime/branch/master/graph/badge.svg)](https://codecov.io/gh/voiceflow/google)
+[![sonar quality gate](https://sonarcloud.io/api/project_badges/measure?project=voiceflow_google-runtime&metric=alert_status)](https://sonarcloud.io/dashboard?id=voiceflow_google-runtime)
 
 ## local/debugging setup
 
