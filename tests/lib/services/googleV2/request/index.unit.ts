@@ -225,67 +225,123 @@ describe('handlerManager unit tests', async () => {
       expect(services.response.build.args[0]).to.eql([stateObj, conv]);
     });
 
-    it('existing session', async () => {
-      const stateObj = {
-        stack: {
-          isEmpty: sinon.stub().returns(false),
-        },
-        variables: {
-          set: sinon.stub(),
-        },
-        update: sinon.stub(),
-        turn: {
-          set: sinon.stub(),
-        },
-      };
-
-      const services = {
-        initialize: {
-          build: sinon.stub(),
-        },
-        runtimeBuild: {
-          build: sinon.stub().returns(stateObj),
-        },
-        response: {
-          build: sinon.stub(),
-        },
-      };
-
-      const conv = {
-        intent: { name: 'random intent', query: 'input raw' },
-        scene: { slots: {} },
-        request: {
-          versionID: 'version-id',
-        },
-        user: {
-          params: {
-            userId: 'user-id',
+    describe('existing session', () => {
+      it('intent', async () => {
+        const stateObj = {
+          stack: {
+            isEmpty: sinon.stub().returns(false),
           },
-        },
-      };
-
-      const slots = { slot1: 'slot_one', slot2: 'slot_two' };
-
-      const handlerManager = new HandlerManager(services as any, null as any);
-      handlerManager._extractSlots = sinon.stub().returns(slots);
-
-      await handlerManager.handle(conv as any);
-
-      expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
-      expect(stateObj.turn.set.args[0]).to.eql([
-        T.REQUEST,
-        {
-          type: RequestType.INTENT,
-          payload: {
-            intent: conv.intent.name,
-            input: conv.intent.query,
-            slots,
+          variables: {
+            set: sinon.stub(),
           },
-        },
-      ]);
-      expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
-      expect(stateObj.update.callCount).to.eql(1);
-      expect(services.response.build.args[0]).to.eql([stateObj, conv]);
+          update: sinon.stub(),
+          turn: {
+            set: sinon.stub(),
+          },
+        };
+
+        const services = {
+          initialize: {
+            build: sinon.stub(),
+          },
+          runtimeBuild: {
+            build: sinon.stub().returns(stateObj),
+          },
+          response: {
+            build: sinon.stub(),
+          },
+        };
+
+        const conv = {
+          intent: { name: 'random intent', query: 'input raw' },
+          scene: { slots: {} },
+          request: {
+            versionID: 'version-id',
+          },
+          user: {
+            params: {
+              userId: 'user-id',
+            },
+          },
+        };
+
+        const slots = { slot1: 'slot_one', slot2: 'slot_two' };
+
+        const handlerManager = new HandlerManager(services as any, null as any);
+        handlerManager._extractSlots = sinon.stub().returns(slots);
+
+        await handlerManager.handle(conv as any);
+
+        expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
+        expect(stateObj.turn.set.args[0]).to.eql([
+          T.REQUEST,
+          {
+            type: RequestType.INTENT,
+            payload: {
+              intent: conv.intent.name,
+              input: conv.intent.query,
+              slots,
+            },
+          },
+        ]);
+        expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
+        expect(stateObj.update.callCount).to.eql(1);
+        expect(services.response.build.args[0]).to.eql([stateObj, conv]);
+      });
+
+      it('media status', async () => {
+        const stateObj = {
+          stack: {
+            isEmpty: sinon.stub().returns(false),
+          },
+          variables: {
+            set: sinon.stub(),
+          },
+          update: sinon.stub(),
+          turn: {
+            set: sinon.stub(),
+          },
+        };
+
+        const services = {
+          runtimeBuild: {
+            build: sinon.stub().returns(stateObj),
+          },
+          response: {
+            build: sinon.stub(),
+          },
+        };
+
+        const conv = {
+          intent: { name: 'actions.intent.MEDIA_STATUS_FINISHED', query: 'input raw' },
+          scene: { slots: {} },
+          request: {
+            versionID: 'version-id',
+          },
+          user: {
+            params: {
+              userId: 'user-id',
+            },
+          },
+        };
+
+        const handlerManager = new HandlerManager(services as any, null as any);
+        handlerManager._extractSlots = sinon.stub().returns({});
+
+        await handlerManager.handle(conv as any);
+
+        expect(stateObj.turn.set.args[0]).to.eql([
+          T.REQUEST,
+          {
+            type: RequestType.MEDIA_STATUS,
+            payload: {
+              intent: conv.intent.name,
+              input: conv.intent.query,
+              slots: {},
+            },
+          },
+        ]);
+      });
     });
   });
 });
