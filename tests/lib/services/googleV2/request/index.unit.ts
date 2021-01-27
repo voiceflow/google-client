@@ -96,7 +96,7 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        runtimeClient: {
+        runtimeBuild: {
           build: sinon.stub().returns(stateObj),
         },
         response: {
@@ -122,7 +122,7 @@ describe('handlerManager unit tests', async () => {
 
       await handlerManager.handle(conv as any);
 
-      expect(services.runtimeClient.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
       expect(services.initialize.build.args[0]).to.eql([stateObj, conv]);
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.callCount).to.eql(1);
@@ -144,7 +144,7 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        runtimeClient: {
+        runtimeBuild: {
           build: sinon.stub().returns(stateObj),
         },
         response: {
@@ -170,7 +170,7 @@ describe('handlerManager unit tests', async () => {
 
       await handlerManager.handle(conv as any);
 
-      expect(services.runtimeClient.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
       expect(services.initialize.build.args[0]).to.eql([stateObj, conv]);
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.callCount).to.eql(1);
@@ -192,7 +192,7 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        runtimeClient: {
+        runtimeBuild: {
           build: sinon.stub().returns(stateObj),
         },
         response: {
@@ -218,7 +218,7 @@ describe('handlerManager unit tests', async () => {
 
       await handlerManager.handle(conv as any);
 
-      expect(services.runtimeClient.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
       expect(services.initialize.build.args[0]).to.eql([stateObj, conv]);
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.callCount).to.eql(1);
@@ -243,7 +243,7 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        runtimeClient: {
+        runtimeBuild: {
           build: sinon.stub().returns(stateObj),
         },
         response: {
@@ -271,7 +271,7 @@ describe('handlerManager unit tests', async () => {
 
       await handlerManager.handle(conv as any);
 
-      expect(services.runtimeClient.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
       expect(stateObj.turn.set.args[0]).to.eql([
         T.REQUEST,
         {

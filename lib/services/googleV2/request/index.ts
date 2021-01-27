@@ -8,10 +8,10 @@ import { AbstractManager, injectServices } from '../../types';
 import GoogleManager from '../index';
 import Initialize from './lifecycle/initialize';
 import Response from './lifecycle/response';
-import RuntimeClient from './lifecycle/runtime';
+import RuntimeBuild from './lifecycle/runtime';
 
-@injectServices({ initialize: Initialize, runtimeClient: RuntimeClient, response: Response })
-class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeClient: RuntimeClient; response: Response }> {
+@injectServices({ initialize: Initialize, runtimeBuild: RuntimeBuild, response: Response })
+class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeBuild: RuntimeBuild; response: Response }> {
   _extractSlots(conv: ConversationV3) {
     const handler = conv.request.handler as { originalName: string };
 
@@ -33,7 +33,7 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeCl
   }
 
   async handle(conv: ConversationV3) {
-    const { initialize, runtimeClient, response } = this.services;
+    const { initialize, runtimeBuild, response } = this.services;
 
     const { intent } = conv;
     const input = intent.query;
@@ -42,7 +42,7 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeCl
 
     const { userId } = conv.user.params;
 
-    const runtime = await runtimeClient.build(_.get(conv.request, 'versionID'), userId);
+    const runtime = await runtimeBuild.build(_.get(conv.request, 'versionID'), userId);
 
     if (intent.name === 'actions.intent.MAIN' || intent.name === 'Default Welcome Intent' || runtime.stack.isEmpty()) {
       await initialize.build(runtime, conv);

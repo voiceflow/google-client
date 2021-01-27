@@ -48,7 +48,7 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        runtimeClient: {
+        runtimeBuild: {
           build: sinon.stub().returns(stateObj),
         },
         response: {
@@ -81,7 +81,7 @@ describe('handlerManager unit tests', async () => {
       await handlerManager.dialogflow(agent as any);
 
       expect(agent.conv.callCount).to.eql(1);
-      expect(services.runtimeClient.build.args[0]).to.eql([convObj.body.versionID, convObj.user.storage.userId]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([convObj.body.versionID, convObj.user.storage.userId]);
       expect(services.initialize.build.args[0]).to.eql([stateObj, convObj]);
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.callCount).to.eql(1);
@@ -103,7 +103,7 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        runtimeClient: {
+        runtimeBuild: {
           build: sinon.stub().returns(stateObj),
         },
         response: {
@@ -136,7 +136,7 @@ describe('handlerManager unit tests', async () => {
       await handlerManager.dialogflow(agent as any);
 
       expect(agent.conv.callCount).to.eql(1);
-      expect(services.runtimeClient.build.args[0]).to.eql([convObj.body.versionID, convObj.user.storage.userId]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([convObj.body.versionID, convObj.user.storage.userId]);
       expect(services.initialize.build.args[0]).to.eql([stateObj, convObj]);
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, agent, convObj]);
@@ -157,7 +157,7 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        runtimeClient: {
+        runtimeBuild: {
           build: sinon.stub().returns(stateObj),
         },
         response: {
@@ -190,7 +190,7 @@ describe('handlerManager unit tests', async () => {
       await handlerManager.dialogflow(agent as any);
 
       expect(agent.conv.callCount).to.eql(1);
-      expect(services.runtimeClient.build.args[0]).to.eql([convObj.body.versionID, convObj.user.storage.userId]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([convObj.body.versionID, convObj.user.storage.userId]);
       expect(services.initialize.build.args[0]).to.eql([stateObj, convObj]);
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, agent, convObj]);
@@ -214,7 +214,7 @@ describe('handlerManager unit tests', async () => {
         initialize: {
           build: sinon.stub(),
         },
-        runtimeClient: {
+        runtimeBuild: {
           build: sinon.stub().returns(stateObj),
         },
         response: {
@@ -247,7 +247,7 @@ describe('handlerManager unit tests', async () => {
       await handlerManager.dialogflow(agent as any);
 
       expect(agent.conv.callCount).to.eql(1);
-      expect(services.runtimeClient.build.args[0]).to.eql([convObj.body.versionID, convObj.user.storage.userId]);
+      expect(services.runtimeBuild.build.args[0]).to.eql([convObj.body.versionID, convObj.user.storage.userId]);
       expect(stateObj.turn.set.args[0]).to.eql([
         T.REQUEST,
         {

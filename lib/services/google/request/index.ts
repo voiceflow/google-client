@@ -7,12 +7,12 @@ import { RequestType } from '@/lib/services/runtime/types';
 import { AbstractManager, injectServices } from '../../types';
 import Initialize from './lifecycle/initialize';
 import Response from './lifecycle/response';
-import Runtime from './lifecycle/runtime';
+import RuntimeBuild from './lifecycle/runtime';
 
-@injectServices({ initialize: Initialize, runtimeClient: Runtime, response: Response })
-class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeClient: Runtime; response: Response }> {
+@injectServices({ initialize: Initialize, runtimeBuild: RuntimeBuild, response: Response })
+class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeBuild: RuntimeBuild; response: Response }> {
   async dialogflow(agent: WebhookClient) {
-    const { initialize, runtimeClient, response } = this.services;
+    const { initialize, runtimeBuild, response } = this.services;
     const conv = agent.conv();
 
     if (!conv) {
@@ -28,7 +28,7 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeCl
 
     const { userId } = conv.user.storage;
 
-    const runtime = await runtimeClient.build(_.get(conv.body, 'versionID'), userId);
+    const runtime = await runtimeBuild.build(_.get(conv.body, 'versionID'), userId);
 
     if (intent === 'actions.intent.MAIN' || intent === 'Default Welcome Intent' || runtime.stack.isEmpty()) {
       await initialize.build(runtime, conv);
