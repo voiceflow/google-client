@@ -47,8 +47,15 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeBu
     if (intent.name === 'actions.intent.MAIN' || intent.name === 'Default Welcome Intent' || runtime.stack.isEmpty()) {
       await initialize.build(runtime, conv);
     } else {
+      let type;
+      if (intent.name?.startsWith('actions.intent.MEDIA_STATUS')) {
+        type = RequestType.MEDIA_STATUS;
+      } else {
+        type = RequestType.INTENT;
+      }
+
       runtime.turn.set(T.REQUEST, {
-        type: RequestType.INTENT,
+        type,
         payload: {
           intent: intent.name,
           input,
