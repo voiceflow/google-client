@@ -2,7 +2,7 @@ import { Command, CommandMapping } from '@voiceflow/api-sdk';
 import { Command as IntentCommand } from '@voiceflow/google-types/build/nodes/command';
 import { extractFrameCommand, Frame, Runtime, Store } from '@voiceflow/runtime';
 
-import { F, T } from '@/lib/constants';
+import { F, S, T } from '@/lib/constants';
 
 import { IntentName, IntentRequest, RequestType } from '../types';
 import { mapSlots } from '../utils';
@@ -71,6 +71,8 @@ export const CommandHandler = (utils: typeof utilsObj) => ({
         } else if (index === runtime.stack.getSize() - 1) {
           // jumping to an intent within the same flow
           nextId = command.next;
+          // clear previous output
+          runtime.storage.set(S.OUTPUT, '');
         }
       }
     }

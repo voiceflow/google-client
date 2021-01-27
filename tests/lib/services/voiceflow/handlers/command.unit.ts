@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { F, T } from '@/lib/constants';
+import { F, S, T } from '@/lib/constants';
 import DefaultCommandHandler, { CommandHandler, getCommand } from '@/lib/services/runtime/handlers/command';
 import { IntentName, RequestType } from '@/lib/services/runtime/types';
 
@@ -148,9 +148,10 @@ describe('command handler unit tests', async () => {
           const utils = { getCommand: sinon.stub().returns(res) };
           const commandHandler = CommandHandler(utils as any);
 
-          const runtime = { turn: { delete: sinon.stub() }, stack: { getSize: sinon.stub().returns(stackSize) } };
+          const runtime = { turn: { delete: sinon.stub() }, stack: { getSize: sinon.stub().returns(stackSize) }, storage: { set: sinon.stub() } };
 
           expect(commandHandler.handle(runtime as any, null as any)).to.eql(res.command.next);
+          expect(runtime.storage.set.args).to.eql([[S.OUTPUT, '']]);
         });
 
         it('not last frame', () => {
