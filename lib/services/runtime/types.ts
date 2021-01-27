@@ -5,6 +5,7 @@ import { DialogflowConversation } from 'actions-on-google';
 
 export enum RequestType {
   INTENT = 'INTENT',
+  MEDIA_STATUS = 'MEDIA_STATUS',
 }
 
 export enum IntentName {
