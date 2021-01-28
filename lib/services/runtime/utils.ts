@@ -1,6 +1,7 @@
 import { SlotMapping } from '@voiceflow/api-sdk';
 import { Chip, SLOT_REGEXP } from '@voiceflow/general-types';
-import { formatIntentName, replaceVariables, Runtime, Store, transformStringVariableToNumber } from '@voiceflow/runtime';
+import { Runtime, Store } from '@voiceflow/runtime';
+import { replaceVariables, formatIntentName, transformStringVariableToNumber } from '@voiceflow/common';
 import _ from 'lodash';
 
 import { S, T } from '@/lib/constants';

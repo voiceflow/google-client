@@ -1,6 +1,8 @@
 import { Card as GoogleCard, Image as GoogleImage } from '@assistant/conversation';
 import { Card, CardType, Node } from '@voiceflow/google-types/build/nodes/card';
-import { HandlerFactory, replaceVariables, Store } from '@voiceflow/runtime';
+import { HandlerFactory, Store } from '@voiceflow/runtime';
+import { replaceVariables } from '@voiceflow/common';
+
 import { BasicCard, Image } from 'actions-on-google';
 
 import { T } from '@/lib/constants';

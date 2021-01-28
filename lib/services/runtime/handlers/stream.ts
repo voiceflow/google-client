@@ -1,7 +1,8 @@
 import { Image as GoogleImage, Media as GoogleMedia, Suggestion as GoogleSuggestion } from '@assistant/conversation';
 import { Capability, MediaObject as GoogleMediaObject, MediaType, OptionalMediaControl } from '@assistant/conversation/dist/api/schema';
 import { Node } from '@voiceflow/google-types/build/nodes/stream';
-import { HandlerFactory, replaceVariables } from '@voiceflow/runtime';
+import { HandlerFactory } from '@voiceflow/runtime';
+import { replaceVariables } from '@voiceflow/common';
 import { Image, MediaObject, MediaObjectOptions, Suggestions } from 'actions-on-google';
 
 import { F, S, T } from '@/lib/constants';
