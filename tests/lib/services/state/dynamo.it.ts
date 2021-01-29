@@ -1,6 +1,6 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 
-import Common from '@voiceflow/common';
+import { getRequiredProcessEnv } from '@voiceflow/common';
 import AWS from 'aws-sdk';
 import { expect } from 'chai';
 import sinon from 'sinon';
@@ -8,13 +8,11 @@ import sinon from 'sinon';
 import '@/envSetup';
 import StateManager from '@/lib/services/state/dynamo';
 
-const { getProcessEnv } = Common.utils.general;
-
 AWS.config = new AWS.Config({
-  accessKeyId: getProcessEnv('AWS_ACCESS_KEY_ID'),
-  secretAccessKey: getProcessEnv('AWS_SECRET_ACCESS_KEY'),
-  endpoint: getProcessEnv('AWS_ENDPOINT'),
-  region: getProcessEnv('AWS_REGION'),
+  accessKeyId: getRequiredProcessEnv('AWS_ACCESS_KEY_ID'),
+  secretAccessKey: getRequiredProcessEnv('AWS_SECRET_ACCESS_KEY'),
+  endpoint: getRequiredProcessEnv('AWS_ENDPOINT'),
+  region: getRequiredProcessEnv('AWS_REGION'),
 } as any);
 
 const TABLE = 'testTable';
@@ -38,7 +36,7 @@ describe('dynamo stateManager integration tests', () => {
 
     docClient = new AWS.DynamoDB.DocumentClient({
       convertEmptyValues: true,
-      endpoint: getProcessEnv('DYNAMO_ENDPOINT'),
+      endpoint: getRequiredProcessEnv('DYNAMO_ENDPOINT'),
     });
   });
 

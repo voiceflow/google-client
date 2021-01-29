@@ -1,6 +1,7 @@
 import { SlotMapping } from '@voiceflow/api-sdk';
+import { formatIntentName } from '@voiceflow/common';
 import { Node } from '@voiceflow/google-types/build/nodes/interaction';
-import { formatIntentName, HandlerFactory } from '@voiceflow/runtime';
+import { HandlerFactory } from '@voiceflow/runtime';
 
 import { S, T } from '@/lib/constants';
 
