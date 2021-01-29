@@ -67,11 +67,14 @@ export const addChipsIfExistsV1 = <B extends { chips?: string[] }>(block: B, run
   }
 };
 
-export const replaceIDVariables = (variables: Record<string, string>) => (input: string) =>
+export const replaceIDVariables = (input: string, variables: Record<string, string>) =>
   input.replace(SLOT_REGEXP, (_match, inner) => variables[inner] || inner);
 
 export const addChipsIfExists = <N extends { chips?: Chip[] }>(node: N, runtime: Runtime, variables: Store): void => {
   if (node.chips) {
-    runtime.turn.set(T.CHIPS, node.chips.map(replaceIDVariables(variables.getState())));
+    runtime.turn.set(
+      T.CHIPS,
+      node.chips.map((chip: Chip) => replaceIDVariables(chip?.label, variables.getState()))
+    );
   }
 };
