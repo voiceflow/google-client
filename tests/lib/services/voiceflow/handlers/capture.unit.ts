@@ -22,6 +22,7 @@ describe('capture handler unit tests', async () => {
     it('no request', () => {
       const utils = {
         addRepromptIfExists: sinon.stub(),
+        addChipsIfExists: sinon.stub(),
       };
 
       const captureHandler = CaptureHandler(utils as any);
@@ -32,11 +33,13 @@ describe('capture handler unit tests', async () => {
 
       expect(captureHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.id);
       expect(utils.addRepromptIfExists.args).to.eql([[block, runtime, variables]]);
+      expect(utils.addChipsIfExists.args).to.eql([[block, runtime, variables]]);
     });
 
     it('request type not intent', () => {
       const utils = {
         addRepromptIfExists: sinon.stub(),
+        addChipsIfExists: sinon.stub(),
       };
 
       const captureHandler = CaptureHandler(utils as any);
@@ -47,6 +50,7 @@ describe('capture handler unit tests', async () => {
 
       expect(captureHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.id);
       expect(utils.addRepromptIfExists.args).to.eql([[block, runtime, variables]]);
+      expect(utils.addChipsIfExists.args).to.eql([[block, runtime, variables]]);
     });
 
     describe('request type is intent', () => {

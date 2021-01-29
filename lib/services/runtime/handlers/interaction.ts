@@ -31,6 +31,7 @@ export const InteractionHandler: HandlerFactory<Node, typeof utilsObj> = (utils:
       runtime.storage.delete(S.REPROMPT);
 
       utils.addRepromptIfExists(node, runtime, variables);
+      utils.addChipsIfExists(node, runtime, variables);
 
       // clean up no matches counter on new interaction
       runtime.storage.delete(S.NO_MATCHES_COUNTER);

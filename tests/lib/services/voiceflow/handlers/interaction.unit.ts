@@ -23,6 +23,7 @@ describe('interaction handler unit tests', async () => {
     it('no request', () => {
       const utils = {
         addRepromptIfExists: sinon.stub(),
+        addChipsIfExists: sinon.stub(),
       };
 
       const interactionHandler = InteractionHandler(utils as any);
@@ -33,12 +34,14 @@ describe('interaction handler unit tests', async () => {
 
       expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.id);
       expect(utils.addRepromptIfExists.args).to.eql([[block, runtime, variables]]);
+      expect(utils.addChipsIfExists.args).to.eql([[block, runtime, variables]]);
       expect(runtime.storage.delete.args).to.eql([[S.REPROMPT], [S.NO_MATCHES_COUNTER]]);
     });
 
     it('request type not intent', () => {
       const utils = {
         addRepromptIfExists: sinon.stub(),
+        addChipsIfExists: sinon.stub(),
       };
 
       const captureHandler = InteractionHandler(utils as any);
@@ -49,6 +52,7 @@ describe('interaction handler unit tests', async () => {
 
       expect(captureHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.id);
       expect(utils.addRepromptIfExists.args).to.eql([[block, runtime, variables]]);
+      expect(utils.addChipsIfExists.args).to.eql([[block, runtime, variables]]);
       expect(runtime.storage.delete.args).to.eql([[S.REPROMPT], [S.NO_MATCHES_COUNTER]]);
     });
 
