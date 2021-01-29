@@ -1,15 +1,16 @@
-import { Node } from '@voiceflow/general-types/build/nodes/capture';
+import { Node } from '@voiceflow/google-types/build/nodes/capture';
 import { HandlerFactory } from '@voiceflow/runtime';
 import wordsToNumbers from 'words-to-numbers';
 
 import { T } from '@/lib/constants';
 
 import { IntentRequest, RequestType } from '../types';
-import { addRepromptIfExists } from '../utils';
+import { addChipsIfExists, addRepromptIfExists } from '../utils';
 import CommandHandler from './command';
 
 const utilsObj = {
   wordsToNumbers,
+  addChipsIfExists,
   addRepromptIfExists,
   commandHandler: CommandHandler(),
 };
@@ -20,6 +21,7 @@ export const CaptureHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => 
     const request = runtime.turn.get<IntentRequest>(T.REQUEST);
 
     if (request?.type !== RequestType.INTENT) {
+      utils.addChipsIfExists(node, runtime, variables);
       utils.addRepromptIfExists(node, runtime, variables);
 
       // quit cycleStack without ending session by stopping on itself

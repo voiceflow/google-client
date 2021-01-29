@@ -6,7 +6,7 @@ import { Suggestions } from 'actions-on-google';
 import { T } from '@/lib/constants';
 
 import { IntentRequest, RequestType, ResponseBuilder, ResponseBuilderV2 } from '../../types';
-import { addChipsIfExists, addRepromptIfExists } from '../../utils';
+import { addChipsIfExistsV1, addRepromptIfExists } from '../../utils';
 import CommandHandler from '../command';
 import getBestScore from './score';
 
@@ -44,7 +44,7 @@ export const ChipsResponseBuilderV2 = ChipsResponseBuilderGeneratorV2(GoogleSugg
 
 const utilsObj = {
   addRepromptIfExists,
-  addChipsIfExists,
+  addChipsIfExists: addChipsIfExistsV1,
   getBestScore,
   commandHandler: CommandHandler(),
 };
