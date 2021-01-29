@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { S, T } from '@/lib/constants';
-import { addChipsIfExists, addRepromptIfExists, mapSlots, transformDateTimeVariableToString } from '@/lib/services/runtime/utils';
+import { addChipsIfExistsV1, addRepromptIfExists, mapSlots, transformDateTimeVariableToString } from '@/lib/services/runtime/utils';
 
 describe('runtime manager utils unit tests', async () => {
   afterEach(() => sinon.restore());
@@ -30,7 +30,7 @@ describe('runtime manager utils unit tests', async () => {
   describe('addChipsIfExists', () => {
     it('does not have chips', () => {
       const runtime = { turn: { set: sinon.stub() } };
-      addChipsIfExists({ foo: 'bar' } as any, runtime as any, null as any);
+      addChipsIfExistsV1({ foo: 'bar' } as any, runtime as any, null as any);
 
       expect(runtime.turn.set.callCount).to.eql(0);
     });
@@ -41,7 +41,7 @@ describe('runtime manager utils unit tests', async () => {
       const varState = { var: 'world', var2: 'there' };
       const variables = { getState: sinon.stub().returns(varState) };
 
-      addChipsIfExists(block as any, runtime as any, variables as any);
+      addChipsIfExistsV1(block as any, runtime as any, variables as any);
 
       expect(runtime.turn.set.args[0]).to.eql([T.CHIPS, ['hello world', 'hi there']]);
     });
