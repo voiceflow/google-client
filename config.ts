@@ -18,7 +18,7 @@ const CONFIG: Config = {
 
   CODE_HANDLER_ENDPOINT: getRequiredProcessEnv('CODE_HANDLER_ENDPOINT'),
   INTEGRATIONS_HANDLER_ENDPOINT: getRequiredProcessEnv('INTEGRATIONS_HANDLER_ENDPOINT'),
-  API_HANDLER_ENDPOINT: getRequiredProcessEnv('API_HANDLER_ENDPOINT'),
+  API_HANDLER_ENDPOINT: getOptionalProcessEnv('API_HANDLER_ENDPOINT'),
   DYNAMO_ENDPOINT: getOptionalProcessEnv('DYNAMO_ENDPOINT'),
 
   // Release information

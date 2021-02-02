@@ -38,7 +38,6 @@ Also add the following file to the local repository:
 >
 > CODE_HANDLER_ENDPOINT="none"
 > INTEGRATIONS_HANDLER_ENDPOINT="none"
-> API_HANDLER_ENDPOINT="none"
 >
 > LOG_LEVEL="warn"
 > MIDDLEWARE_VERBOSITY="none"

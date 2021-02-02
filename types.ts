@@ -16,7 +16,7 @@ export interface Config {
 
   CODE_HANDLER_ENDPOINT: string;
   INTEGRATIONS_HANDLER_ENDPOINT: string;
-  API_HANDLER_ENDPOINT: string;
+  API_HANDLER_ENDPOINT: string | null;
   DYNAMO_ENDPOINT: string | null;
 
   // Release information
