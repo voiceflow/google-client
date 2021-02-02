@@ -36,7 +36,6 @@ Also add the following file to the local repository:
 > SESSIONS_DYNAMO_TABLE="none"
 > VF_DATA_ENDPOINT="none"
 >
-> CODE_HANDLER_ENDPOINT="none"
 > INTEGRATIONS_HANDLER_ENDPOINT="none"
 >
 > LOG_LEVEL="warn"

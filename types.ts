@@ -14,7 +14,7 @@ export interface Config {
   DATADOG_API_KEY: string;
   ADMIN_SERVER_DATA_API_TOKEN: string;
 
-  CODE_HANDLER_ENDPOINT: string;
+  CODE_HANDLER_ENDPOINT: string | null;
   INTEGRATIONS_HANDLER_ENDPOINT: string;
   API_HANDLER_ENDPOINT: string | null;
   DYNAMO_ENDPOINT: string | null;
