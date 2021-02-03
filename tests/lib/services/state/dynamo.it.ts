@@ -1,11 +1,12 @@
 /* eslint-disable sonarjs/no-duplicate-string */
 
+import '@/envSetup';
+
 import { getRequiredProcessEnv } from '@voiceflow/common';
 import AWS from 'aws-sdk';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import '@/envSetup';
 import StateManager from '@/lib/services/state/dynamo';
 
 AWS.config = new AWS.Config({

@@ -1,6 +1,7 @@
+import '@/envSetup';
+
 import { getOptionalProcessEnv, getRequiredProcessEnv } from '@voiceflow/common';
 
-import '@/envSetup';
 import { Config } from '@/types';
 
 const CONFIG: Config = {
