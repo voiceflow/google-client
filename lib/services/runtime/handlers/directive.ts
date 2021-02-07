@@ -50,9 +50,8 @@ export const DirectiveHandler: HandlerFactory<Node, typeof utilsObj> = (utils) =
 
     try {
       const directive = JSON.parse(directiveString);
-      runtime.turn.produce((draft) => {
-        draft[T.DIRECTIVES] = [...(draft[T.DIRECTIVES] || []), directive];
-      });
+      const directives = runtime.turn.get<Record<string, any>[] | undefined>(T.DIRECTIVES);
+      runtime.turn.set(T.DIRECTIVES, [...(directives || []), directive]);
       runtime.trace.debug(`sending directive JSON:\n\`${directiveString}\``);
     } catch (err) {
       runtime.trace.debug(`invalid directive JSON:\n\`${directiveString}\`\n\`${err}\``);

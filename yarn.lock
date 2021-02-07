@@ -7717,11 +7717,6 @@ ts-node@^8.5.4:
     source-map-support "^0.5.6"
     yn "3.1.1"
 
-ts-transformer-keys@^0.4.3:
-  version "0.4.3"
-  resolved "https://registry.yarnpkg.com/ts-transformer-keys/-/ts-transformer-keys-0.4.3.tgz#d62389a40f430c00ef98fb9575fb6778a196e3ed"
-  integrity sha512-pOTLlet1SnAvhKNr9tMAFwuv5283OkUNiq1fXTEK+vrSv+kxU3e2Ijr/UkqyX2vuMmvcNHdpXC31hob7ljH//g==
-
 tsconfig-paths@^3.5.0, tsconfig-paths@^3.9.0:
   version "3.9.0"
   resolved "https://registry.yarnpkg.com/tsconfig-paths/-/tsconfig-paths-3.9.0.tgz#098547a6c4448807e8fcb8eae081064ee9a3c90b"
