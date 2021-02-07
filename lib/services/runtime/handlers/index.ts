@@ -17,12 +17,13 @@ import { Config } from '@/types';
 import CaptureHandler from './capture';
 import CardHandler, { CardResponseBuilder, CardResponseBuilderV2 } from './card';
 import ChoiceHandler, { ChipsResponseBuilder, ChipsResponseBuilderV2 } from './choice';
+import DirectiveHandler, { DirectiveResponseBuilder } from './directive';
 import InteractionHandler from './interaction';
 import SpeakHandler from './speak';
 import StreamHandler, { StreamResponseBuilder, StreamResponseBuilderV2 } from './stream';
 
 export const responseHandlers = [CardResponseBuilder, StreamResponseBuilder, ChipsResponseBuilder];
-export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2, StreamResponseBuilderV2];
+export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2, StreamResponseBuilderV2, DirectiveResponseBuilder];
 
 // google handlers for V2 (conversational actions)
 export const HandlersV2 = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLER_ENDPOINT, CODE_HANDLER_ENDPOINT }: Config) => [
@@ -31,6 +32,7 @@ export const HandlersV2 = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLER_ENDPOINT
   InteractionHandler('v2'),
   ResetHandler(),
   CardHandler(),
+  DirectiveHandler(),
   ChoiceHandler(),
   StreamHandler(),
   CodeHandler({ endpoint: CODE_HANDLER_ENDPOINT }),
