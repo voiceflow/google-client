@@ -2,12 +2,14 @@ import { ConversationV3, Simple } from '@assistant/conversation';
 
 import { S, T } from '@/lib/constants';
 import { responseHandlersV2 } from '@/lib/services/runtime/handlers';
+import { DirectiveResponseBuilder } from '@/lib/services/runtime/handlers/directive';
 import { GoogleRuntime } from '@/lib/services/runtime/types';
 import { generateResponseText } from '@/lib/services/utils';
 
 import { AbstractManager, injectServices } from '../../../types';
 
 const utilsObj = {
+  DirectiveResponseBuilder,
   responseHandlersV2,
   Simple,
 };

@@ -15,6 +15,7 @@ export enum Turn {
   CARD = 'card',
   STREAM_PLAY = 'stream_play',
   CHIPS = 'chips',
+  DIRECTIVES = 'directives',
 }
 
 export enum Frame {
