@@ -13,8 +13,7 @@ class GoogleController extends AbstractController {
      * handling errors here because unable to use responseBuilder.route
      */
     await Promise.try(() => google.handleRequest(req, res)).catch((err) => {
-      // eslint-disable-next-line no-console
-      log.error('google handler err: ', err);
+      log.error(`google handler err: ${err}`);
       if (!res.headersSent) res.status(err.code || 500).send(err.message ?? 'error');
     });
   };
@@ -27,9 +26,7 @@ class GoogleController extends AbstractController {
      * handling errors here because unable to use responseBuilder.route
      */
     await Promise.try(() => googleV2.handleRequest(req, res)).catch((err) => {
-      // eslint-disable-next-line no-console
-      console.log(err);
-      log.error('googleV2 handler err: ', err);
+      log.error(`googleV2 handler err: ${err}`);
       if (!res.headersSent) res.status(err.code || 500).send(err.message ?? 'error');
     });
   };

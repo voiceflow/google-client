@@ -17,7 +17,7 @@ class AdapterManager extends AbstractManager {
       };
     } catch (err) {
       // eslint-disable-next-line no-console
-      log.error('state adapter err: ', err.message);
+      log.error(`state adapter err: ${err.message}`);
       return {};
     }
   }

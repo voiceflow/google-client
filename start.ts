@@ -20,7 +20,7 @@ import Server from './server';
   });
 
   process.on('unhandledRejection', (r, p) => {
-    log.warn(r, 'Unhandled rejection at: ', p);
+    log.warn(`${r} Unhandled rejection at: ${p}`);
   });
 
   try {
