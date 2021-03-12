@@ -14,6 +14,7 @@ import {
 
 import { Config } from '@/types';
 
+import _V1Handler from './_v1';
 import CaptureHandler from './capture';
 import CardHandler, { CardResponseBuilder, CardResponseBuilderV2 } from './card';
 import ChoiceHandler, { ChipsResponseBuilder, ChipsResponseBuilderV2 } from './choice';
@@ -45,6 +46,7 @@ export const HandlersV2 = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLER_ENDPOINT
   SetHandler(),
   StartHandler(),
   NextHandler(),
+  _V1Handler(),
 ];
 
 // google handlers for V1 (dialogflow)
