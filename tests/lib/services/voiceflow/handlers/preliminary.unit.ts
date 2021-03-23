@@ -31,10 +31,9 @@ describe('preliminary handler unit tests', () => {
       };
       const handler = PreliminaryHandlerFactory(utils as any);
 
-      const runtime = { turn: { delete: sinon.stub() } };
+      const runtime = {};
       const variables = { var1: 'val1', var2: 'val2' };
       expect(handler.handle(null as any, runtime as any, variables as any, null as any)).to.eql(nodeID);
-      expect(runtime.turn.delete.args).to.eql([[T.REQUEST]]);
       expect(utils.commandHandler.canHandle.args).to.eql([[runtime]]);
       expect(utils.commandHandler.handle.args).to.eql([[runtime, variables]]);
     });
