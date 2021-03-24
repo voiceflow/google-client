@@ -20,6 +20,7 @@ import CardHandler, { CardResponseBuilder, CardResponseBuilderV2 } from './card'
 import ChoiceHandler, { ChipsResponseBuilder, ChipsResponseBuilderV2 } from './choice';
 import DirectiveHandler, { DirectiveResponseBuilder } from './directive';
 import InteractionHandler from './interaction';
+import PreliminaryHandler from './preliminary';
 import SpeakHandler from './speak';
 import StreamHandler, { StreamResponseBuilder, StreamResponseBuilderV2 } from './stream';
 
@@ -28,6 +29,7 @@ export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2
 
 // google handlers for V2 (conversational actions)
 export const HandlersV2 = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLER_ENDPOINT, CODE_HANDLER_ENDPOINT }: Config) => [
+  PreliminaryHandler(),
   SpeakHandler(),
   CaptureHandler(),
   InteractionHandler('v2'),
