@@ -1,24 +1,17 @@
-import { HTTP_STATUS } from '@voiceflow/verror';
-import PrettyStream from 'bunyan-prettystream';
+import VError from '@voiceflow/verror';
 import compression from 'compression';
 import timeout from 'connect-timeout';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 import * as Express from 'express';
-import expressLogger from 'express-bunyan-logger';
 import helmet from 'helmet';
 import _ from 'lodash';
 
 import { ControllerMap, MiddlewareMap } from '@/lib';
-import pjson from '@/package.json';
+import log from '@/logger';
 
 import api from './api';
-import { ERROR_RESPONSE_MS, WARN_RESPONSE_MS } from './constants';
-
-const name = pjson.name.replace(/^@[a-zA-Z0-9-]+\//g, '');
-
-const prettyStdOut = new PrettyStream({ mode: 'dev' });
-prettyStdOut.pipe(process.stdout);
+import { ERROR_RESPONSE_MS } from './constants';
 
 /**
  * @class
@@ -46,37 +39,17 @@ class ExpressMiddleware {
     app.enable('trust proxy');
     app.disable('x-powered-by');
 
-    const logMiddleware = expressLogger({
-      name: `${name}-express`,
-      format: ':status-code - :method :url - response-time: :response-time',
-      streams: [
-        {
-          level: 'info',
-          stream: process.env.NODE_ENV === 'production' ? process.stdout : prettyStdOut,
-        },
-      ],
-      excludes: ['*'],
-      levelFn: (_status, _err, meta) => {
-        if (meta['response-time'] > ERROR_RESPONSE_MS) {
-          return 'error';
-        }
-        if (meta['response-time'] > WARN_RESPONSE_MS) {
-          return 'warn';
-        }
-        if (meta['status-code'] >= HTTP_STATUS.INTERNAL_SERVER_ERROR) {
-          return 'error';
-        }
-        if (meta['status-code'] >= HTTP_STATUS.BAD_REQUEST) {
-          return 'warn';
-        }
-        return 'trace'; // Do not log 200
-      },
+    app.use(log.logMiddleware());
+
+    app.use(timeout(String(ERROR_RESPONSE_MS), { respond: false }));
+    app.use((req, res, next) => {
+      req.on('timeout', () => {
+        log.warn('response timeout');
+        res.status(VError.HTTP_STATUS.REQUEST_TIMEOUT).send('response timeout');
+      });
+
+      return !req.timedout && next();
     });
-
-    app.use(logMiddleware);
-
-    app.use(timeout(String(ERROR_RESPONSE_MS)));
-    app.use((req, _res, next) => !req.timedout && next());
 
     // All valid routes handled here
     app.use(api(middlewares, controllers));
