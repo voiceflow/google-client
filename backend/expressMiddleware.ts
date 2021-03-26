@@ -1,4 +1,4 @@
-import { HTTP_STATUS } from '@voiceflow/verror';
+import VError, { HTTP_STATUS } from '@voiceflow/verror';
 import PrettyStream from 'bunyan-prettystream';
 import compression from 'compression';
 import timeout from 'connect-timeout';
@@ -10,6 +10,7 @@ import helmet from 'helmet';
 import _ from 'lodash';
 
 import { ControllerMap, MiddlewareMap } from '@/lib';
+import log from '@/logger';
 import pjson from '@/package.json';
 
 import api from './api';
@@ -76,7 +77,15 @@ class ExpressMiddleware {
     app.use(logMiddleware);
 
     app.use(timeout(String(ERROR_RESPONSE_MS)));
-    app.use((req, _res, next) => !req.timedout && next());
+    app.use(timeout(String(ERROR_RESPONSE_MS), { respond: false }));
+    app.use((req, res, next) => {
+      req.on('timeout', () => {
+        log.warn('response timeout');
+        res.status(VError.HTTP_STATUS.REQUEST_TIMEOUT).send('response timeout');
+      });
+
+      return !req.timedout && next();
+    });
 
     // All valid routes handled here
     app.use(api(middlewares, controllers));
