@@ -1,5 +1,4 @@
 import VError from '@voiceflow/verror';
-import PrettyStream from 'bunyan-prettystream';
 import compression from 'compression';
 import timeout from 'connect-timeout';
 import cookieParser from 'cookie-parser';
