@@ -3,6 +3,7 @@ import { HandlerFactory } from '@voiceflow/runtime';
 
 import { T } from '@/lib/constants';
 
+import { RequestType } from '../types';
 import CaptureHandler from './capture';
 import CommandHandler from './command';
 import InteractionHandler from './interaction';
@@ -20,8 +21,8 @@ const utilsObj = {
  */
 export const PreliminaryHandler: HandlerFactory<Node<any, any>, typeof utilsObj> = (utils) => ({
   canHandle: (node, runtime, variables, program) => {
-    const request = runtime.turn.get(T.REQUEST);
-    return !!request && !utils.eventHandlers.find((h) => h.canHandle(node, runtime, variables, program));
+    const request = runtime.turn.get<{ type: string } | null>(T.REQUEST);
+    return !!request && request.type !== RequestType.MEDIA_STATUS && !utils.eventHandlers.find((h) => h.canHandle(node, runtime, variables, program));
   },
   handle: (node, runtime, variables) => {
     // check if there is a command in the stack that fulfills request
