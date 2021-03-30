@@ -3,12 +3,18 @@ import sinon from 'sinon';
 
 import { T } from '@/lib/constants';
 import { PreliminaryHandler as PreliminaryHandlerFactory } from '@/lib/services/runtime/handlers/preliminary';
+import { RequestType } from '@/lib/services/runtime/types';
 
 describe('preliminary handler unit tests', () => {
   describe('canHandle', () => {
     it('not expected request', () => {
       const runtime = { turn: { get: sinon.stub().returns(null) } };
       expect(PreliminaryHandlerFactory({ eventHandlers: [] } as any).canHandle(null as any, runtime as any, null as any, null as any)).to.eql(false);
+    });
+
+    it('media status request', () => {
+      const runtime = { turn: { get: sinon.stub().returns({ type: RequestType.MEDIA_STATUS }) } };
+      expect(PreliminaryHandlerFactory({} as any).canHandle(null as any, runtime as any, null as any, null as any)).to.eql(false);
     });
 
     it('handler found', () => {
