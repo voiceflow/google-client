@@ -1,13 +1,13 @@
 /* eslint no-process-exit: "off", no-process-env: "off" */
 import Promise from 'bluebird';
 import express, { Express } from 'express';
+import fs from 'fs';
 import http from 'http';
 import https from 'https';
 
 import { ExpressMiddleware, ServiceManager } from './backend';
 import log from './logger';
 import pjson from './package.json';
-import fs from 'fs';
 import { Config } from './types';
 
 const name = pjson.name.replace(/^@[a-zA-Z0-9-]+\//g, '');
