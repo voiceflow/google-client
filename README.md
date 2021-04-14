@@ -32,7 +32,7 @@ Also add the following file to the local repository:
 >
 > AWS_REGION='localhost'
 >
-> PORT=4000
+> PORT=8007
 > SESSIONS_DYNAMO_TABLE="none"
 > VF_DATA_ENDPOINT="none"
 >
@@ -59,10 +59,10 @@ Run your local instance of `voiceflow/google-runtime` with
 yarn local
 ```
 
-This will now be running on port 4000 of localhost. Expose this with
+This will now be running on port 8007 of localhost. Expose this with
 
 ```
-ngrok http 4000
+ngrok http 8007
 ```
 
 In your shell you will see a link similar to this - `https://e9g1335dd0ac.ngrok.io`, note this down. Ensure you copy the `https://` version instead of `http://`

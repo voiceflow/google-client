@@ -1,5 +1,5 @@
 --require source-map-support/register
---timeout 4000
+--timeout 8007
 --use_strict
 --exit
 --recursive
