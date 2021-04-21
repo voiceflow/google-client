@@ -16,7 +16,7 @@
     "@voiceflow/api-sdk": "1.28.0",
     "@voiceflow/backend-utils": "2.2.1",
     "@voiceflow/common": "6.5.0",
-    "@voiceflow/general-types": "1.36.0",
+    "@voiceflow/general-types": "1.45.1",
     "@voiceflow/google-types": "1.22.0",
     "@voiceflow/logger": "1.5.2",
     "@voiceflow/runtime": "1.26.0",
