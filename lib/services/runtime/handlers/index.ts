@@ -30,6 +30,7 @@ export const responseHandlers = [CardResponseBuilder, StreamResponseBuilder, Chi
 export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2, StreamResponseBuilderV2, DirectiveResponseBuilder];
 
 // google handlers for V2 (conversational actions)
+const _v1Handler = _V1Handler();
 export const HandlersV2 = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLER_ENDPOINT, CODE_HANDLER_ENDPOINT }: Config) => [
   PreliminaryHandler(),
   SpeakHandler(),
@@ -44,15 +45,15 @@ export const HandlersV2 = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLER_ENDPOINT
   EndHandler(),
   FlowHandler(),
   IfHandler(),
-  IfV2Handler({ endpoint: CODE_HANDLER_ENDPOINT }),
+  IfV2Handler({ _v1: _v1Handler }),
   APIHandler({ customAPIEndpoint: API_HANDLER_ENDPOINT }),
   IntegrationsHandler({ integrationsEndpoint: INTEGRATIONS_HANDLER_ENDPOINT }),
   RandomHandler(),
   SetHandler(),
-  SetV2Handler({ endpoint: CODE_HANDLER_ENDPOINT }),
+  SetV2Handler(),
   StartHandler(),
   NextHandler(),
-  _V1Handler(),
+  _v1Handler,
 ];
 
 // google handlers for V1 (dialogflow)
