@@ -1,5 +1,25 @@
 version: 2.1
 
+parameters:
+  npm-repo:
+    type: string
+    default: "@voiceflow/google-runtime"
+  container-image-url:
+    type: string
+    default: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
+  k8s-asset:
+    type: string
+    default: "deployment/google"
+  k8s-namespace:
+    type: string
+    default: "voiceflow-v1" # This is usually voiceflow-v1
+  ssh-fingerprint:
+    type: string
+    default: "0d:70:64:7b:cf:1e:f2:63:ed:a0:98:3d:a9:e2:35:b9"
+  track-component:
+    type: string
+    default: "google-runtime"
+
 # Reusable YAML chunks
 defaults:
   prod_deploy_filters: &prod_deploy_filters
@@ -9,13 +29,11 @@ defaults:
       tags:
         only: /^v[0-9]*(\.[0-9]*)*$/
 
-  ignore_dev_env_autorebase_staging_filters:
-    &ignore_dev_env_autorebase_staging_filters
+  ignore_autorebase_staging_filters: &ignore_autorebase_staging_filters
     branches:
       ignore:
         - /rebase-pull-request-.*/
         - /cherry-pick-rebase-pull-request-.*/
-        - /env-.*/
         - staging
 
   slack-fail-post-step: &slack-fail-post-step
@@ -28,7 +46,7 @@ defaults:
           branch_pattern: master
 
 orbs:
-  vfcommon: voiceflow/common@0.0.72
+  vfcommon: voiceflow/common@0.0.116
   sonarcloud: sonarsource/sonarcloud@1.0.2
 
 jobs:
@@ -58,33 +76,32 @@ jobs:
     executor: vfcommon/build-executor
     steps:
       - vfcommon/build_push_image:
-          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
-          release_pkg: "@voiceflow/google-runtime"
+          image_repo: << pipeline.parameters.container-image-url >>
+          release_pkg: << pipeline.parameters.npm-repo >>
 
   deploy-image:
     executor: vfcommon/build-executor
     steps:
       - vfcommon/deploy_image:
-          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
-          namespace: "voiceflow-v1"
-          target: "deployment/google"
+          image_repo: << pipeline.parameters.container-image-url >>
+          namespace: << pipeline.parameters.k8s-namespace >>
+          target: << pipeline.parameters.k8s-asset >>
 
   deploy-on-tag:
     executor: vfcommon/build-executor
     steps:
       - vfcommon/deploy_image:
-          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
-          namespace: "voiceflow-v1"
-          target: "deployment/google"
+          image_repo: << pipeline.parameters.container-image-url >>
+          namespace: << pipeline.parameters.k8s-namespace >>
+          target: << pipeline.parameters.k8s-asset >>
           tagged: true
 
-  build-deploy-dev-env:
+  update-track:
     executor: vfcommon/build-executor
     steps:
-      - vfcommon/build_deploy_dev_env:
-          image_repo: "168387678261.dkr.ecr.us-east-1.amazonaws.com/google"
-          component: "google"
-          ssh_key: "0d:70:64:7b:cf:1e:f2:63:ed:a0:98:3d:a9:e2:35:b9"
+      - vfcommon/update_track:
+          image_repo: << pipeline.parameters.container-image-url >>
+          component: << pipeline.parameters.track-component >>
 
 # When should each job run and what are their dependencies?
 workflows:
@@ -105,15 +122,14 @@ workflows:
               only:
                 - staging
 
-  # Development environments
-  build-deploy-environment:
+  # Update tracks, avoiding tags
+  update-track:
     jobs:
-      - build-deploy-dev-env:
+      - update-track:
           context: dev-test
           filters:
-            branches:
-              only:
-                - /env-.*/
+            tags:
+              ignore: /.*/
 
   test-and-release-app::
     jobs:
@@ -121,7 +137,7 @@ workflows:
           <<: *slack-fail-post-step
           context: dev-test
           filters:
-            <<: *ignore_dev_env_autorebase_staging_filters
+            <<: *ignore_autorebase_staging_filters
 
       - vfcommon/release:
           <<: *slack-fail-post-step
