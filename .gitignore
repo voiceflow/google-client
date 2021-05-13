@@ -56,6 +56,7 @@ yarn-error.log
 
 #Sonar report
 sonar/
+nyc_coverage*
 
 /projects/*
 !/projects/README.md
