@@ -114,6 +114,7 @@
   "license": "ISC",
   "main": "build/start.js",
   "prettier": "@voiceflow/prettier-config",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/voiceflow/google-runtime.git"
