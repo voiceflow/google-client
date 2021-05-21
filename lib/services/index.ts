@@ -3,6 +3,7 @@ import { Config } from '@/types';
 import { ClientMap } from '../clients';
 import { Source } from '../constants';
 import Adapter from './adapter';
+import Dialogflow from './dialogflow';
 import Google from './google';
 import GoogleV2 from './googleV2';
 import Runtime from './runtime';
@@ -13,6 +14,7 @@ export interface ServiceMap {
   state: State;
   google: Google;
   googleV2: GoogleV2;
+  dialogflow: Dialogflow;
   runtimeClient: ReturnType<typeof Runtime>;
   runtimeClientV2: ReturnType<typeof Runtime>;
 }
@@ -42,6 +44,7 @@ const buildServices = (config: Config, clients: ClientMap): FullServiceMap => {
 
   services.google = new Google(services, config);
   services.googleV2 = new GoogleV2(services, config);
+  services.dialogflow = new Dialogflow(services, config);
 
   return services;
 };
