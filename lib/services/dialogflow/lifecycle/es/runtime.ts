@@ -3,16 +3,15 @@ import { State } from '@voiceflow/runtime';
 import { S, T } from '@/lib/constants';
 import { GoogleRuntime } from '@/lib/services/runtime/types';
 
-import { AbstractManager } from '../../types';
+import { AbstractManager } from '../../../types';
 
 class RuntimeClientManager extends AbstractManager {
   async build(versionID: string, userID: string): Promise<GoogleRuntime> {
-    // todo: use a dialogflow specific runtime? specific handlers
-    const { state, runtimeClientV2 } = this.services;
+    const { state, runtimeClientDialogflowES } = this.services;
 
     const rawState = await state.getFromDb<State>(userID);
 
-    const runtime = runtimeClientV2.createRuntime(versionID, rawState);
+    const runtime = runtimeClientDialogflowES.createRuntime(versionID, rawState);
 
     runtime.turn.set(T.PREVIOUS_OUTPUT, runtime.storage.get(S.OUTPUT));
     runtime.storage.set(S.OUTPUT, '');

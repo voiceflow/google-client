@@ -1,42 +1,39 @@
 import { S, T } from '@/lib/constants';
-import { responseHandlersV2 } from '@/lib/services/runtime/handlers';
+import { responseHandlersDialogflowES } from '@/lib/services/runtime/handlers';
 import { DirectiveResponseBuilder } from '@/lib/services/runtime/handlers/directive';
 import { GoogleRuntime } from '@/lib/services/runtime/types';
 
-// import { generateResponseText } from '@/lib/services/utils';
-import { AbstractManager, injectServices } from '../../types';
-// import { WebhookRequest } from '../types';
+import { AbstractManager, injectServices } from '../../../types';
+import { WebhookResponse } from '../../types';
 
 const utilsObj = {
   DirectiveResponseBuilder,
-  responseHandlersV2,
+  responseHandlersDialogflowES,
 };
 
 @injectServices({ utils: utilsObj })
 class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
   async build(runtime: GoogleRuntime) {
-    const { state /* , randomstring , utils */ } = this.services;
+    const { state, utils } = this.services;
     const { storage, turn } = runtime;
-    const res: any = {};
 
     if (runtime.stack.isEmpty()) {
       turn.set(T.END, true);
     }
 
     const output = storage.get<string>(S.OUTPUT) ?? '';
-    // console.log('speak', output);
 
-    // const response = new utils.Simple({
-    //   speech: `<speak>${output}</speak>`,
-    //   text: generateResponseText(output),
-    // });
+    const res: WebhookResponse = {
+      fulfillmentText: output,
+      fulfillmentMessages: [{ text: { text: [output] } }],
+      endInteraction: false,
+    };
 
     if (turn.get(T.END)) {
       res.endInteraction = true;
     }
 
-    // conv.add(response);
-    res.fulfillmentText = output;
+    /*
     res.fulfillmentMessages = [
       {
         text: { text: [output] },
@@ -64,26 +61,21 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
           ],
         },
       },
-      /*
       {
         payload: {
           free-form for the user? any json and it's platform specific
         }
       }
-      */
     ];
-
-    /*
-    // eslint-disable-next-line no-restricted-syntax
-    for (const handler of utils.responseHandlersV2) {
-      // eslint-disable-next-line no-await-in-loop
-      await handler(runtime, conv);
-    }
     */
 
-    await state.saveToDb(storage.get<string>(S.USER)!, runtime.getFinalState());
+    // eslint-disable-next-line no-restricted-syntax
+    for (const handler of utils.responseHandlersDialogflowES) {
+      // eslint-disable-next-line no-await-in-loop
+      await handler(runtime, res);
+    }
 
-    // conv.user.params.forceUpdateToken = randomstring.generate();
+    await state.saveToDb(storage.get<string>(S.USER)!, runtime.getFinalState());
 
     return res;
   }

@@ -17,6 +17,7 @@ export interface ServiceMap {
   dialogflow: Dialogflow;
   runtimeClient: ReturnType<typeof Runtime>;
   runtimeClientV2: ReturnType<typeof Runtime>;
+  runtimeClientDialogflowES: ReturnType<typeof Runtime>;
 }
 
 export interface FullServiceMap extends ClientMap, ServiceMap {}
@@ -41,6 +42,7 @@ const buildServices = (config: Config, clients: ClientMap): FullServiceMap => {
 
   services.runtimeClient = Runtime(services, config);
   services.runtimeClientV2 = Runtime(services, config, 'v2');
+  services.runtimeClientDialogflowES = Runtime(services, config, 'dialogflowES');
 
   services.google = new Google(services, config);
   services.googleV2 = new GoogleV2(services, config);

@@ -5,8 +5,8 @@ import { F, S, V } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/runtime/programs/resume';
 import { GoogleRuntime } from '@/lib/services/runtime/types';
 
-import { AbstractManager, injectServices } from '../../types';
-import { WebhookRequest } from '../types';
+import { AbstractManager, injectServices } from '../../../types';
+import { WebhookRequest } from '../../types';
 
 const utils = {
   resume: {

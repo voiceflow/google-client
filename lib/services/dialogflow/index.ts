@@ -2,15 +2,15 @@ import { T, V } from '@/lib/constants';
 import { RequestType } from '@/lib/services/runtime/types';
 
 import { AbstractManager, injectServices } from '../types';
-import Initialize from './lifecycle/initialize';
-import Response from './lifecycle/response';
-import RuntimeBuild from './lifecycle/runtime';
+import InitializeES from './lifecycle/es/initialize';
+import ResponseES from './lifecycle/es/response';
+import RuntimeBuildES from './lifecycle/es/runtime';
 import { WebhookRequest } from './types';
 
-@injectServices({ initialize: Initialize, runtimeBuild: RuntimeBuild, response: Response })
-class DialogflowManager extends AbstractManager<{ initialize: Initialize; runtimeBuild: RuntimeBuild; response: Response }> {
+@injectServices({ initializeES: InitializeES, runtimeBuildES: RuntimeBuildES, responseES: ResponseES })
+class DialogflowManager extends AbstractManager<{ initializeES: InitializeES; runtimeBuildES: RuntimeBuildES; responseES: ResponseES }> {
   async es(req: WebhookRequest, versionID: string) {
-    const { metrics, initialize, runtimeBuild, response } = this.services;
+    const { metrics, initializeES, runtimeBuildES, responseES } = this.services;
 
     metrics.invocation();
 
@@ -19,20 +19,13 @@ class DialogflowManager extends AbstractManager<{ initialize: Initialize; runtim
     const slots = req.queryResult.parameters;
     const userId = req.session;
 
-    const runtime = await runtimeBuild.build(versionID, userId);
+    const runtime = await runtimeBuildES.build(versionID, userId);
 
     if (intentName === 'actions.intent.MAIN' || intentName === 'Default Welcome Intent' || runtime.stack.isEmpty()) {
-      await initialize.build(runtime, req);
+      await initializeES.build(runtime, req);
     } else {
-      let type;
-      if (intentName?.startsWith('actions.intent.MEDIA_STATUS')) {
-        type = RequestType.MEDIA_STATUS;
-      } else {
-        type = RequestType.INTENT;
-      }
-
       runtime.turn.set(T.REQUEST, {
-        type,
+        type: RequestType.INTENT,
         payload: {
           intent: intentName,
           input,
@@ -44,7 +37,7 @@ class DialogflowManager extends AbstractManager<{ initialize: Initialize; runtim
     runtime.variables.set(V.TIMESTAMP, Math.floor(Date.now() / 1000));
     await runtime.update();
 
-    return response.build(runtime);
+    return responseES.build(runtime);
   }
 }
 
