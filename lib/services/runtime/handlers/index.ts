@@ -24,7 +24,7 @@ import DirectiveHandler, { DirectiveResponseBuilder } from './directive';
 import InteractionHandler from './interaction';
 import PreliminaryHandler from './preliminary';
 import SpeakHandler from './speak';
-import StreamHandler, { StreamResponseBuilder, StreamResponseBuilderV2 } from './stream';
+import StreamHandler, { StreamHandlerDialogflowES, StreamResponseBuilder, StreamResponseBuilderV2 } from './stream';
 
 export const responseHandlers = [CardResponseBuilder, StreamResponseBuilder, ChipsResponseBuilder];
 export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2, StreamResponseBuilderV2, DirectiveResponseBuilder];
@@ -40,7 +40,7 @@ export const HandlersDialogflowES = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLE
   ResetHandler(),
   CardHandler(),
   ChoiceHandler(),
-  // todo: add pass-through stream handler (streams not supported in dialogflow es)
+  StreamHandlerDialogflowES,
   CodeHandler({ endpoint: CODE_HANDLER_ENDPOINT }),
   EndHandler(),
   FlowHandler(),
