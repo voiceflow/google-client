@@ -7,6 +7,7 @@ import DefaultCardHandler, {
   addVariables,
   CardHandler,
   CardResponseBuilder,
+  CardResponseBuilderDialogflowES,
   CardResponseBuilderGenerator,
   CardResponseBuilderGeneratorV2,
   CardResponseBuilderV2,
@@ -352,6 +353,80 @@ describe('card handler unit tests', async () => {
         },
       ]);
       expect(conv.add.args[0]).to.eql([{}]);
+    });
+  });
+
+  describe('responseBuilderDialogflowES', () => {
+    it('no card', async () => {
+      const runtime = {
+        turn: { get: sinon.stub().returns(null) },
+      };
+
+      CardResponseBuilderDialogflowES(runtime as any, null as any);
+
+      expect(runtime.turn.get.args).to.eql([[T.CARD]]);
+    });
+
+    it('unknow card type', async () => {
+      const card = {
+        type: 'random',
+      };
+
+      const runtime = {
+        turn: { get: sinon.stub().returns(card) },
+      };
+
+      CardResponseBuilderDialogflowES(runtime as any, null as any);
+
+      expect(runtime.turn.get.args).to.eql([[T.CARD]]);
+    });
+
+    it('simple card', async () => {
+      const card = {
+        type: CardType.SIMPLE,
+        title: 'TITLE',
+        text: 'CONTENT',
+      };
+
+      const runtime = {
+        turn: { get: sinon.stub().returns(card) },
+      };
+
+      const res = { fulfillmentMessages: [] };
+
+      CardResponseBuilderDialogflowES(runtime as any, res as any);
+
+      expect(runtime.turn.get.args).to.eql([[T.CARD]]);
+      expect(res.fulfillmentMessages).to.eql([
+        {
+          card: {
+            subtitle: card.text,
+            title: card.title,
+          },
+        },
+      ]);
+    });
+
+    it('standard card', async () => {
+      const card = {
+        type: CardType.STANDARD,
+        title: 'TITLE',
+        text: 'TEXT',
+        image: {
+          largeImageUrl: 'IMAGE URL',
+        },
+      };
+
+      const runtime = {
+        turn: { get: sinon.stub().returns(card) },
+      };
+
+      const res = { fulfillmentMessages: [] };
+
+      CardResponseBuilderDialogflowES(runtime as any, res as any);
+
+      expect(runtime.turn.get.args).to.eql([[T.CARD]]);
+      expect(res.fulfillmentMessages).to.eql([{ card: { title: card.title, text: card.text, imageUri: card.image.largeImageUrl } }]);
     });
   });
 });
