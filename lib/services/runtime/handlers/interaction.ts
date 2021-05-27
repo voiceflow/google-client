@@ -1,5 +1,4 @@
 import { SlotMapping } from '@voiceflow/api-sdk';
-import { formatIntentName } from '@voiceflow/common';
 import { Node } from '@voiceflow/google-types/build/nodes/interaction';
 import { HandlerFactory } from '@voiceflow/runtime';
 
@@ -14,7 +13,6 @@ import NoMatchHandler from './noMatch';
 const utilsObj = {
   addRepromptIfExists,
   addChipsIfExists,
-  formatIntentName,
   mapSlots,
   commandHandler: CommandHandler(),
   noMatchHandler: NoMatchHandler(),
@@ -48,7 +46,7 @@ export const InteractionHandler: HandlerFactory<Node, typeof utilsObj> = (utils:
 
     // check if there is a choice in the node that fulfills intent
     node.interactions.forEach((choice, i: number) => {
-      if (choice.intent && utils.formatIntentName(choice.intent) === intent) {
+      if (choice.intent && choice.intent === intent) {
         variableMap = choice.mappings ?? null;
         nextId = node.nextIds[choice.nextIdIndex || choice.nextIdIndex === 0 ? choice.nextIdIndex : i];
       }
