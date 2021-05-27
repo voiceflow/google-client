@@ -81,7 +81,6 @@ describe('interaction handler unit tests', async () => {
       describe('command cant handle', () => {
         it('no choice', () => {
           const utils = {
-            formatIntentName: sinon.stub().returns(false),
             commandHandler: {
               canHandle: sinon.stub().returns(false),
             },
@@ -98,13 +97,11 @@ describe('interaction handler unit tests', async () => {
           const variables = { foo: 'bar' };
 
           expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(null);
-          expect(utils.formatIntentName.args).to.eql([[block.interactions[0].intent], [block.interactions[1].intent]]);
           expect(runtime.turn.delete.args).to.eql([[T.REQUEST]]);
         });
 
         it('no choice with elseId', () => {
           const utils = {
-            formatIntentName: sinon.stub().returns(false),
             commandHandler: {
               canHandle: sinon.stub().returns(false),
             },
@@ -128,7 +125,6 @@ describe('interaction handler unit tests', async () => {
           const noMatches = ['speak1', 'speak2', 'speak3'];
 
           const utils = {
-            formatIntentName: sinon.stub().returns(false),
             commandHandler: {
               canHandle: sinon.stub().returns(false),
             },
@@ -150,7 +146,6 @@ describe('interaction handler unit tests', async () => {
           const variables = { foo: 'bar' };
 
           expect(interactionHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(nextId);
-          expect(utils.formatIntentName.args).to.eql([[block.interactions[0].intent], [block.interactions[1].intent]]);
           expect(runtime.turn.delete.args).to.eql([[T.REQUEST]]);
           expect(utils.noMatchHandler.canHandle.args).to.eql([[block, runtime]]);
           expect(utils.noMatchHandler.handle.args).to.eql([[block, runtime, variables]]);
@@ -160,7 +155,6 @@ describe('interaction handler unit tests', async () => {
           const intentName = 'random-intent';
 
           const utils = {
-            formatIntentName: sinon.stub().returns(intentName),
             commandHandler: {
               canHandle: sinon.stub().returns(false),
             },
@@ -171,7 +165,7 @@ describe('interaction handler unit tests', async () => {
 
           const interactionHandler = InteractionHandler(utils as any);
 
-          const block = { id: 'block-id', elseId: 'else-id', interactions: [{ intent: 'random-intent  ' }], nextIds: ['id-one'] };
+          const block = { id: 'block-id', elseId: 'else-id', interactions: [{ intent: 'random-intent' }], nextIds: ['id-one'] };
           const request = { type: RequestType.INTENT, payload: { intent: intentName } };
           const runtime = { turn: { get: sinon.stub().returns(request), delete: sinon.stub() }, storage: { delete: sinon.stub() } };
           const variables = { foo: 'bar' };
@@ -183,7 +177,6 @@ describe('interaction handler unit tests', async () => {
           const intentName = 'random-intent';
 
           const utils = {
-            formatIntentName: sinon.stub().returns(intentName),
             commandHandler: {
               canHandle: sinon.stub().returns(false),
             },
@@ -197,7 +190,7 @@ describe('interaction handler unit tests', async () => {
           const block = {
             id: 'block-id',
             elseId: 'else-id',
-            interactions: [{ intent: 'random-intent  ', nextIdIndex: 1 }],
+            interactions: [{ intent: 'random-intent', nextIdIndex: 1 }],
             nextIds: ['id-one', 'id-two'],
           };
           const request = { type: RequestType.INTENT, payload: { intent: intentName } };
@@ -212,7 +205,6 @@ describe('interaction handler unit tests', async () => {
           const mappedSlots = { slot1: 'slot-1' };
 
           const utils = {
-            formatIntentName: sinon.stub().returns(intentName),
             commandHandler: {
               canHandle: sinon.stub().returns(false),
             },
@@ -227,7 +219,7 @@ describe('interaction handler unit tests', async () => {
           const block = {
             id: 'block-id',
             elseId: 'else-id',
-            interactions: [{ intent: 'random-intent  ', mappings: { foo: 'bar' } }],
+            interactions: [{ intent: 'random-intent', mappings: { foo: 'bar' } }],
             nextIds: ['id-one'],
           };
           const request = { type: RequestType.INTENT, payload: { intent: intentName, slots: { foo2: 'bar2' } } };
@@ -242,7 +234,6 @@ describe('interaction handler unit tests', async () => {
         describe('v2', () => {
           it('no noInput', async () => {
             const utils = {
-              formatIntentName: sinon.stub().returns(false),
               commandHandler: {
                 canHandle: sinon.stub().returns(false),
               },
@@ -268,7 +259,6 @@ describe('interaction handler unit tests', async () => {
           it('with noInput', async () => {
             const nextId = 'next-id';
             const utils = {
-              formatIntentName: sinon.stub().returns(false),
               commandHandler: {
                 canHandle: sinon.stub().returns(false),
               },

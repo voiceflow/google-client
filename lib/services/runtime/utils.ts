@@ -1,5 +1,5 @@
 import { SlotMapping } from '@voiceflow/api-sdk';
-import { formatIntentName, replaceVariables, SLOT_REGEXP, transformStringVariableToNumber } from '@voiceflow/common';
+import { replaceVariables, SLOT_REGEXP, transformStringVariableToNumber } from '@voiceflow/common';
 import { Chip } from '@voiceflow/general-types';
 import { Runtime, Store } from '@voiceflow/runtime';
 import _ from 'lodash';
@@ -37,7 +37,7 @@ export const mapSlots = (mappings: SlotMapping[], slots: { [key: string]: string
       if (!map.slot) return;
 
       const toVariable = map.variable;
-      const fromSlot = formatIntentName(map.slot);
+      const fromSlot = map.slot;
 
       // extract slot value from request
       const fromSlotValue = slots[fromSlot] || null;
