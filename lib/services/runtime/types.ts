@@ -3,6 +3,8 @@ import { GoogleProgram, GoogleVersion } from '@voiceflow/google-types';
 import Client, { DataAPI, Runtime } from '@voiceflow/runtime';
 import { DialogflowConversation } from 'actions-on-google';
 
+import { WebhookResponse } from '../dialogflow/types';
+
 export enum RequestType {
   INTENT = 'INTENT',
   MEDIA_STATUS = 'MEDIA_STATUS',
@@ -30,3 +32,5 @@ export type GoogleRuntime = Runtime<unknown, DataAPI<GoogleProgram, GoogleVersio
 export type ResponseBuilder = (runtime: GoogleRuntime, conv: DialogflowConversation<any>) => void | boolean;
 
 export type ResponseBuilderV2 = (runtime: GoogleRuntime, conv: ConversationV3) => void | boolean;
+
+export type ResponseBuilderDialogflowES = (runtime: GoogleRuntime, res: WebhookResponse) => void | boolean;

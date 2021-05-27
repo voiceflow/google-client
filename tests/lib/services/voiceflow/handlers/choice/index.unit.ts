@@ -4,6 +4,7 @@ import sinon from 'sinon';
 
 import { T } from '@/lib/constants';
 import DefaultChoiceHandler, {
+  ChipsResponseBuilderDialogflowES,
   ChipsResponseBuilderGenerator,
   ChipsResponseBuilderGeneratorV2,
   ChoiceHandler,
@@ -263,6 +264,25 @@ describe('choice handler unit tests', async () => {
       expect(runtime.turn.get.args).to.eql([[T.CHIPS]]);
       expect(SuggestionsBuilder.args).to.eql([[{ title: 'yes' }], [{ title: 'no' }]]);
       expect(conv.add.args).to.eql([[{}], [{}]]);
+    });
+  });
+
+  describe('responseBuilderDialogflowES', () => {
+    it('no chips', () => {
+      const runtime = { turn: { get: sinon.stub().returns(null) } };
+      ChipsResponseBuilderDialogflowES(runtime as any, null as any);
+
+      expect(runtime.turn.get.args).to.eql([[T.CHIPS]]);
+    });
+
+    it('with chips', () => {
+      const chips = ['yes', 'no'];
+      const runtime = { turn: { get: sinon.stub().returns(chips) } };
+      const res = { fulfillmentMessages: [] };
+      ChipsResponseBuilderDialogflowES(runtime as any, res as any);
+
+      expect(runtime.turn.get.args).to.eql([[T.CHIPS]]);
+      expect(res.fulfillmentMessages).to.eql([{ quickReplies: { title: 'Suggestions', quickReplies: chips } }]);
     });
   });
 });

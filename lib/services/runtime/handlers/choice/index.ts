@@ -5,7 +5,7 @@ import { Suggestions } from 'actions-on-google';
 
 import { T } from '@/lib/constants';
 
-import { IntentRequest, RequestType, ResponseBuilder, ResponseBuilderV2 } from '../../types';
+import { IntentRequest, RequestType, ResponseBuilder, ResponseBuilderDialogflowES, ResponseBuilderV2 } from '../../types';
 import { addChipsIfExistsV1, addRepromptIfExists } from '../../utils';
 import CommandHandler from '../command';
 import getBestScore from './score';
@@ -41,6 +41,14 @@ export const ChipsResponseBuilderGeneratorV2 = (SuggestionsBuilder: typeof Googl
 };
 
 export const ChipsResponseBuilderV2 = ChipsResponseBuilderGeneratorV2(GoogleSuggestion);
+
+export const ChipsResponseBuilderDialogflowES: ResponseBuilderDialogflowES = (runtime, res) => {
+  const chips = runtime.turn.get<string[]>(T.CHIPS);
+
+  if (chips) {
+    res.fulfillmentMessages.push({ quickReplies: { title: 'Suggestions', quickReplies: chips } });
+  }
+};
 
 const utilsObj = {
   addRepromptIfExists,
