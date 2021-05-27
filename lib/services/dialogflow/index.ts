@@ -23,7 +23,9 @@ class DialogflowManager extends AbstractManager<{ initializeES: InitializeES; ru
 
     if (intentName === 'actions.intent.MAIN' || intentName === 'Default Welcome Intent' || runtime.stack.isEmpty()) {
       await initializeES.build(runtime, req);
-    } else {
+    }
+
+    if (!['actions.intent.MAIN', 'Default Welcome Intent'].includes(intentName)) {
       runtime.turn.set(T.REQUEST, {
         type: RequestType.INTENT,
         payload: {

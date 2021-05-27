@@ -107,6 +107,9 @@ describe('DialogflowManager unit tests', async () => {
 
     it('stack empty', async () => {
       const stateObj = {
+        turn: {
+          set: sinon.stub(),
+        },
         stack: {
           isEmpty: sinon.stub().returns(true),
         },
@@ -132,7 +135,7 @@ describe('DialogflowManager unit tests', async () => {
       };
 
       const req = {
-        queryResult: { intent: { displayName: 'random intent' }, queryText: 'random' },
+        queryResult: { intent: { displayName: 'random intent' }, parameters: { s1: 'v1', s2: 'v2' }, queryText: 'random' },
         session: 'user-id',
       };
       const versionID = 'version-id';
@@ -144,6 +147,17 @@ describe('DialogflowManager unit tests', async () => {
       expect(services.metrics.invocation.args).to.eql([[]]);
       expect(services.runtimeBuildES.build.args).to.eql([[versionID, req.session]]);
       expect(services.initializeES.build.args).to.eql([[stateObj, req]]);
+      expect(stateObj.turn.set.args[0]).to.eql([
+        T.REQUEST,
+        {
+          type: RequestType.INTENT,
+          payload: {
+            intent: req.queryResult.intent.displayName,
+            input: req.queryResult.queryText,
+            slots: req.queryResult.parameters,
+          },
+        },
+      ]);
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.args).to.eql([[]]);
       expect(services.responseES.build.args).to.eql([[stateObj]]);
