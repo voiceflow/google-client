@@ -1,5 +1,5 @@
 import { Node } from '@voiceflow/api-sdk';
-import { Runtime } from '@voiceflow/runtime';
+import { Runtime } from '@voiceflow/general-runtime/build/runtime';
 
 import { S, T } from '@/lib/constants';
 

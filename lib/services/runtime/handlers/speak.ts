@@ -1,6 +1,6 @@
 import { replaceVariables, sanitizeVariables } from '@voiceflow/common';
+import { HandlerFactory } from '@voiceflow/general-runtime/build/runtime';
 import { Node } from '@voiceflow/general-types/build/nodes/speak';
-import { HandlerFactory } from '@voiceflow/runtime';
 import _ from 'lodash';
 
 import { F, S } from '@/lib/constants';

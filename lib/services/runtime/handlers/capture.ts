@@ -1,5 +1,5 @@
+import { HandlerFactory } from '@voiceflow/general-runtime/build/runtime';
 import { Node } from '@voiceflow/google-types/build/nodes/capture';
-import { HandlerFactory } from '@voiceflow/runtime';
 import wordsToNumbers from 'words-to-numbers';
 
 import { T } from '@/lib/constants';
