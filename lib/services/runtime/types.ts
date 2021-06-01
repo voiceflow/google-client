@@ -1,6 +1,6 @@
 import { ConversationV3 } from '@assistant/conversation';
+import Client, { DataAPI, Runtime } from '@voiceflow/general-runtime/build/runtime';
 import { GoogleProgram, GoogleVersion } from '@voiceflow/google-types';
-import Client, { DataAPI, Runtime } from '@voiceflow/runtime';
 import { DialogflowConversation } from 'actions-on-google';
 
 import { WebhookResponse } from '../dialogflow/types';

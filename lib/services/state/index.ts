@@ -1,4 +1,4 @@
-import { State as StateObj } from '@voiceflow/runtime';
+import { State as StateObj } from '@voiceflow/general-runtime/build/runtime';
 
 export { default as MongoState } from './mongo';
 export { default as DynamoState } from './dynamo';

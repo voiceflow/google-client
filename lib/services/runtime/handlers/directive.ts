@@ -1,8 +1,8 @@
 import { Prompt } from '@assistant/conversation';
 import * as Schema from '@assistant/conversation/dist/api/schema';
 import { replaceVariables } from '@voiceflow/common';
+import { HandlerFactory } from '@voiceflow/general-runtime/build/runtime';
 import { Node } from '@voiceflow/general-types/build/nodes/directive';
-import { HandlerFactory } from '@voiceflow/runtime';
 
 import { T } from '@/lib/constants';
 

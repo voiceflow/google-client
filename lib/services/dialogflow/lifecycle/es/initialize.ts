@@ -1,5 +1,5 @@
+import { Frame, Store } from '@voiceflow/general-runtime/build/runtime';
 import { SessionType } from '@voiceflow/general-types';
-import { Frame, Store } from '@voiceflow/runtime';
 
 import { F, S, V } from '@/lib/constants';
 import { createResumeFrame, RESUME_DIAGRAM_ID } from '@/lib/services/runtime/programs/resume';

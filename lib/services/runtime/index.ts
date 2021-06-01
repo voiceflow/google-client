@@ -1,5 +1,5 @@
+import Client, { DataAPI, EventType } from '@voiceflow/general-runtime/build/runtime';
 import { GoogleProgram, GoogleVersion } from '@voiceflow/google-types';
-import Client, { DataAPI, EventType } from '@voiceflow/runtime';
 
 import { F, S } from '@/lib/constants';
 import { Config } from '@/types';

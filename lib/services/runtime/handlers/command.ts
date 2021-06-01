@@ -1,6 +1,6 @@
 import { Command, CommandMapping } from '@voiceflow/api-sdk';
+import { extractFrameCommand, Frame, Runtime, Store } from '@voiceflow/general-runtime/build/runtime';
 import { Command as IntentCommand } from '@voiceflow/google-types/build/nodes/command';
-import { extractFrameCommand, Frame, Runtime, Store } from '@voiceflow/runtime';
 
 import { F, S, T } from '@/lib/constants';
 
