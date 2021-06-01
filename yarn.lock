@@ -1094,10 +1094,10 @@
     eslint-plugin-xss "^0.1.9"
     typescript "^3.9.7"
 
-"@voiceflow/general-runtime@1.46.0":
-  version "1.46.0"
-  resolved "https://registry.yarnpkg.com/@voiceflow/general-runtime/-/general-runtime-1.46.0.tgz#b94f2c901778ce96495ad50dae037b9790858290"
-  integrity sha512-pzHGg/P3RazfexI047lAqoQmKWL/Uhmr1XLq7oae6rOWuaiRcsNcNf8zLgnIs/7Mgw1ohIq/8d35vAdIVPfkxw==
+"@voiceflow/general-runtime@1.46.2":
+  version "1.46.2"
+  resolved "https://registry.yarnpkg.com/@voiceflow/general-runtime/-/general-runtime-1.46.2.tgz#05ffc57623de0e9b90ada0971a993a11d01557f4"
+  integrity sha512-A3WzFrAnYX4s+bRChzsLMvbgLxHeZDXBNOhQOvvWHqWNcPxryOKEQNcy6lpLyncgdDcLq8gylpiYoi6Czj4B6Q==
   dependencies:
     "@types/mathjs" "^6.0.4"
     "@types/workerpool" "^5.0.1"
