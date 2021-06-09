@@ -1,5 +1,5 @@
-import { Node } from '@voiceflow/api-sdk';
-import { HandlerFactory } from '@voiceflow/general-runtime/build/runtime';
+import { BaseNode } from '@voiceflow/api-sdk';
+import { Handler, HandlerFactory } from '@voiceflow/general-runtime/build/runtime';
 
 import { T } from '@/lib/constants';
 
@@ -8,7 +8,7 @@ import CaptureHandler from './capture';
 import CommandHandler from './command';
 import InteractionHandler from './interaction';
 
-export const eventHandlers = [CaptureHandler(), InteractionHandler()];
+export const eventHandlers = [CaptureHandler(), InteractionHandler()] as Handler[];
 
 const utilsObj = {
   commandHandler: CommandHandler(),
@@ -19,7 +19,7 @@ const utilsObj = {
  * If request comes in but runtime nodeID is not a node that handles events (i.e, interaction, capture, etc..) =>
  * Handle it here
  */
-export const PreliminaryHandler: HandlerFactory<Node<any, any>, typeof utilsObj> = (utils) => ({
+export const PreliminaryHandler: HandlerFactory<BaseNode, typeof utilsObj> = (utils) => ({
   canHandle: (node, runtime, variables, program) => {
     const request = runtime.turn.get<{ type: string } | null>(T.REQUEST);
     return !!request && request.type !== RequestType.MEDIA_STATUS && !utils.eventHandlers.find((h) => h.canHandle(node, runtime, variables, program));

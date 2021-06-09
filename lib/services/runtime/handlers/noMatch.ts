@@ -1,11 +1,14 @@
-import { Node } from '@voiceflow/api-sdk';
+import { BaseNode } from '@voiceflow/api-sdk';
 import { replaceVariables, sanitizeVariables } from '@voiceflow/common';
 import { Runtime, Store } from '@voiceflow/general-runtime/build/runtime';
 import _ from 'lodash';
 
 import { S } from '@/lib/constants';
 
-type NoMatchNode = Node<any, { noMatches?: string[]; randomize?: boolean }>;
+export interface NoMatchNode extends BaseNode {
+  noMatches?: string[];
+  randomize?: boolean;
+}
 
 export const EMPTY_AUDIO_STRING = '<audio src=""/>';
 
