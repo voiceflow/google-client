@@ -77,8 +77,6 @@ export const addChipsIfExists = <N extends { chips?: Chip[]; buttons?: Nullable<
   variables: Store
 ): void => {
   if (node.buttons) {
-    // runtime.storage;
-
     runtime.turn.set(
       T.CHIPS,
       node.buttons.map((button) => replaceIDVariables(button?.name, variables.getState()))
