@@ -55,7 +55,7 @@ export const CommandHandler = (utils: typeof utilsObj) => ({
     if (res.command) {
       const { index, command } = res;
 
-      variableMap = command.mappings.map(({ slot, variable }) => ({ slot: slot ?? '', variable: variable ?? '' }));
+      variableMap = command.mappings?.map(({ slot, variable }) => ({ slot: slot ?? '', variable: variable ?? '' }));
 
       if (command.diagram_id) {
         runtime.stack.top().storage.set(F.CALLED_COMMAND, true);
