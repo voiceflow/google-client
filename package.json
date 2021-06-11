@@ -15,6 +15,7 @@
     "@assistant/conversation": "3.2.0",
     "@voiceflow/api-sdk": "1.32.1",
     "@voiceflow/backend-utils": "2.2.1",
+    "@voiceflow/body-parser": "^1.20.1",
     "@voiceflow/common": "6.5.0",
     "@voiceflow/general-runtime": "1.47.0",
     "@voiceflow/general-types": "1.49.3",
@@ -25,7 +26,6 @@
     "aws-sdk": "^2.586.0",
     "axios": "^0.19.0",
     "bluebird": "^3.7.2",
-    "body-parser": "^1.19.0",
     "compression": "^1.7.4",
     "connect-timeout": "^1.9.0",
     "cookie-parser": "^1.4.4",
@@ -41,6 +41,7 @@
     "mongodb": "^3.6.3",
     "randomstring": "^1.1.5",
     "regenerator-runtime": "^0.13.3",
+    "secure-json-parse": "^2.4.0",
     "talisman": "^0.21.0",
     "uuid": "^3.4.0",
     "words-to-numbers": "^1.5.1"
