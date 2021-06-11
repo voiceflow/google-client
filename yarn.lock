@@ -1008,16 +1008,6 @@
     semver "^7.3.2"
     tsutils "^3.17.1"
 
-"@voiceflow/api-sdk@1.31.11", "@voiceflow/api-sdk@^1.31.11":
-  version "1.31.11"
-  resolved "https://registry.yarnpkg.com/@voiceflow/api-sdk/-/api-sdk-1.31.11.tgz#945164cd8594fe40a5ed182adfe3a890430a7cf9"
-  integrity sha512-0JJq2EPHXhz3S1JKb4fx5fql1yi0x4wZkO1H+UkQx9ORAZ+D7L4PhrPalEaH3L7dpjdQVAUGUVdN6lDW3gQceA==
-  dependencies:
-    "@types/atob" "^2.1.2"
-    atob "^2.1.2"
-    axios "^0.21.1"
-    superstruct "^0.10.12"
-
 "@voiceflow/api-sdk@1.32.1", "@voiceflow/api-sdk@^1.32.1":
   version "1.32.1"
   resolved "https://registry.yarnpkg.com/@voiceflow/api-sdk/-/api-sdk-1.32.1.tgz#f98562c71fb19d75378733a11c23d9d94e932139"
@@ -1104,17 +1094,17 @@
     eslint-plugin-xss "^0.1.9"
     typescript "^3.9.7"
 
-"@voiceflow/general-runtime@1.46.2":
-  version "1.46.2"
-  resolved "https://registry.yarnpkg.com/@voiceflow/general-runtime/-/general-runtime-1.46.2.tgz#05ffc57623de0e9b90ada0971a993a11d01557f4"
-  integrity sha512-A3WzFrAnYX4s+bRChzsLMvbgLxHeZDXBNOhQOvvWHqWNcPxryOKEQNcy6lpLyncgdDcLq8gylpiYoi6Czj4B6Q==
+"@voiceflow/general-runtime@1.47.0":
+  version "1.47.0"
+  resolved "https://registry.yarnpkg.com/@voiceflow/general-runtime/-/general-runtime-1.47.0.tgz#e07aa9600a787b2f64551f8dca0ec725be13d01f"
+  integrity sha512-fOo6ICr7E1oTj50jTmpbDJNrh03SgDmUcWdvrhdb7oAqitcUTwgiXNYE548TN1RS8ejwZrdD/VJI2aAqi1LX5g==
   dependencies:
     "@types/mathjs" "^6.0.4"
     "@types/workerpool" "^5.0.1"
-    "@voiceflow/api-sdk" "1.31.11"
+    "@voiceflow/api-sdk" "1.32.1"
     "@voiceflow/backend-utils" "3.3.0"
     "@voiceflow/common" "6.5.0"
-    "@voiceflow/general-types" "1.48.2"
+    "@voiceflow/general-types" "1.49.3"
     "@voiceflow/logger" "1.5.2"
     "@voiceflow/natural-language-commander" "^0.5.1"
     "@voiceflow/verror" "^1.1.0"
@@ -1136,7 +1126,7 @@
     html-parse-stringify "^1.0.3"
     immer "^5.1.0"
     ioredis "^4.22.0"
-    lodash "^4.17.15"
+    lodash "^4.17.21"
     mathjs "^6.5.0"
     mongodb "^3.6.5"
     regenerator-runtime "^0.13.3"
@@ -1146,13 +1136,6 @@
     vm2 "^3.9.2"
     words-to-numbers "^1.5.1"
     workerpool "^5.0.4"
-
-"@voiceflow/general-types@1.48.2":
-  version "1.48.2"
-  resolved "https://registry.yarnpkg.com/@voiceflow/general-types/-/general-types-1.48.2.tgz#3c0f86f1860ac123b24f186b344645ae9fff66d2"
-  integrity sha512-f85uH0A71g0pgOVuC1O683Mmipv5uWQ+IQJ6Stpd7MxMLLpcd836xTsXoIlV4tPdXSo8MWQqg/DqpwgBloj5mQ==
-  dependencies:
-    "@voiceflow/api-sdk" "^1.31.11"
 
 "@voiceflow/general-types@1.49.3", "@voiceflow/general-types@^1.49.3":
   version "1.49.3"
