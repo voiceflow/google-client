@@ -1,5 +1,5 @@
 import { Suggestion as GoogleSuggestion } from '@assistant/conversation';
-import { Node } from '@voiceflow/api-sdk';
+import { BaseNode } from '@voiceflow/api-sdk';
 import { HandlerFactory } from '@voiceflow/general-runtime/build/runtime';
 import { Suggestions } from 'actions-on-google';
 
@@ -10,17 +10,14 @@ import { addChipsIfExistsV1, addRepromptIfExists } from '../../utils';
 import CommandHandler from '../command';
 import getBestScore from './score';
 
-type Choice = Node<
-  'choice',
-  {
-    chips?: string[];
-    inputs: Array<string[]>;
-    elseId?: string;
-    choices: any[];
-    nextIds: string[];
-    reprompt?: string;
-  }
->;
+interface Choice extends BaseNode {
+  chips?: string[];
+  inputs: Array<string[]>;
+  elseId?: string;
+  choices: any[];
+  nextIds: string[];
+  reprompt?: string;
+}
 
 export const ChipsResponseBuilderGenerator = (SuggestionsBuilder: typeof Suggestions): ResponseBuilder => (runtime, conv) => {
   const chips = runtime.turn.get<string[]>(T.CHIPS);

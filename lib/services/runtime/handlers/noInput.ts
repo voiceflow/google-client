@@ -1,4 +1,4 @@
-import { Node } from '@voiceflow/api-sdk';
+import { BaseNode } from '@voiceflow/api-sdk';
 import { Runtime } from '@voiceflow/general-runtime/build/runtime';
 
 import { S, T } from '@/lib/constants';
@@ -11,7 +11,7 @@ export const NoInputHandler = () => ({
   canHandle: (runtime: Runtime) => {
     return !!runtime.turn.get<IntentRequest>(T.REQUEST)?.payload?.intent.startsWith(NO_INPUT_PREFIX);
   },
-  handle: (node: Node, runtime: Runtime) => {
+  handle: (node: BaseNode, runtime: Runtime) => {
     const { storage } = runtime;
 
     const output = storage.get<string>(S.REPROMPT) ?? storage.get<string>(S.OUTPUT);

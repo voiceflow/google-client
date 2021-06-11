@@ -1,4 +1,4 @@
-import { Command, CommandMapping } from '@voiceflow/api-sdk';
+import { CommandMapping } from '@voiceflow/api-sdk';
 import { extractFrameCommand, Frame, Runtime, Store } from '@voiceflow/general-runtime/build/runtime';
 import { Command as IntentCommand } from '@voiceflow/google-types/build/nodes/command';
 
@@ -19,7 +19,7 @@ export const getCommand = (runtime: Runtime, extractFrame: typeof extractFrameCo
   // don't act on a catchall intent
   if (intent === IntentName.VOICEFLOW) return null;
 
-  const matcher = (command: Command | null) => command?.intent === intent;
+  const matcher = (command: IntentCommand | null) => command?.intent === intent;
 
   const res = extractFrame<IntentCommand>(runtime.stack, matcher);
 
@@ -55,7 +55,7 @@ export const CommandHandler = (utils: typeof utilsObj) => ({
     if (res.command) {
       const { index, command } = res;
 
-      variableMap = command.mappings;
+      variableMap = command.mappings?.map(({ slot, variable }) => ({ slot: slot ?? '', variable: variable ?? '' }));
 
       if (command.diagram_id) {
         runtime.stack.top().storage.set(F.CALLED_COMMAND, true);
