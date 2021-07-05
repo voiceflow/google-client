@@ -227,6 +227,7 @@ describe('handlerManager unit tests', async () => {
 
     describe('existing session', () => {
       it('intent', async () => {
+        const versionID = 'version.id';
         const stateObj = {
           stack: {
             isEmpty: sinon.stub().returns(false),
@@ -238,6 +239,14 @@ describe('handlerManager unit tests', async () => {
           turn: {
             set: sinon.stub(),
           },
+          services: {
+            analyticsClient: {
+              identify: sinon.stub().returns(true),
+              track: sinon.stub().returns(true),
+            },
+          },
+          getVersionID: sinon.stub().returns(versionID),
+          getRawState: sinon.stub().returns(versionID),
         };
 
         const services = {
@@ -258,10 +267,14 @@ describe('handlerManager unit tests', async () => {
           request: {
             versionID: 'version-id',
           },
+          add: sinon.stub(),
           user: {
             params: {
               userId: 'user-id',
             },
+          },
+          session: {
+            id: 'session-id',
           },
         };
 
@@ -290,6 +303,7 @@ describe('handlerManager unit tests', async () => {
       });
 
       it('media status', async () => {
+        const versionID = 'version.id';
         const stateObj = {
           stack: {
             isEmpty: sinon.stub().returns(false),
@@ -301,6 +315,14 @@ describe('handlerManager unit tests', async () => {
           turn: {
             set: sinon.stub(),
           },
+          services: {
+            analyticsClient: {
+              identify: sinon.stub().returns(true),
+              track: sinon.stub().returns(true),
+            },
+          },
+          getVersionID: sinon.stub().returns(versionID),
+          getRawState: sinon.stub().returns(versionID),
         };
 
         const services = {
@@ -322,6 +344,9 @@ describe('handlerManager unit tests', async () => {
             params: {
               userId: 'user-id',
             },
+          },
+          session: {
+            id: 'session-id',
           },
         };
 

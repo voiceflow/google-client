@@ -35,6 +35,9 @@ class InitializeManager extends AbstractManager<{ utils: typeof utils }> {
 
     const { stack, storage, variables } = runtime;
 
+    // Identify on analytics system
+    runtime.services.analyticsClient.identify(runtime.getVersionID());
+
     // increment user sessions by 1 or initialize
     if (!storage.get(S.SESSIONS)) {
       storage.set(S.SESSIONS, 1);

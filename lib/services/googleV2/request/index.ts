@@ -1,6 +1,7 @@
 import { ConversationV3 } from '@assistant/conversation';
 import _ from 'lodash';
 
+import { Event } from '@/lib/clients/ingest-client';
 import { T, V } from '@/lib/constants';
 import { RequestType } from '@/lib/services/runtime/types';
 
@@ -53,15 +54,16 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeBu
       } else {
         type = RequestType.INTENT;
       }
-
-      runtime.turn.set(T.REQUEST, {
+      const request = {
         type,
         payload: {
           intent: intent.name,
           input,
           slots,
         },
-      });
+      };
+      runtime.turn.set(T.REQUEST, request);
+      runtime.services.analyticsClient.track(runtime.getVersionID(), Event.INTERACT, true, request, conv.session.id, runtime.getRawState());
     }
 
     runtime.variables.set(V.TIMESTAMP, Math.floor(Date.now() / 1000));

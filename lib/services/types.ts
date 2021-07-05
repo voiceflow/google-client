@@ -1,3 +1,5 @@
+import { RequestType } from '@voiceflow/general-types';
+
 import { isConstructor } from '@/lib/utils';
 import { Config } from '@/types';
 
@@ -51,4 +53,15 @@ export interface Audio {
   icon?: string;
   background?: string;
   offset: number;
+}
+
+export interface GoogleRequest {
+  type: RequestType;
+  payload: {
+    intent: string;
+    input: string;
+    slots: {
+      [key: string]: string;
+    };
+  };
 }

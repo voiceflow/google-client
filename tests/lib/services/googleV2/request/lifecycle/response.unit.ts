@@ -49,6 +49,13 @@ describe('responseManager unit tests', async () => {
             .returns(false)
             .returns(null),
         },
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(userId),
+            track: sinon.stub().returns(userId),
+          },
+        },
+        getVersionID: sinon.stub().returns(userId),
       };
 
       const conv = {
@@ -56,6 +63,9 @@ describe('responseManager unit tests', async () => {
           params: { forceUpdateToken: '' },
         },
         add: sinon.stub(),
+        session: {
+          id: 'session-id',
+        },
       };
 
       await responseManager.build(runtime as any, conv as any);
@@ -111,6 +121,13 @@ describe('responseManager unit tests', async () => {
           set: sinon.stub(),
           get: sinon.stub().returns(true),
         },
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(userId),
+            track: sinon.stub().returns(userId),
+          },
+        },
+        getVersionID: sinon.stub().returns(userId),
       };
 
       const conv = {
@@ -120,6 +137,9 @@ describe('responseManager unit tests', async () => {
         add: sinon.stub(),
         scene: {
           next: { name: '' },
+        },
+        session: {
+          id: 'session.id',
         },
       };
 

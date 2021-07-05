@@ -74,6 +74,12 @@ describe('initializeManager unit tests', async () => {
           merge: sinon.stub(),
         },
         getVersionID: sinon.stub().returns(VERSION_ID),
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(VERSION_ID),
+            track: sinon.stub().returns(VERSION_ID),
+          },
+        },
       };
 
       const conv = {
