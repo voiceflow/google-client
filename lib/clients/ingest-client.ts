@@ -1,9 +1,9 @@
 import { State } from '@voiceflow/general-runtime/build/runtime';
 import { FrameState } from '@voiceflow/general-runtime/build/runtime/lib/Runtime/Stack';
-import { Response } from 'ask-sdk-model';
+import { SimpleResponse } from 'actions-on-google';
 import Axios, { AxiosInstance, AxiosRequestConfig } from 'axios';
 
-import { AlexaRuntimeRequest } from '../services/runtime/types';
+import { GoogleRequest } from '../services/types';
 
 export interface InteractBody {
   eventId: Event;
@@ -11,7 +11,7 @@ export interface InteractBody {
     requestType?: string;
     sessionId?: string;
     versionId?: string;
-    payload?: Response | AlexaRuntimeRequest;
+    payload?: SimpleResponse | GoogleRequest;
     metadata?: {
       stack?: FrameState[];
       storage?: State;
