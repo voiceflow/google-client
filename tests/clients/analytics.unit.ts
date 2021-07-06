@@ -25,8 +25,21 @@ describe('Analytics client unit tests', () => {
   describe('Track', () => {
     it('throws on unknown events', () => {
       const client = AnalyticsClient({} as any);
+      const metadata = {
+        data: {
+          reqHeaders: {},
+          locale: 'locale',
+        },
+        stack: {},
+        storage: {},
+        variables: {},
+      };
 
-      expect(client.track('id', 'unknown event' as any, {} as any)).to.eventually.rejectedWith(RangeError);
+      const payload = {};
+
+      expect(client.track('id', Event.INTERACT, Request.REQUEST, payload as any, 'session.id', metadata as any)).to.eventually.rejectedWith(
+        RangeError
+      );
     });
 
     it('works with interact events', () => {

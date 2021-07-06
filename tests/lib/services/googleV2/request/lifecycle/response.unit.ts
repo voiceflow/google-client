@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import _ from 'lodash';
 import sinon from 'sinon';
 
+import { Event, Request } from '@/lib/clients/ingest-client';
 import { S, T } from '@/lib/constants';
 import ResponseManager from '@/lib/services/googleV2/request/lifecycle/response';
 
@@ -69,7 +70,6 @@ describe('responseManager unit tests', async () => {
       };
 
       await responseManager.build(runtime as any, conv as any);
-
       expect(runtime.stack.isEmpty.callCount).to.eql(1);
       expect(runtime.storage.get.args).to.eql([[S.OUTPUT], [S.USER]]);
       expect(services.utils.Simple.args[0]).to.eql([
@@ -83,6 +83,7 @@ describe('responseManager unit tests', async () => {
       expect(responseHandler2.args).to.eql([[runtime, conv]]);
       expect(services.state.saveToDb.args[0]).to.eql([userId, finalState]);
       expect(conv.user.params.forceUpdateToken).to.deep.eq(updateToken);
+      expect(runtime.services.analyticsClient.track.args).to.eql([[userId, Event.INTERACT, Request.RESPONSE, response, conv.session.id, finalState]]);
     });
 
     it('empty stack', async () => {
@@ -160,6 +161,7 @@ describe('responseManager unit tests', async () => {
       expect(responseHandler2.args).to.eql([[runtime, conv]]);
       expect(services.state.saveToDb.args[0]).to.eql([userId, finalState]);
       expect(conv.user.params.forceUpdateToken).to.deep.eq(updateToken);
+      expect(runtime.services.analyticsClient.track.args).to.eql([[userId, Event.INTERACT, Request.RESPONSE, response, conv.session.id, finalState]]);
     });
   });
 });
