@@ -82,6 +82,7 @@ describe('handlerManager unit tests', async () => {
 
   describe('handle', () => {
     it('main intent', async () => {
+      const versionID = 'version-id';
       const stateObj = {
         stack: {
           isEmpty: sinon.stub().returns(false),
@@ -90,6 +91,14 @@ describe('handlerManager unit tests', async () => {
           set: sinon.stub(),
         },
         update: sinon.stub(),
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(true),
+            track: sinon.stub().returns(true),
+          },
+        },
+        getVersionID: sinon.stub().returns(versionID),
+        getRawState: sinon.stub().returns(versionID),
       };
 
       const services = {
@@ -115,6 +124,9 @@ describe('handlerManager unit tests', async () => {
             userId: 'user-id',
           },
         },
+        session: {
+          id: 'session-id',
+        },
       };
 
       const handlerManager = new HandlerManager(services as any, null as any);
@@ -130,6 +142,7 @@ describe('handlerManager unit tests', async () => {
     });
 
     it('default welcome intent', async () => {
+      const versionID = 'version-id';
       const stateObj = {
         stack: {
           isEmpty: sinon.stub().returns(false),
@@ -138,6 +151,14 @@ describe('handlerManager unit tests', async () => {
           set: sinon.stub(),
         },
         update: sinon.stub(),
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(true),
+            track: sinon.stub().returns(true),
+          },
+        },
+        getVersionID: sinon.stub().returns(versionID),
+        getRawState: sinon.stub().returns(versionID),
       };
 
       const services = {
@@ -163,6 +184,9 @@ describe('handlerManager unit tests', async () => {
             userId: 'user-id',
           },
         },
+        session: {
+          id: 'session-id',
+        },
       };
 
       const handlerManager = new HandlerManager(services as any, null as any);
@@ -178,6 +202,7 @@ describe('handlerManager unit tests', async () => {
     });
 
     it('stack empty', async () => {
+      const versionID = 'version-id';
       const stateObj = {
         stack: {
           isEmpty: sinon.stub().returns(true),
@@ -186,6 +211,14 @@ describe('handlerManager unit tests', async () => {
           set: sinon.stub(),
         },
         update: sinon.stub(),
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(true),
+            track: sinon.stub().returns(true),
+          },
+        },
+        getVersionID: sinon.stub().returns(versionID),
+        getRawState: sinon.stub().returns(versionID),
       };
 
       const services = {
@@ -210,6 +243,9 @@ describe('handlerManager unit tests', async () => {
           params: {
             userId: 'user-id',
           },
+        },
+        session: {
+          id: 'session-id',
         },
       };
 

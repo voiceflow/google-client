@@ -1,7 +1,7 @@
 import { ConversationV3 } from '@assistant/conversation';
 import _ from 'lodash';
 
-import { Event } from '@/lib/clients/ingest-client';
+import { Event, Request } from '@/lib/clients/ingest-client';
 import { T, V } from '@/lib/constants';
 import { RequestType } from '@/lib/services/runtime/types';
 
@@ -47,6 +47,15 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeBu
 
     if (intent.name === 'actions.intent.MAIN' || intent.name === 'Default Welcome Intent' || runtime.stack.isEmpty()) {
       await initialize.build(runtime, conv);
+      const request = {
+        type: RequestType.INTENT,
+        payload: {
+          intent: intent.name,
+          input,
+          slots,
+        },
+      };
+      runtime.services.analyticsClient.track(runtime.getVersionID(), Event.INTERACT, Request.LAUNCH, request, conv.session.id, runtime.getRawState());
     } else {
       let type;
       if (intent.name?.startsWith('actions.intent.MEDIA_STATUS')) {
@@ -63,7 +72,14 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeBu
         },
       };
       runtime.turn.set(T.REQUEST, request);
-      runtime.services.analyticsClient.track(runtime.getVersionID(), Event.INTERACT, true, request, conv.session.id, runtime.getRawState());
+      runtime.services.analyticsClient.track(
+        runtime.getVersionID(),
+        Event.INTERACT,
+        Request.REQUEST,
+        request,
+        conv.session.id,
+        runtime.getRawState()
+      );
     }
 
     runtime.variables.set(V.TIMESTAMP, Math.floor(Date.now() / 1000));

@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import AnalyticsClient from '@/lib/clients/analytics';
-import { Event } from '@/lib/clients/ingest-client';
+import { Event, Request } from '@/lib/clients/ingest-client';
 
 describe('Analytics client unit tests', () => {
   describe('Identify', () => {
@@ -58,7 +58,7 @@ describe('Analytics client unit tests', () => {
 
       (client as any).ingestClient = ingestClient;
 
-      client.track('id', Event.INTERACT, true, payload as any, 'session.id', metadata as any);
+      client.track('id', Event.INTERACT, Request.REQUEST, payload as any, 'session.id', metadata as any);
 
       expect(rudderstack.track.callCount).to.eql(1);
       expect(rudderstack.track.getCall(0).args).to.deep.eq([
