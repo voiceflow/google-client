@@ -64,11 +64,7 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeBu
         runtime.getRawState()
       );
     } else {
-      if (intent.name?.startsWith('actions.intent.MEDIA_STATUS')) {
-        request.type = RequestType.MEDIA_STATUS;
-      } else {
-        request.type = RequestType.INTENT;
-      }
+      request.type = intent.name?.startsWith('actions.intent.MEDIA_STATUS') ? RequestType.MEDIA_STATUS : RequestType.INTENT;
       request.payload.intent = intent.name;
 
       runtime.turn.set(T.REQUEST, request);
