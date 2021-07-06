@@ -2,6 +2,7 @@ import { expect } from 'chai';
 import _ from 'lodash';
 import sinon from 'sinon';
 
+import { Event, RequestType as InteractRequestType } from '@/lib/clients/ingest-client';
 import { S, T } from '@/lib/constants';
 import ResponseManager from '@/lib/services/dialogflow/lifecycle/es/response';
 
@@ -21,10 +22,11 @@ describe('responseManager unit tests', async () => {
       };
 
       const responseManager = new ResponseManager(services as any, null as any);
-
-      const finalState = { random: 'runtime' };
-      const output = '';
       const userId = 'user-id';
+      const versionID = 'version-id';
+      const finalState = { random: 'runtime', storage: { user: userId } };
+      const output = '';
+
       const storageGet = sinon.stub();
       storageGet.withArgs(S.OUTPUT).returns(output);
       storageGet.withArgs(S.USER).returns(userId);
@@ -36,6 +38,7 @@ describe('responseManager unit tests', async () => {
         },
         storage: {
           get: storageGet,
+          user: userId,
         },
         turn: {
           set: sinon.stub(),
@@ -45,6 +48,14 @@ describe('responseManager unit tests', async () => {
             .returns(false)
             .returns(null),
         },
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(true),
+            track: sinon.stub().returns(true),
+          },
+        },
+        getVersionID: sinon.stub().returns(versionID),
+        getRawState: sinon.stub().returns(versionID),
       };
 
       const res = {
@@ -60,6 +71,9 @@ describe('responseManager unit tests', async () => {
       expect(responseHandler1.args).to.eql([[runtime, res]]);
       expect(responseHandler2.args).to.eql([[runtime, res]]);
       expect(services.state.saveToDb.args[0]).to.eql([userId, finalState]);
+      expect(runtime.services.analyticsClient.track.args).to.eql([
+        [versionID, Event.INTERACT, InteractRequestType.RESPONSE, res, userId, runtime.getFinalState()],
+      ]);
     });
 
     it('empty stack', async () => {
@@ -75,9 +89,11 @@ describe('responseManager unit tests', async () => {
 
       const responseManager = new ResponseManager(services as any, null as any);
 
-      const finalState = { random: 'runtime' };
-      const output = 'random output';
       const userId = 'user-id';
+      const finalState = { random: 'runtime', storage: { user: userId } };
+      const output = 'random output';
+
+      const versionID = 'version-id';
       const storageGet = sinon.stub();
       storageGet.withArgs(S.OUTPUT).returns(output);
       storageGet.withArgs(S.USER).returns(userId);
@@ -94,6 +110,14 @@ describe('responseManager unit tests', async () => {
           set: sinon.stub(),
           get: sinon.stub().returns(true),
         },
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(true),
+            track: sinon.stub().returns(true),
+          },
+        },
+        getVersionID: sinon.stub().returns(versionID),
+        getRawState: sinon.stub().returns(versionID),
       };
 
       const res = {
@@ -110,6 +134,9 @@ describe('responseManager unit tests', async () => {
       expect(responseHandler1.args).to.eql([[runtime, res]]);
       expect(responseHandler2.args).to.eql([[runtime, res]]);
       expect(services.state.saveToDb.args[0]).to.eql([userId, finalState]);
+      expect(runtime.services.analyticsClient.track.args).to.eql([
+        [versionID, Event.INTERACT, InteractRequestType.RESPONSE, res, userId, runtime.getFinalState()],
+      ]);
     });
   });
 });

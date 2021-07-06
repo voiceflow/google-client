@@ -1,6 +1,6 @@
 import { ConversationV3, Simple } from '@assistant/conversation';
 
-import { Event, Request } from '@/lib/clients/ingest-client';
+import { Event, RequestType } from '@/lib/clients/ingest-client';
 import { S, T } from '@/lib/constants';
 import { responseHandlersV2 } from '@/lib/services/runtime/handlers';
 import { DirectiveResponseBuilder } from '@/lib/services/runtime/handlers/directive';
@@ -52,7 +52,7 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
     runtime.services.analyticsClient.track(
       runtime.getVersionID(),
       Event.INTERACT,
-      Request.RESPONSE,
+      RequestType.RESPONSE,
       response,
       conv.session.id,
       runtime.getFinalState()

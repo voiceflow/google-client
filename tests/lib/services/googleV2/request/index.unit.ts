@@ -1,7 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
-import { Event, Request } from '@/lib/clients/ingest-client';
+import { Event, RequestType as InteractRequestType } from '@/lib/clients/ingest-client';
 import { T, V } from '@/lib/constants';
 import HandlerManager from '@/lib/services/googleV2/request';
 import { RequestType } from '@/lib/services/runtime/types';
@@ -148,7 +148,9 @@ describe('handlerManager unit tests', async () => {
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, conv]);
-      expect(stateObj.services.analyticsClient.track.args).to.eql([[versionID, Event.INTERACT, Request.LAUNCH, request, conv.session.id, versionID]]);
+      expect(stateObj.services.analyticsClient.track.args).to.eql([
+        [versionID, Event.INTERACT, InteractRequestType.LAUNCH, request, conv.session.id, versionID],
+      ]);
     });
 
     it('default welcome intent', async () => {
@@ -217,7 +219,9 @@ describe('handlerManager unit tests', async () => {
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, conv]);
-      expect(stateObj.services.analyticsClient.track.args).to.eql([[versionID, Event.INTERACT, Request.LAUNCH, request, conv.session.id, versionID]]);
+      expect(stateObj.services.analyticsClient.track.args).to.eql([
+        [versionID, Event.INTERACT, InteractRequestType.LAUNCH, request, conv.session.id, versionID],
+      ]);
     });
 
     it('stack empty', async () => {
@@ -286,7 +290,9 @@ describe('handlerManager unit tests', async () => {
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, conv]);
-      expect(stateObj.services.analyticsClient.track.args).to.eql([[versionID, Event.INTERACT, Request.LAUNCH, request, conv.session.id, versionID]]);
+      expect(stateObj.services.analyticsClient.track.args).to.eql([
+        [versionID, Event.INTERACT, InteractRequestType.LAUNCH, request, conv.session.id, versionID],
+      ]);
     });
 
     describe('existing session', () => {
@@ -362,7 +368,7 @@ describe('handlerManager unit tests', async () => {
 
         expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
         expect(stateObj.services.analyticsClient.track.args).to.eql([
-          [versionID, Event.INTERACT, Request.REQUEST, request, conv.session.id, versionID],
+          [versionID, Event.INTERACT, InteractRequestType.REQUEST, request, conv.session.id, versionID],
         ]);
         expect(stateObj.turn.set.args[0]).to.eql([
           T.REQUEST,
@@ -443,7 +449,7 @@ describe('handlerManager unit tests', async () => {
         await handlerManager.handle(conv as any);
 
         expect(stateObj.services.analyticsClient.track.args).to.eql([
-          [versionID, Event.INTERACT, Request.REQUEST, request, conv.session.id, versionID],
+          [versionID, Event.INTERACT, InteractRequestType.REQUEST, request, conv.session.id, versionID],
         ]);
 
         expect(stateObj.turn.set.args[0]).to.eql([

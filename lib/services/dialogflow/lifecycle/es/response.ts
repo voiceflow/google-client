@@ -1,3 +1,4 @@
+import { Event, RequestType } from '@/lib/clients/ingest-client';
 import { S, T } from '@/lib/constants';
 import { responseHandlersDialogflowES } from '@/lib/services/runtime/handlers';
 import { GoogleRuntime } from '@/lib/services/runtime/types';
@@ -36,8 +37,16 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
       // eslint-disable-next-line no-await-in-loop
       await handler(runtime, res);
     }
-
     await state.saveToDb(storage.get<string>(S.USER)!, runtime.getFinalState());
+    // Track response on analytics system
+    runtime.services.analyticsClient.track(
+      runtime.getVersionID(),
+      Event.INTERACT,
+      RequestType.RESPONSE,
+      res,
+      runtime.getFinalState().storage.user,
+      runtime.getFinalState()
+    );
 
     return res;
   }
