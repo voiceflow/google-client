@@ -39,14 +39,14 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
     }
     await state.saveToDb(storage.get<string>(S.USER)!, runtime.getFinalState());
     // Track response on analytics system
-    runtime.services.analyticsClient.track(
-      runtime.getVersionID(),
-      Event.INTERACT,
-      RequestType.RESPONSE,
-      res,
-      runtime.getFinalState().storage.user,
-      runtime.getFinalState()
-    );
+    runtime.services.analyticsClient.track({
+      id: runtime.getVersionID(),
+      event: Event.INTERACT,
+      request: RequestType.RESPONSE,
+      payload: res,
+      sessionid: runtime.getFinalState().storage.user,
+      metadata: runtime.getFinalState(),
+    });
 
     return res;
   }

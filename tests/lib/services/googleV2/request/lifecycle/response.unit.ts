@@ -84,7 +84,7 @@ describe('responseManager unit tests', async () => {
       expect(services.state.saveToDb.args[0]).to.eql([userId, finalState]);
       expect(conv.user.params.forceUpdateToken).to.deep.eq(updateToken);
       expect(runtime.services.analyticsClient.track.args).to.eql([
-        [userId, Event.INTERACT, RequestType.RESPONSE, response, conv.session.id, finalState],
+        [{ id: userId, event: Event.INTERACT, request: RequestType.RESPONSE, payload: response, sessionid: conv.session.id, metadata: finalState }],
       ]);
     });
 
@@ -164,7 +164,7 @@ describe('responseManager unit tests', async () => {
       expect(services.state.saveToDb.args[0]).to.eql([userId, finalState]);
       expect(conv.user.params.forceUpdateToken).to.deep.eq(updateToken);
       expect(runtime.services.analyticsClient.track.args).to.eql([
-        [userId, Event.INTERACT, RequestType.RESPONSE, response, conv.session.id, finalState],
+        [{ id: userId, event: Event.INTERACT, request: RequestType.RESPONSE, payload: response, sessionid: conv.session.id, metadata: finalState }],
       ]);
     });
   });

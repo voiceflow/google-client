@@ -149,7 +149,16 @@ describe('handlerManager unit tests', async () => {
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, conv]);
       expect(stateObj.services.analyticsClient.track.args).to.eql([
-        [versionID, Event.INTERACT, InteractRequestType.LAUNCH, request, conv.session.id, versionID],
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.LAUNCH,
+            payload: request,
+            sessionid: conv.session.id,
+            metadata: versionID,
+          },
+        ],
       ]);
     });
 
@@ -220,7 +229,16 @@ describe('handlerManager unit tests', async () => {
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, conv]);
       expect(stateObj.services.analyticsClient.track.args).to.eql([
-        [versionID, Event.INTERACT, InteractRequestType.LAUNCH, request, conv.session.id, versionID],
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.LAUNCH,
+            payload: request,
+            sessionid: conv.session.id,
+            metadata: versionID,
+          },
+        ],
       ]);
     });
 
@@ -291,7 +309,16 @@ describe('handlerManager unit tests', async () => {
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, conv]);
       expect(stateObj.services.analyticsClient.track.args).to.eql([
-        [versionID, Event.INTERACT, InteractRequestType.LAUNCH, request, conv.session.id, versionID],
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.LAUNCH,
+            payload: request,
+            sessionid: conv.session.id,
+            metadata: versionID,
+          },
+        ],
       ]);
     });
 
@@ -368,7 +395,16 @@ describe('handlerManager unit tests', async () => {
 
         expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
         expect(stateObj.services.analyticsClient.track.args).to.eql([
-          [versionID, Event.INTERACT, InteractRequestType.REQUEST, request, conv.session.id, versionID],
+          [
+            {
+              id: versionID,
+              event: Event.INTERACT,
+              request: InteractRequestType.REQUEST,
+              payload: request,
+              sessionid: conv.session.id,
+              metadata: versionID,
+            },
+          ],
         ]);
         expect(stateObj.turn.set.args[0]).to.eql([
           T.REQUEST,
@@ -449,7 +485,16 @@ describe('handlerManager unit tests', async () => {
         await handlerManager.handle(conv as any);
 
         expect(stateObj.services.analyticsClient.track.args).to.eql([
-          [versionID, Event.INTERACT, InteractRequestType.REQUEST, request, conv.session.id, versionID],
+          [
+            {
+              id: versionID,
+              event: Event.INTERACT,
+              request: InteractRequestType.REQUEST,
+              payload: request,
+              sessionid: conv.session.id,
+              metadata: versionID,
+            },
+          ],
         ]);
 
         expect(stateObj.turn.set.args[0]).to.eql([

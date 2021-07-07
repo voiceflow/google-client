@@ -77,7 +77,16 @@ describe('DialogflowManager unit tests', async () => {
       expect(stateObj.update.args).to.eql([[]]);
       expect(services.responseES.build.args).to.eql([[stateObj]]);
       expect(stateObj.services.analyticsClient.track.args).to.eql([
-        [versionID, Event.INTERACT, InteractRequestType.LAUNCH, payload, req.session, versionID],
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.LAUNCH,
+            payload,
+            sessionid: req.session,
+            metadata: versionID,
+          },
+        ],
       ]);
     });
 
@@ -140,7 +149,16 @@ describe('DialogflowManager unit tests', async () => {
       expect(stateObj.update.args).to.eql([[]]);
       expect(services.responseES.build.args).to.eql([[stateObj]]);
       expect(stateObj.services.analyticsClient.track.args).to.eql([
-        [versionID, Event.INTERACT, InteractRequestType.LAUNCH, payload, req.session, versionID],
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.LAUNCH,
+            payload,
+            sessionid: req.session,
+            metadata: versionID,
+          },
+        ],
       ]);
     });
 
@@ -277,7 +295,16 @@ describe('DialogflowManager unit tests', async () => {
       expect(stateObj.update.args).to.eql([[]]);
       expect(services.responseES.build.args).to.eql([[stateObj]]);
       expect(stateObj.services.analyticsClient.track.args).to.eql([
-        [versionID, Event.INTERACT, InteractRequestType.REQUEST, payload, req.session, versionID],
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.REQUEST,
+            payload,
+            sessionid: req.session,
+            metadata: versionID,
+          },
+        ],
       ]);
     });
   });

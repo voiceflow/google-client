@@ -72,7 +72,16 @@ describe('responseManager unit tests', async () => {
       expect(responseHandler2.args).to.eql([[runtime, res]]);
       expect(services.state.saveToDb.args[0]).to.eql([userId, finalState]);
       expect(runtime.services.analyticsClient.track.args).to.eql([
-        [versionID, Event.INTERACT, InteractRequestType.RESPONSE, res, userId, runtime.getFinalState()],
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.RESPONSE,
+            payload: res,
+            sessionid: userId,
+            metadata: runtime.getFinalState(),
+          },
+        ],
       ]);
     });
 
@@ -135,7 +144,16 @@ describe('responseManager unit tests', async () => {
       expect(responseHandler2.args).to.eql([[runtime, res]]);
       expect(services.state.saveToDb.args[0]).to.eql([userId, finalState]);
       expect(runtime.services.analyticsClient.track.args).to.eql([
-        [versionID, Event.INTERACT, InteractRequestType.RESPONSE, res, userId, runtime.getFinalState()],
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.RESPONSE,
+            payload: res,
+            sessionid: userId,
+            metadata: runtime.getFinalState(),
+          },
+        ],
       ]);
     });
   });

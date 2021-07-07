@@ -49,14 +49,14 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
     conv.user.params.forceUpdateToken = randomstring.generate();
 
     // Track response on analytics system
-    runtime.services.analyticsClient.track(
-      runtime.getVersionID(),
-      Event.INTERACT,
-      RequestType.RESPONSE,
-      response,
-      conv.session.id,
-      runtime.getFinalState()
-    );
+    runtime.services.analyticsClient.track({
+      id: runtime.getVersionID(),
+      event: Event.INTERACT,
+      request: RequestType.RESPONSE,
+      payload: response,
+      sessionid: conv.session.id,
+      metadata: runtime.getFinalState(),
+    });
   }
 }
 
