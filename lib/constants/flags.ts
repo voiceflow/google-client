@@ -16,6 +16,7 @@ export enum Turn {
   STREAM_PLAY = 'stream_play',
   CHIPS = 'chips',
   DIRECTIVES = 'directives',
+  DF_ES_IMAGE = 'df-es-image',
 }
 
 export enum Frame {
