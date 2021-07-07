@@ -1,5 +1,6 @@
 import { ConversationV3, Simple } from '@assistant/conversation';
 
+import { Event, RequestType } from '@/lib/clients/ingest-client';
 import { S, T } from '@/lib/constants';
 import { responseHandlersV2 } from '@/lib/services/runtime/handlers';
 import { DirectiveResponseBuilder } from '@/lib/services/runtime/handlers/directive';
@@ -46,6 +47,16 @@ class ResponseManager extends AbstractManager<{ utils: typeof utilsObj }> {
     await state.saveToDb(storage.get<string>(S.USER)!, runtime.getFinalState());
 
     conv.user.params.forceUpdateToken = randomstring.generate();
+
+    // Track response on analytics system
+    runtime.services.analyticsClient.track({
+      id: runtime.getVersionID(),
+      event: Event.INTERACT,
+      request: RequestType.RESPONSE,
+      payload: response,
+      sessionid: conv.session.id,
+      metadata: runtime.getFinalState(),
+    });
   }
 }
 

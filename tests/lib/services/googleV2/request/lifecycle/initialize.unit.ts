@@ -74,6 +74,12 @@ describe('initializeManager unit tests', async () => {
           merge: sinon.stub(),
         },
         getVersionID: sinon.stub().returns(VERSION_ID),
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(VERSION_ID),
+            track: sinon.stub().returns(VERSION_ID),
+          },
+        },
       };
 
       const conv = {
@@ -140,6 +146,7 @@ describe('initializeManager unit tests', async () => {
       ]);
       expect(services.utils.client.Store.initialize.args[0]).to.eql([runtime.variables, metaObj.variables, 0]);
       expect(services.utils.client.Store.initialize.args[1]).to.eql([runtime.variables, metaObj.platformData.slots.map(({ name }) => name), 0]);
+      expect(runtime.services.analyticsClient.identify.args).to.eql([[VERSION_ID]]);
     });
 
     it('second session', async () => {

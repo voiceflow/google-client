@@ -13,6 +13,7 @@
   },
   "dependencies": {
     "@assistant/conversation": "3.2.0",
+    "@rudderstack/rudder-sdk-node": "^1.0.2",
     "@voiceflow/api-sdk": "1.32.1",
     "@voiceflow/backend-utils": "2.2.1",
     "@voiceflow/body-parser": "^1.21.0",

@@ -10,6 +10,7 @@ import uuid4 from 'uuid/v4';
 import { MongoState } from '@/lib/services/state';
 import { Config } from '@/types';
 
+import Analytics, { AnalyticsSystem } from './analytics';
 import Dynamo from './dynamo';
 import Metrics, { MetricsType } from './metrics';
 import MongoDB from './mongodb';
@@ -25,6 +26,7 @@ export interface ClientMap extends StaticType {
   metrics: MetricsType;
   dataAPI: DataAPI<GoogleProgram, GoogleVersion>;
   mongo: MongoDB | null;
+  analyticsClient: AnalyticsSystem;
 }
 
 /**
@@ -43,6 +45,7 @@ const buildClients = (config: Config) => {
 
   clients.docClient = Dynamo(config);
   clients.metrics = Metrics(config);
+  clients.analyticsClient = Analytics(config);
 
   return clients;
 };

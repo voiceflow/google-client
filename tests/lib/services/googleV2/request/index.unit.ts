@@ -1,6 +1,7 @@
 import { expect } from 'chai';
 import sinon from 'sinon';
 
+import { Event, RequestType as InteractRequestType } from '@/lib/clients/ingest-client';
 import { T, V } from '@/lib/constants';
 import HandlerManager from '@/lib/services/googleV2/request';
 import { RequestType } from '@/lib/services/runtime/types';
@@ -82,6 +83,7 @@ describe('handlerManager unit tests', async () => {
 
   describe('handle', () => {
     it('main intent', async () => {
+      const versionID = 'version-id';
       const stateObj = {
         stack: {
           isEmpty: sinon.stub().returns(false),
@@ -90,6 +92,14 @@ describe('handlerManager unit tests', async () => {
           set: sinon.stub(),
         },
         update: sinon.stub(),
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(true),
+            track: sinon.stub().returns(true),
+          },
+        },
+        getVersionID: sinon.stub().returns(versionID),
+        getRawState: sinon.stub().returns(versionID),
       };
 
       const services = {
@@ -115,21 +125,45 @@ describe('handlerManager unit tests', async () => {
             userId: 'user-id',
           },
         },
+        session: {
+          id: 'session-id',
+        },
       };
 
       const handlerManager = new HandlerManager(services as any, null as any);
       handlerManager._extractSlots = sinon.stub().returns({});
 
       await handlerManager.handle(conv as any);
+      const request = {
+        payload: {
+          input: 'input raw',
+          intent: 'actions.intent.MAIN',
+          slots: {},
+        },
+        type: 'INTENT',
+      };
 
       expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
       expect(services.initialize.build.args[0]).to.eql([stateObj, conv]);
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, conv]);
+      expect(stateObj.services.analyticsClient.track.args).to.eql([
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.LAUNCH,
+            payload: request,
+            sessionid: conv.session.id,
+            metadata: versionID,
+          },
+        ],
+      ]);
     });
 
     it('default welcome intent', async () => {
+      const versionID = 'version-id';
       const stateObj = {
         stack: {
           isEmpty: sinon.stub().returns(false),
@@ -138,6 +172,14 @@ describe('handlerManager unit tests', async () => {
           set: sinon.stub(),
         },
         update: sinon.stub(),
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(true),
+            track: sinon.stub().returns(true),
+          },
+        },
+        getVersionID: sinon.stub().returns(versionID),
+        getRawState: sinon.stub().returns(versionID),
       };
 
       const services = {
@@ -163,21 +205,45 @@ describe('handlerManager unit tests', async () => {
             userId: 'user-id',
           },
         },
+        session: {
+          id: 'session-id',
+        },
       };
 
       const handlerManager = new HandlerManager(services as any, null as any);
       handlerManager._extractSlots = sinon.stub().returns({});
 
       await handlerManager.handle(conv as any);
+      const request = {
+        payload: {
+          input: 'input raw',
+          intent: 'Default Welcome Intent',
+          slots: {},
+        },
+        type: 'INTENT',
+      };
 
       expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
       expect(services.initialize.build.args[0]).to.eql([stateObj, conv]);
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, conv]);
+      expect(stateObj.services.analyticsClient.track.args).to.eql([
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.LAUNCH,
+            payload: request,
+            sessionid: conv.session.id,
+            metadata: versionID,
+          },
+        ],
+      ]);
     });
 
     it('stack empty', async () => {
+      const versionID = 'version-id';
       const stateObj = {
         stack: {
           isEmpty: sinon.stub().returns(true),
@@ -186,6 +252,14 @@ describe('handlerManager unit tests', async () => {
           set: sinon.stub(),
         },
         update: sinon.stub(),
+        services: {
+          analyticsClient: {
+            identify: sinon.stub().returns(true),
+            track: sinon.stub().returns(true),
+          },
+        },
+        getVersionID: sinon.stub().returns(versionID),
+        getRawState: sinon.stub().returns(versionID),
       };
 
       const services = {
@@ -211,6 +285,17 @@ describe('handlerManager unit tests', async () => {
             userId: 'user-id',
           },
         },
+        session: {
+          id: 'session-id',
+        },
+      };
+      const request = {
+        payload: {
+          input: 'input raw',
+          intent: 'random intent',
+          slots: {},
+        },
+        type: 'INTENT',
       };
 
       const handlerManager = new HandlerManager(services as any, null as any);
@@ -223,10 +308,23 @@ describe('handlerManager unit tests', async () => {
       expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
       expect(stateObj.update.callCount).to.eql(1);
       expect(services.response.build.args[0]).to.eql([stateObj, conv]);
+      expect(stateObj.services.analyticsClient.track.args).to.eql([
+        [
+          {
+            id: versionID,
+            event: Event.INTERACT,
+            request: InteractRequestType.LAUNCH,
+            payload: request,
+            sessionid: conv.session.id,
+            metadata: versionID,
+          },
+        ],
+      ]);
     });
 
     describe('existing session', () => {
       it('intent', async () => {
+        const versionID = 'version.id';
         const stateObj = {
           stack: {
             isEmpty: sinon.stub().returns(false),
@@ -238,6 +336,14 @@ describe('handlerManager unit tests', async () => {
           turn: {
             set: sinon.stub(),
           },
+          services: {
+            analyticsClient: {
+              identify: sinon.stub().returns(true),
+              track: sinon.stub().returns(true),
+            },
+          },
+          getVersionID: sinon.stub().returns(versionID),
+          getRawState: sinon.stub().returns(versionID),
         };
 
         const services = {
@@ -258,14 +364,29 @@ describe('handlerManager unit tests', async () => {
           request: {
             versionID: 'version-id',
           },
+          add: sinon.stub(),
           user: {
             params: {
               userId: 'user-id',
             },
           },
+          session: {
+            id: 'session-id',
+          },
         };
 
         const slots = { slot1: 'slot_one', slot2: 'slot_two' };
+        const request = {
+          payload: {
+            input: 'input raw',
+            intent: 'random intent',
+            slots: {
+              slot1: 'slot_one',
+              slot2: 'slot_two',
+            },
+          },
+          type: 'INTENT',
+        };
 
         const handlerManager = new HandlerManager(services as any, null as any);
         handlerManager._extractSlots = sinon.stub().returns(slots);
@@ -273,6 +394,18 @@ describe('handlerManager unit tests', async () => {
         await handlerManager.handle(conv as any);
 
         expect(services.runtimeBuild.build.args[0]).to.eql([conv.request.versionID, conv.user.params.userId]);
+        expect(stateObj.services.analyticsClient.track.args).to.eql([
+          [
+            {
+              id: versionID,
+              event: Event.INTERACT,
+              request: InteractRequestType.REQUEST,
+              payload: request,
+              sessionid: conv.session.id,
+              metadata: versionID,
+            },
+          ],
+        ]);
         expect(stateObj.turn.set.args[0]).to.eql([
           T.REQUEST,
           {
@@ -290,6 +423,7 @@ describe('handlerManager unit tests', async () => {
       });
 
       it('media status', async () => {
+        const versionID = 'version.id';
         const stateObj = {
           stack: {
             isEmpty: sinon.stub().returns(false),
@@ -301,6 +435,14 @@ describe('handlerManager unit tests', async () => {
           turn: {
             set: sinon.stub(),
           },
+          services: {
+            analyticsClient: {
+              identify: sinon.stub().returns(true),
+              track: sinon.stub().returns(true),
+            },
+          },
+          getVersionID: sinon.stub().returns(versionID),
+          getRawState: sinon.stub().returns(versionID),
         };
 
         const services = {
@@ -323,12 +465,37 @@ describe('handlerManager unit tests', async () => {
               userId: 'user-id',
             },
           },
+          session: {
+            id: 'session-id',
+          },
+        };
+
+        const request = {
+          payload: {
+            input: 'input raw',
+            intent: 'actions.intent.MEDIA_STATUS_FINISHED',
+            slots: {},
+          },
+          type: 'MEDIA_STATUS',
         };
 
         const handlerManager = new HandlerManager(services as any, null as any);
         handlerManager._extractSlots = sinon.stub().returns({});
 
         await handlerManager.handle(conv as any);
+
+        expect(stateObj.services.analyticsClient.track.args).to.eql([
+          [
+            {
+              id: versionID,
+              event: Event.INTERACT,
+              request: InteractRequestType.REQUEST,
+              payload: request,
+              sessionid: conv.session.id,
+              metadata: versionID,
+            },
+          ],
+        ]);
 
         expect(stateObj.turn.set.args[0]).to.eql([
           T.REQUEST,

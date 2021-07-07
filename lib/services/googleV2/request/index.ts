@@ -1,6 +1,7 @@
 import { ConversationV3 } from '@assistant/conversation';
 import _ from 'lodash';
 
+import { Event, RequestType as InteractRequestType } from '@/lib/clients/ingest-client';
 import { T, V } from '@/lib/constants';
 import { RequestType } from '@/lib/services/runtime/types';
 
@@ -43,24 +44,37 @@ class HandlerManager extends AbstractManager<{ initialize: Initialize; runtimeBu
     const { userId } = conv.user.params;
 
     const runtime = await runtimeBuild.build(_.get(conv.request, 'versionID'), userId);
-
+    const request = {
+      type: RequestType.INTENT,
+      payload: {
+        intent: intent.name,
+        input,
+        slots,
+      },
+    };
     if (intent.name === 'actions.intent.MAIN' || intent.name === 'Default Welcome Intent' || runtime.stack.isEmpty()) {
       await initialize.build(runtime, conv);
-    } else {
-      let type;
-      if (intent.name?.startsWith('actions.intent.MEDIA_STATUS')) {
-        type = RequestType.MEDIA_STATUS;
-      } else {
-        type = RequestType.INTENT;
-      }
 
-      runtime.turn.set(T.REQUEST, {
-        type,
-        payload: {
-          intent: intent.name,
-          input,
-          slots,
-        },
+      runtime.services.analyticsClient.track({
+        id: runtime.getVersionID(),
+        event: Event.INTERACT,
+        request: InteractRequestType.LAUNCH,
+        payload: request,
+        sessionid: conv.session.id,
+        metadata: runtime.getRawState(),
+      });
+    } else {
+      request.type = intent.name?.startsWith('actions.intent.MEDIA_STATUS') ? RequestType.MEDIA_STATUS : RequestType.INTENT;
+      request.payload.intent = intent.name;
+
+      runtime.turn.set(T.REQUEST, request);
+      runtime.services.analyticsClient.track({
+        id: runtime.getVersionID(),
+        event: Event.INTERACT,
+        request: InteractRequestType.REQUEST,
+        payload: request,
+        sessionid: conv.session.id,
+        metadata: runtime.getRawState(),
       });
     }
 

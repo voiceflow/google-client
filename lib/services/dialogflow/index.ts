@@ -1,3 +1,4 @@
+import { Event, RequestType as InteractRequestType } from '@/lib/clients/ingest-client';
 import { T, V } from '@/lib/constants';
 import { RequestType } from '@/lib/services/runtime/types';
 
@@ -17,22 +18,43 @@ class DialogflowManager extends AbstractManager<{ initializeES: InitializeES; ru
     const intentName = req.queryResult.intent.displayName;
     const input = req.queryResult.queryText;
     const slots = req.queryResult.parameters;
+
     const userId = req.session;
 
     const runtime = await runtimeBuildES.build(versionID, userId);
-
-    if (intentName === 'actions.intent.MAIN' || intentName === 'Default Welcome Intent' || runtime.stack.isEmpty()) {
+    const request = {
+      type: RequestType.INTENT,
+      payload: {
+        intent: intentName,
+        input,
+        slots,
+      },
+    };
+    const mainIntent1 = 'actions.intent.MAIN';
+    const mainIntent2 = 'Default Welcome Intent';
+    if (intentName === mainIntent1 || intentName === mainIntent2 || runtime.stack.isEmpty()) {
       await initializeES.build(runtime, req);
+      if (intentName === mainIntent1 || intentName === mainIntent2) {
+        runtime.services.analyticsClient.track({
+          id: runtime.getVersionID(),
+          event: Event.INTERACT,
+          request: InteractRequestType.LAUNCH,
+          payload: request,
+          sessionid: req.session,
+          metadata: runtime.getRawState(),
+        });
+      }
     }
 
     if (!['actions.intent.MAIN', 'Default Welcome Intent'].includes(intentName)) {
-      runtime.turn.set(T.REQUEST, {
-        type: RequestType.INTENT,
-        payload: {
-          intent: intentName,
-          input,
-          slots,
-        },
+      runtime.turn.set(T.REQUEST, request);
+      runtime.services.analyticsClient.track({
+        id: runtime.getVersionID(),
+        event: Event.INTERACT,
+        request: InteractRequestType.REQUEST,
+        payload: request,
+        sessionid: req.session,
+        metadata: runtime.getRawState(),
       });
     }
 
