@@ -11,7 +11,7 @@ type TurnImage = {
   imageUrl: string;
 };
 
-export const CardResponseBuilderDialogflowES: ResponseBuilderDialogflowES = (runtime, res) => {
+export const ImageResponseBuilderDialogflowES: ResponseBuilderDialogflowES = (runtime, res) => {
   const image = runtime.turn.get<TurnImage>(T.DF_ES_IMAGE);
 
   if (!image) {
