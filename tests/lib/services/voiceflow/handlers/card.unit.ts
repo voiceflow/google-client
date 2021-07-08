@@ -4,7 +4,6 @@ import sinon from 'sinon';
 
 import { T } from '@/lib/constants';
 import DefaultCardHandler, {
-  addVariables,
   CardHandler,
   CardResponseBuilder,
   CardResponseBuilderDialogflowES,
@@ -236,32 +235,6 @@ describe('card handler unit tests', async () => {
         },
       ]);
       expect(conv.add.args[0]).to.eql([{}]);
-    });
-  });
-
-  describe('addVariables', () => {
-    it('no value', async () => {
-      const defaultValue = 'default';
-
-      const result = addVariables(null as any)(null as any, null as any, defaultValue);
-      expect(result).to.eql(defaultValue);
-    });
-
-    it('no value and no default', async () => {
-      const result = addVariables(null as any)(null as any, null as any);
-      expect(result).to.eql('');
-    });
-
-    it('has value', () => {
-      const value = 'value';
-      const actual = 'random';
-      const regexVariables = sinon.stub().returns(actual);
-      const varState = { foo: 'bar' };
-      const variables = { getState: sinon.stub().returns(varState) };
-
-      const result = addVariables(regexVariables as any)(value, variables as any, null as any);
-      expect(result).to.eql(actual);
-      expect(regexVariables.args[0]).to.eql([value, varState]);
     });
   });
 

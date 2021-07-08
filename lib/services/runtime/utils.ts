@@ -88,3 +88,6 @@ export const addChipsIfExists = <N extends { chips?: Chip[]; buttons?: Nullable<
     );
   }
 };
+
+export const addVariables = (regex: typeof replaceVariables) => (value: string | undefined, variables: Store, defaultValue = '') =>
+  value ? regex(value, variables.getState()) : defaultValue;

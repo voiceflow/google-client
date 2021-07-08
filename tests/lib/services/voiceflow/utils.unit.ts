@@ -2,7 +2,7 @@ import { expect } from 'chai';
 import sinon from 'sinon';
 
 import { S, T } from '@/lib/constants';
-import { addChipsIfExistsV1, addRepromptIfExists, mapSlots, transformDateTimeVariableToString } from '@/lib/services/runtime/utils';
+import { addChipsIfExistsV1, addRepromptIfExists, addVariables, mapSlots, transformDateTimeVariableToString } from '@/lib/services/runtime/utils';
 
 describe('runtime manager utils unit tests', async () => {
   afterEach(() => sinon.restore());
@@ -84,6 +84,32 @@ describe('runtime manager utils unit tests', async () => {
       const slots = { slotA: '1', slotB: 'value', slotC: { day: 1, month: 2, year: 2020, hours: 13, minutes: 15, seconds: 0, nanos: 0 } };
 
       expect(mapSlots(mappings as any, slots as any)).to.eql({ var1: 1, var2: 'value', var3: '1/2/2020 13:15' });
+    });
+  });
+
+  describe('addVariables', () => {
+    it('no value', async () => {
+      const defaultValue = 'default';
+
+      const result = addVariables(null as any)(null as any, null as any, defaultValue);
+      expect(result).to.eql(defaultValue);
+    });
+
+    it('no value and no default', async () => {
+      const result = addVariables(null as any)(null as any, null as any);
+      expect(result).to.eql('');
+    });
+
+    it('has value', () => {
+      const value = 'value';
+      const actual = 'random';
+      const regexVariables = sinon.stub().returns(actual);
+      const varState = { foo: 'bar' };
+      const variables = { getState: sinon.stub().returns(varState) };
+
+      const result = addVariables(regexVariables as any)(value, variables as any, null as any);
+      expect(result).to.eql(actual);
+      expect(regexVariables.args[0]).to.eql([value, varState]);
     });
   });
 });
