@@ -20,7 +20,7 @@ import _V1Handler from './_v1';
 import CaptureHandler from './capture';
 import CardHandler, { CardResponseBuilder, CardResponseBuilderDialogflowES, CardResponseBuilderV2 } from './card';
 import ChoiceHandler, { ChipsResponseBuilder, ChipsResponseBuilderDialogflowES, ChipsResponseBuilderV2 } from './choice';
-import DFESImageHandler, { ImageResponseBuilderDialogflowES as DFESImageResponseBuilderDialogflowES } from './df-es/image';
+import DFESImageHandler, { ImageResponseBuilderDialogflowES } from './df-es/image';
 import DirectiveHandler, { DirectiveResponseBuilder } from './directive';
 import InteractionHandler from './interaction';
 import PreliminaryHandler from './preliminary';
@@ -29,7 +29,7 @@ import StreamHandler, { StreamResponseBuilder, StreamResponseBuilderV2 } from '.
 
 export const responseHandlers = [CardResponseBuilder, StreamResponseBuilder, ChipsResponseBuilder];
 export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2, StreamResponseBuilderV2, DirectiveResponseBuilder];
-export const responseHandlersDialogflowES = [ChipsResponseBuilderDialogflowES, CardResponseBuilderDialogflowES, DFESImageResponseBuilderDialogflowES];
+export const responseHandlersDialogflowES = [ChipsResponseBuilderDialogflowES, CardResponseBuilderDialogflowES, ImageResponseBuilderDialogflowES];
 const _v1Handler = _V1Handler();
 
 // handlers for dialogflow es agent
