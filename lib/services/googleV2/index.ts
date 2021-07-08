@@ -27,6 +27,8 @@ class GoogleManager extends AbstractManager<{ handler: Handler }> {
 
     app.handle('main', handler.handle.bind(handler));
 
+    console.log('REQUEST');
+    console.log(JSON.stringify(request.body));
     return app(request, response);
   }
 }
