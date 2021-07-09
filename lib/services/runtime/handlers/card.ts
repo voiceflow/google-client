@@ -1,12 +1,13 @@
 import { Card as GoogleCard, Image as GoogleImage } from '@assistant/conversation';
 import { replaceVariables } from '@voiceflow/common';
-import { HandlerFactory, Store } from '@voiceflow/general-runtime/build/runtime';
+import { HandlerFactory } from '@voiceflow/general-runtime/build/runtime';
 import { Card, CardType, Node } from '@voiceflow/google-types/build/nodes/card';
 import { BasicCard, Image } from 'actions-on-google';
 
 import { T } from '@/lib/constants';
 
 import { ResponseBuilder, ResponseBuilderDialogflowES, ResponseBuilderV2 } from '../types';
+import { addVariables } from '../utils';
 
 export const CardResponseBuilderGenerator = (CardBuilder: typeof BasicCard, ImageBuilder: typeof Image): ResponseBuilder => (runtime, conv) => {
   const card = runtime.turn.get<Card>(T.CARD);
@@ -68,9 +69,6 @@ export const CardResponseBuilderDialogflowES: ResponseBuilderDialogflowES = (run
     res.fulfillmentMessages.push({ card: { title: card.title, text: card.text, imageUri: card.image?.largeImageUrl ?? '' } });
   }
 };
-
-export const addVariables = (regex: typeof replaceVariables) => (value: string | undefined, variables: Store, defaultValue = '') =>
-  value ? regex(value, variables.getState()) : defaultValue;
 
 const utilsObj = {
   addVariables: addVariables(replaceVariables),

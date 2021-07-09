@@ -1053,6 +1053,16 @@
     axios "^0.21.1"
     superstruct "^0.10.12"
 
+"@voiceflow/api-sdk@^1.33.0":
+  version "1.33.0"
+  resolved "https://registry.yarnpkg.com/@voiceflow/api-sdk/-/api-sdk-1.33.0.tgz#c86a2ef5d4e788238b0e6b95999c07ddbd080dda"
+  integrity sha512-XmPKy02/dWSh8kOAb30Soqi3UG8zz+7kPQwJhj41BlRGSQBZeGbQa56NzQZ3Tb416w8r0AU3TLZZOR2HWj27Sw==
+  dependencies:
+    "@types/atob" "^2.1.2"
+    atob "^2.1.2"
+    axios "^0.21.1"
+    superstruct "^0.10.12"
+
 "@voiceflow/backend-utils@2.2.1":
   version "2.2.1"
   resolved "https://registry.yarnpkg.com/@voiceflow/backend-utils/-/backend-utils-2.2.1.tgz#11bd9e2102bbfd04b48d662e1906c06fcda4b22d"
@@ -1189,12 +1199,19 @@
     words-to-numbers "^1.5.1"
     workerpool "^5.0.4"
 
-"@voiceflow/general-types@1.49.3", "@voiceflow/general-types@^1.49.3":
+"@voiceflow/general-types@1.49.3":
   version "1.49.3"
   resolved "https://registry.yarnpkg.com/@voiceflow/general-types/-/general-types-1.49.3.tgz#8011fb89386d8364a37a62fecbd1379dcb2c8eb1"
   integrity sha512-5lAFvLV+hWbtd1adWShn170Y+21fO1gKfe50Goxcd+Mn6rh1S+oewlZ8d9KLxp/fE4JYmGJkpkIJAhR/QOlwAA==
   dependencies:
     "@voiceflow/api-sdk" "^1.32.1"
+
+"@voiceflow/general-types@^1.50.5":
+  version "1.50.5"
+  resolved "https://registry.yarnpkg.com/@voiceflow/general-types/-/general-types-1.50.5.tgz#08424501a71e91f6e25013f8df2462caf278001d"
+  integrity sha512-SgwlRucj1RaKk3+ojqjNntF2hyoBvjCuhTpztEw9nnusPo3uN8OzEGwcfZD59MeB8pPsvIlX5mp3csG+1FU7jA==
+  dependencies:
+    "@voiceflow/api-sdk" "^1.33.0"
 
 "@voiceflow/git-branch-check@^1.2.0":
   version "1.2.0"
@@ -1203,14 +1220,14 @@
   dependencies:
     current-git-branch "^1.1.0"
 
-"@voiceflow/google-types@1.28.3":
-  version "1.28.3"
-  resolved "https://registry.yarnpkg.com/@voiceflow/google-types/-/google-types-1.28.3.tgz#8bb2c4de0b7ceb71747cee713d56cb925e18ef89"
-  integrity sha512-UexiQH3UgVxMOJEnCEXtKGUb9KQPHgc3I/AqOkEz8dqjINR9X/uR0S+QoVYZp19bQifm6sroOMvY/rlkHig6xw==
+"@voiceflow/google-types@1.29.0":
+  version "1.29.0"
+  resolved "https://registry.yarnpkg.com/@voiceflow/google-types/-/google-types-1.29.0.tgz#5bee75a59a8322ebbd6828054a062bb198a659e0"
+  integrity sha512-Ifu00CBe5pONlBCQn+bQg0wB/bqKJqts/dkGJG76s6pog9QYdlEE2+iBJxf6Qy4bkZJOp1+ffhxoS05IFgDYdQ==
   dependencies:
-    "@voiceflow/api-sdk" "^1.32.1"
+    "@voiceflow/api-sdk" "^1.33.0"
     "@voiceflow/common" "6.5.0"
-    "@voiceflow/general-types" "^1.49.3"
+    "@voiceflow/general-types" "^1.50.5"
     googleapis "^60.0.1"
 
 "@voiceflow/logger@1.5.2":

@@ -1,7 +1,7 @@
 import { Image as GoogleImage, Media as GoogleMedia, Suggestion as GoogleSuggestion } from '@assistant/conversation';
 import { Capability, MediaObject as GoogleMediaObject, MediaType, OptionalMediaControl } from '@assistant/conversation/dist/api/schema';
 import { replaceVariables } from '@voiceflow/common';
-import { Handler, HandlerFactory } from '@voiceflow/general-runtime/build/runtime';
+import { HandlerFactory } from '@voiceflow/general-runtime/build/runtime';
 import { Node } from '@voiceflow/google-types/build/nodes/stream';
 import { Image, MediaObject, MediaObjectOptions, Suggestions } from 'actions-on-google';
 
@@ -160,10 +160,3 @@ export const StreamHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => (
 });
 
 export default () => StreamHandler(utilsObj);
-
-export const StreamHandlerDialogflowES: Handler<Node> = {
-  canHandle: (block) => !!block.play,
-  handle: (block) => {
-    return block.gNextId ?? null;
-  },
-};
