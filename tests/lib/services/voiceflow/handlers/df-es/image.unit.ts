@@ -19,7 +19,7 @@ describe('df es image handler unit tests', async () => {
   });
 
   describe('handle', () => {
-    it('type STANDARD with image', async () => {
+    it('works', async () => {
       const utils = {
         addVariables: sinon.stub().returns('url'),
       };
@@ -43,7 +43,7 @@ describe('df es image handler unit tests', async () => {
   });
 
   describe('responseBuilderDialogflowES', () => {
-    it('no card', async () => {
+    it('no image', async () => {
       const runtime = {
         turn: { get: sinon.stub().returns(null) },
       };
@@ -53,7 +53,7 @@ describe('df es image handler unit tests', async () => {
       expect(runtime.turn.get.args).to.eql([[T.DF_ES_IMAGE]]);
     });
 
-    it('simple card', async () => {
+    it('with image', async () => {
       const image = {
         imageUrl: 'image-url',
       };
