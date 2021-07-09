@@ -1,4 +1,4 @@
-import { NodeType } from '@voiceflow/google-types/build/nodes/df-es/types';
+import { NodeType } from '@voiceflow/general-types/build/nodes/types';
 import { expect } from 'chai';
 import sinon from 'sinon';
 
@@ -14,7 +14,7 @@ describe('df es image handler unit tests', async () => {
     });
 
     it('true', async () => {
-      expect(DefaultImageHandler().canHandle({ type: NodeType.IMAGE } as any, null as any, null as any, null as any)).to.eql(true);
+      expect(DefaultImageHandler().canHandle({ type: NodeType.VISUAL } as any, null as any, null as any, null as any)).to.eql(true);
     });
   });
 
@@ -27,17 +27,17 @@ describe('df es image handler unit tests', async () => {
       const imageHandler = ImageHandler(utils);
 
       const block = {
-        imageUrl: '{image-url}',
-        nextID: 'next-id',
+        data: { image: '{image-url}' },
+        nextId: 'next-id',
       };
       const runtime = {
         turn: { set: sinon.stub() },
       };
       const variables = { foo: 'bar' };
 
-      expect(imageHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.nextID);
+      expect(imageHandler.handle(block as any, runtime as any, variables as any, null as any)).to.eql(block.nextId);
 
-      expect(utils.addVariables.args).to.eql([[block.imageUrl, variables]]);
+      expect(utils.addVariables.args).to.eql([[block.data.image, variables]]);
       expect(runtime.turn.set.args).to.eql([[T.DF_ES_IMAGE, { imageUrl: 'url' }]]);
     });
   });
