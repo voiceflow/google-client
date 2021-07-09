@@ -21,6 +21,7 @@ import CaptureHandler from './capture';
 import CardHandler, { CardResponseBuilder, CardResponseBuilderDialogflowES, CardResponseBuilderV2 } from './card';
 import ChoiceHandler, { ChipsResponseBuilder, ChipsResponseBuilderDialogflowES, ChipsResponseBuilderV2 } from './choice';
 import DFESImageHandler, { ImageResponseBuilderDialogflowES } from './df-es/image';
+import DFESPayloadHandler, { PayloadResponseBuilderDialogflowES } from './df-es/payload';
 import DirectiveHandler, { DirectiveResponseBuilder } from './directive';
 import InteractionHandler from './interaction';
 import PreliminaryHandler from './preliminary';
@@ -29,7 +30,12 @@ import StreamHandler, { StreamResponseBuilder, StreamResponseBuilderV2 } from '.
 
 export const responseHandlers = [CardResponseBuilder, StreamResponseBuilder, ChipsResponseBuilder];
 export const responseHandlersV2 = [ChipsResponseBuilderV2, CardResponseBuilderV2, StreamResponseBuilderV2, DirectiveResponseBuilder];
-export const responseHandlersDialogflowES = [ChipsResponseBuilderDialogflowES, CardResponseBuilderDialogflowES, ImageResponseBuilderDialogflowES];
+export const responseHandlersDialogflowES = [
+  ChipsResponseBuilderDialogflowES,
+  CardResponseBuilderDialogflowES,
+  ImageResponseBuilderDialogflowES,
+  PayloadResponseBuilderDialogflowES,
+];
 const _v1Handler = _V1Handler();
 
 // handlers for dialogflow es agent
@@ -41,6 +47,7 @@ export const HandlersDialogflowES = ({ API_HANDLER_ENDPOINT, INTEGRATIONS_HANDLE
   ResetHandler(),
   CardHandler(),
   DFESImageHandler(),
+  DFESPayloadHandler(),
   ChoiceHandler(),
   CodeHandler({ endpoint: CODE_HANDLER_ENDPOINT }),
   EndHandler(),

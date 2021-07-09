@@ -29,12 +29,12 @@ const utilsObj = {
 export const PayloadHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => ({
   canHandle: (node) => node.type === NodeType.PAYLOAD,
   handle: (node, runtime, variables) => {
-    const unparsedPayload = utils.addVariables(node.payload, variables);
+    const unparsedData = utils.addVariables(node.data, variables);
     try {
-      const data = JSON.parse(unparsedPayload) as TurnPayload['data'];
+      const data = JSON.parse(unparsedData) as TurnPayload['data'];
       runtime.turn.set<TurnPayload>(T.DF_ES_PAYLOAD, { data });
     } catch (err) {
-      runtime.trace.debug(`invalid payload JSON:\n\`${unparsedPayload}\`\n\`${err}\``);
+      runtime.trace.debug(`invalid payload JSON:\n\`${unparsedData}\`\n\`${err}\``);
     }
 
     return node.nextID ?? null;
