@@ -1,7 +1,7 @@
 import { replaceVariables } from '@voiceflow/common';
 import { HandlerFactory } from '@voiceflow/general-runtime/build/runtime';
-import { Node } from '@voiceflow/google-types/build/nodes/df-es/image';
-import { NodeType } from '@voiceflow/google-types/build/nodes/df-es/types';
+import { NodeType } from '@voiceflow/general-types/build/nodes/types';
+import { ImageStepData, Node } from '@voiceflow/general-types/build/nodes/visual';
 
 import { T } from '@/lib/constants';
 
@@ -27,11 +27,11 @@ const utilsObj = {
 };
 
 export const ImageHandler: HandlerFactory<Node, typeof utilsObj> = (utils) => ({
-  canHandle: (node) => node.type === NodeType.IMAGE,
+  canHandle: (node) => node.type === NodeType.VISUAL,
   handle: (node, runtime, variables) => {
-    runtime.turn.set<TurnImage>(T.DF_ES_IMAGE, { imageUrl: utils.addVariables(node.imageUrl, variables) });
+    runtime.turn.set<TurnImage>(T.DF_ES_IMAGE, { imageUrl: utils.addVariables((node.data as ImageStepData).image!, variables) });
 
-    return node.nextID ?? null;
+    return node.nextId ?? null;
   },
 });
 
