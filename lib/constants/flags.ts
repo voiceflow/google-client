@@ -27,6 +27,7 @@ export enum Frame {
 
 export enum Variables {
   TIMESTAMP = 'timestamp',
+  DF_ES_CHANNEL = 'channel',
 }
 
 export default {
