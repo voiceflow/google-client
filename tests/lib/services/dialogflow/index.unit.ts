@@ -1,4 +1,5 @@
 import { expect } from 'chai';
+import _ from 'lodash';
 import sinon from 'sinon';
 
 import { Event, RequestType as InteractRequestType } from '@/lib/clients/ingest-client';
@@ -59,6 +60,9 @@ describe('DialogflowManager unit tests', async () => {
       };
 
       const dialogflow = new DialogflowManager(services as any, null as any);
+      const CHANNEL_VAR = 'the-channel';
+      const _getChannelStub = sinon.stub().returns(CHANNEL_VAR);
+      _.set(dialogflow, '_getChannel', _getChannelStub);
 
       await dialogflow.es(req as any, versionID);
 
@@ -73,7 +77,10 @@ describe('DialogflowManager unit tests', async () => {
       expect(services.metrics.invocation.args).to.eql([[]]);
       expect(services.runtimeBuildES.build.args).to.eql([[versionID, req.session]]);
       expect(services.initializeES.build.args).to.eql([[stateObj, req]]);
-      expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
+      expect(stateObj.variables.set.args).to.eql([
+        [V.TIMESTAMP, Math.floor(clock.now / 1000)],
+        [V.DF_ES_CHANNEL, CHANNEL_VAR],
+      ]);
       expect(stateObj.update.args).to.eql([[]]);
       expect(services.responseES.build.args).to.eql([[stateObj]]);
       expect(stateObj.services.analyticsClient.track.args).to.eql([
@@ -131,6 +138,8 @@ describe('DialogflowManager unit tests', async () => {
       };
 
       const dialogflow = new DialogflowManager(services as any, null as any);
+      const _getChannelStub = sinon.stub().returns('');
+      _.set(dialogflow, '_getChannel', _getChannelStub);
 
       await dialogflow.es(req as any, versionID);
       const payload = {
@@ -145,7 +154,10 @@ describe('DialogflowManager unit tests', async () => {
       expect(services.metrics.invocation.args).to.eql([[]]);
       expect(services.runtimeBuildES.build.args).to.eql([[versionID, req.session]]);
       expect(services.initializeES.build.args).to.eql([[stateObj, req]]);
-      expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
+      expect(stateObj.variables.set.args).to.eql([
+        [V.TIMESTAMP, Math.floor(clock.now / 1000)],
+        [V.DF_ES_CHANNEL, ''],
+      ]);
       expect(stateObj.update.args).to.eql([[]]);
       expect(services.responseES.build.args).to.eql([[stateObj]]);
       expect(stateObj.services.analyticsClient.track.args).to.eql([
@@ -206,6 +218,8 @@ describe('DialogflowManager unit tests', async () => {
       };
 
       const dialogflow = new DialogflowManager(services as any, null as any);
+      const _getChannelStub = sinon.stub().returns('');
+      _.set(dialogflow, '_getChannel', _getChannelStub);
 
       await dialogflow.es(req as any, versionID);
 
@@ -223,7 +237,10 @@ describe('DialogflowManager unit tests', async () => {
           },
         },
       ]);
-      expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
+      expect(stateObj.variables.set.args).to.eql([
+        [V.TIMESTAMP, Math.floor(clock.now / 1000)],
+        [V.DF_ES_CHANNEL, ''],
+      ]);
       expect(stateObj.update.args).to.eql([[]]);
       expect(services.responseES.build.args).to.eql([[stateObj]]);
     });
@@ -267,6 +284,8 @@ describe('DialogflowManager unit tests', async () => {
       };
 
       const dialogflow = new DialogflowManager(services as any, null as any);
+      const _getChannelStub = sinon.stub().returns('');
+      _.set(dialogflow, '_getChannel', _getChannelStub);
 
       await dialogflow.es(req as any, versionID);
       const payload = {
@@ -291,7 +310,10 @@ describe('DialogflowManager unit tests', async () => {
           },
         },
       ]);
-      expect(stateObj.variables.set.args).to.eql([[V.TIMESTAMP, Math.floor(clock.now / 1000)]]);
+      expect(stateObj.variables.set.args).to.eql([
+        [V.TIMESTAMP, Math.floor(clock.now / 1000)],
+        [V.DF_ES_CHANNEL, ''],
+      ]);
       expect(stateObj.update.args).to.eql([[]]);
       expect(services.responseES.build.args).to.eql([[stateObj]]);
       expect(stateObj.services.analyticsClient.track.args).to.eql([
@@ -306,6 +328,42 @@ describe('DialogflowManager unit tests', async () => {
           },
         ],
       ]);
+    });
+  });
+
+  describe('_getChannel', () => {
+    it('source included', () => {
+      const req = {
+        originalDetectIntentRequest: { source: 'facebook' },
+      };
+
+      const dialogflow = new DialogflowManager({} as any, null as any);
+
+      expect(dialogflow._getChannel(req as any)).to.eql(req.originalDetectIntentRequest.source);
+    });
+
+    describe('source not included', () => {
+      it('in session', () => {
+        const req = {
+          originalDetectIntentRequest: {},
+          session: 'projects/english-project-69249/agent/sessions/dfMessenger-32453617/contexts/system_counters',
+        };
+
+        const dialogflow = new DialogflowManager({} as any, null as any);
+
+        expect(dialogflow._getChannel(req as any)).to.eql('dfMessenger');
+      });
+
+      it('not in session', () => {
+        const req = {
+          originalDetectIntentRequest: {},
+          session: 'session',
+        };
+
+        const dialogflow = new DialogflowManager({} as any, null as any);
+
+        expect(dialogflow._getChannel(req as any)).to.eql('unknown');
+      });
     });
   });
 });

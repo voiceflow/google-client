@@ -59,9 +59,27 @@ class DialogflowManager extends AbstractManager<{ initializeES: InitializeES; ru
     }
 
     runtime.variables.set(V.TIMESTAMP, Math.floor(Date.now() / 1000));
+    runtime.variables.set(V.DF_ES_CHANNEL, this._getChannel(req));
     await runtime.update();
 
     return responseES.build(runtime);
+  }
+
+  /*
+    From the docs, the channel is found in the source field of the originalDetectIntentRequest object
+    https://cloud.google.com/dialogflow/es/docs/reference/rpc/google.cloud.dialogflow.v2#originaldetectintentrequest
+    For some channels like "webdemo" or "dfMessenger" the field is emtpy, but we can infer it from the session id
+    (i.e, this is what a session id looks like from dfMessenger: 
+      projects/english-project-69249/agent/sessions/dfMessenger-32453617/contexts/system_counters)
+  */
+  _getChannel(req: WebhookRequest) {
+    if (req.originalDetectIntentRequest.source) return req.originalDetectIntentRequest.source;
+
+    const specialChannels = ['webdemo', 'dfMessenger'];
+
+    const channel = specialChannels.find((ch) => req.session.includes(ch));
+
+    return channel ?? 'unknown';
   }
 }
 

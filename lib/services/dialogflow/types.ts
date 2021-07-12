@@ -9,7 +9,7 @@ export type WebhookRequest = {
     intentDetectionConfidence: number;
     languageCode: string;
   };
-  originalDetectIntentRequest: { payload: Record<string, any> };
+  originalDetectIntentRequest: { source?: string; payload: Record<string, any> };
   session: string;
 };
 
