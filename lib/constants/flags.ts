@@ -17,6 +17,7 @@ export enum Turn {
   CHIPS = 'chips',
   DIRECTIVES = 'directives',
   DF_ES_IMAGE = 'df-es-image',
+  DF_ES_PAYLOAD = 'df-es-payload',
 }
 
 export enum Frame {
